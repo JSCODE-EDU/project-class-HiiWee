@@ -1,9 +1,11 @@
 package com.example.anonymousboard.post.service;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 
 import com.example.anonymousboard.post.domain.Content;
 import com.example.anonymousboard.post.domain.Post;
@@ -11,9 +13,12 @@ import com.example.anonymousboard.post.domain.Title;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +53,7 @@ class PostServiceTest {
         post1 = Post.builder()
                 .id(1L)
                 .title(Title.from("제목1"))
-                .content(Content.from("내용"))
+                .content(Content.from("내용1"))
                 .build();
         post2 = Post.builder()
                 .id(2L)
@@ -110,5 +115,35 @@ class PostServiceTest {
                 () -> assertThat(postResponse.getTitle()).isEqualTo("제목4"),
                 () -> assertThat(postResponse.getContent()).isEqualTo("내용4")
         );
+    }
+
+    @DisplayName("특정 id값의 게시글을 조회할 수 있다.")
+    @Test
+    void findPostById() {
+        // given
+        given(postRepository.findById(any())).willReturn(Optional.of(post1));
+
+        // when
+        PostResponse findPost = postService.findPostById(1L);
+
+        // then
+        assertAll(
+                () -> assertThat(findPost.getId()).isEqualTo(1L),
+                () -> assertThat(findPost.getTitle()).isEqualTo("제목1"),
+                () -> assertThat(findPost.getContent()).isEqualTo("내용1")
+        );
+    }
+
+    @DisplayName("존재하지 않는 id의 게시글을 조회하면 예외가 발생한다.")
+    @Test
+    void findPostById_exception_notFoundPostId() {
+        // given
+        doThrow(new PostNotFoundException()).when(postRepository)
+                .findById(any());
+
+        // when & then
+        assertThatThrownBy(() -> postService.findPostById(11111L))
+                .isInstanceOf(PostNotFoundException.class)
+                .hasMessageContaining("게시글을 찾을 수 없습니다.");
     }
 }

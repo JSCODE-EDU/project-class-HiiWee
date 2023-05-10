@@ -1,6 +1,7 @@
 package com.example.anonymousboard.advice;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,6 +30,16 @@ public class ControllerAdvice {
                 .message(e.getMessage())
                 .build()
         );
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(final NotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.builder()
+                        .errorCode(e.getErrorCode())
+                        .message(e.getMessage())
+                        .build()
+                );
     }
 
     @ExceptionHandler(RuntimeException.class)
