@@ -31,6 +31,7 @@ class PostServiceTest {
     @BeforeEach
     void setUp() {
         post = Post.builder()
+                .id(1L)
                 .content(Content.from("안녕하세요!"))
                 .title(Title.from("첫 게시글 입니다!"))
                 .build();
