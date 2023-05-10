@@ -1,15 +1,15 @@
 package com.example.anonymousboard.post.service;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
-import com.example.anonymousboard.post.domain.Content;
 import com.example.anonymousboard.post.domain.Post;
-import com.example.anonymousboard.post.domain.Title;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
@@ -19,7 +19,6 @@ import com.example.anonymousboard.post.repository.PostRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -183,6 +182,30 @@ class PostServiceTest {
 
         // when & then
         assertThatThrownBy(() -> postService.updatePostById(1111L, updateRequest))
+                .isInstanceOf(PostNotFoundException.class)
+                .hasMessageContaining("게시글을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("특정 게시글을 삭제할 수 있다.")
+    @Test
+    void deletePost() {
+        //given
+        given(postRepository.findById(any())).willReturn(Optional.of(post1));
+        doNothing().when(postRepository)
+                .delete(any());
+
+        assertThatNoException().isThrownBy(() -> postService.deletePostById(1L));
+    }
+
+    @DisplayName("존재하지 않는 게시글은 삭제할 수 없다.")
+    @Test
+    void deletePost_exception_notFoundPostId() {
+        // given
+        doThrow(new PostNotFoundException()).when(postRepository)
+                .findById(any());
+
+        // when & then
+        assertThatThrownBy(() -> postService.deletePostById(111L))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
     }
