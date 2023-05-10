@@ -3,7 +3,8 @@ package com.example.anonymousboard.post.exception;
 public enum PostErrorCode {
 
     INVALID_TITLE(1001),
-    INVALID_CONTENT(1002);
+    INVALID_CONTENT(1002),
+    POST_NOT_FOUND(1003);
 
     private final int errorCode;
 

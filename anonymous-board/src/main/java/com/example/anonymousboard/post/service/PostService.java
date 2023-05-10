@@ -4,7 +4,9 @@ import com.example.anonymousboard.post.domain.Content;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.domain.Title;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +40,9 @@ public class PostService {
         return PagePostsResponse.of(posts.getContent());
     }
 
+    public PostResponse findPostById(final Long id) {
+        Post findPost = postRepository.findById(id)
+                .orElseThrow(PostNotFoundException::new);
+        return PostResponse.from(findPost);
+    }
 }
