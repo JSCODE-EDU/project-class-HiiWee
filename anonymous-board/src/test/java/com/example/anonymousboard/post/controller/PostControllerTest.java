@@ -4,7 +4,6 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -48,6 +47,8 @@ public class PostControllerTest {
 
     PagePostsResponse pagePostsResponse;
 
+    PagePostsResponse keywordPosts;
+
     PostResponse postResponse;
 
     Post post1;
@@ -55,6 +56,10 @@ public class PostControllerTest {
     Post post2;
 
     Post post3;
+
+    Post keywordPost1;
+
+    Post keywordPost2;
 
     @BeforeEach
     void setUp() {
@@ -73,7 +78,18 @@ public class PostControllerTest {
                 .title("제목3")
                 .content("내용3")
                 .build();
+        keywordPost1 = Post.builder()
+                .id(4L)
+                .title("비슷한 제목")
+                .content("내용4")
+                .build();
+        keywordPost2 = Post.builder()
+                .id(4L)
+                .title("비슷한2 제목")
+                .content("내용4")
+                .build();
         pagePostsResponse = PagePostsResponse.of(List.of(post3, post2, post1));
+        keywordPosts = PagePostsResponse.of(List.of(keywordPost1, keywordPost2));
         postResponse = PostResponse.from(post1);
     }
 
@@ -150,7 +166,7 @@ public class PostControllerTest {
     void findPosts() throws Exception {
         // given
         doReturn(pagePostsResponse).when(postService)
-                .findPosts(any());
+                .findPosts(any(), any());
 
         // when & then
         mockMvc.perform(get("/posts"))
@@ -267,6 +283,22 @@ public class PostControllerTest {
                         status().isNotFound(),
                         jsonPath("$.errorCode").value(PostErrorCode.POST_NOT_FOUND.value()),
                         jsonPath("$.message").value("게시글을 찾을 수 없습니다.")
+                );
+    }
+
+    @DisplayName("특정 키워드를 기준으로 게시글을 조회하면 200을 반환한다.")
+    @Test
+    void findPosts_with_keyword() throws Exception {
+        // given
+        doReturn(keywordPosts).when(postService).findPosts(any(), any());
+
+        // when & then
+        mockMvc.perform(get("/posts").param("keyword", "비슷한"))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.postResponses.size()").value(2),
+                        jsonPath("$.postResponses[0].title").value("비슷한 제목"),
+                        jsonPath("$.postResponses[1].title").value("비슷한2 제목")
                 );
     }
 }

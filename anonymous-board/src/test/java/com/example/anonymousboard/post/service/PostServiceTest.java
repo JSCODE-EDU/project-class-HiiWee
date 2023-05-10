@@ -3,6 +3,7 @@ package com.example.anonymousboard.post.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.in;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -23,6 +24,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,9 +46,16 @@ class PostServiceTest {
     PostRepository postRepository;
 
     Post post1;
+
     Post post2;
+
     Post post3;
+
     Post post4;
+
+    Post keywordPost1;
+
+    Post keywordPost2;
 
     Page<Post> pagePosts;
 
@@ -68,6 +79,16 @@ class PostServiceTest {
         post4 = Post.builder()
                 .id(4L)
                 .title("제목4")
+                .content("내용4")
+                .build();
+        keywordPost1 = Post.builder()
+                .id(4L)
+                .title("비슷한 제목")
+                .content("내용4")
+                .build();
+        keywordPost2 = Post.builder()
+                .id(4L)
+                .title("비슷한2 제목")
                 .content("내용4")
                 .build();
 
@@ -100,7 +121,7 @@ class PostServiceTest {
         Pageable pageable = PageRequest.of(0, 4, Direction.DESC, "createdAt");
 
         // when
-        PagePostsResponse posts = postService.findPosts(pageable);
+        PagePostsResponse posts = postService.findPosts(null, pageable);
         PostResponse postResponse = posts.getPostResponses().get(0);
         List<String> titles = posts.getPostResponses()
                 .stream()
@@ -189,7 +210,7 @@ class PostServiceTest {
     @DisplayName("특정 게시글을 삭제할 수 있다.")
     @Test
     void deletePost() {
-        //given
+        // given
         given(postRepository.findById(any())).willReturn(Optional.of(post1));
         doNothing().when(postRepository)
                 .delete(any());
@@ -208,5 +229,38 @@ class PostServiceTest {
         assertThatThrownBy(() -> postService.deletePostById(111L))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("특정 키워드를 통해 게시글을 검색할 수 있다.")
+    @Test
+    void findPosts_with_keyword() {
+        // given
+        given(postRepository.findPostsByKeyword(any(), any())).willReturn(List.of(keywordPost1, keywordPost2));
+
+        // when
+        PagePostsResponse pagePostsResponse = postService.findPosts("비슷한",
+                PageRequest.of(0, 100, Direction.DESC, "createdAt"));
+        List<String> titles = pagePostsResponse.getPostResponses().stream()
+                .map(PostResponse::getTitle)
+                .collect(Collectors.toList());
+
+        // then
+        assertThat(titles).containsExactly("비슷한 제목", "비슷한2 제목");
+    }
+
+    @DisplayName("키워드가 조건을 충족하지 않는다면 전체 게시글을 조회한다.")
+    @ParameterizedTest
+    @ValueSource(strings = {"", "d"})
+    void findPosts_with_invalidKeyword(String invalidKeyword) {
+        // given
+        given(postRepository.findPostsByOrderByCreatedAtDesc(any())).willReturn(
+                new PageImpl<>(List.of(post1, post2, post3, post4)));
+
+        // when
+        PagePostsResponse pagePostsResponse = postService.findPosts(invalidKeyword,
+                PageRequest.of(0, 100, Direction.DESC, "createdAt"));
+
+        // then
+        assertThat(pagePostsResponse.getTotalPostCount()).isEqualTo(4);
     }
 }
