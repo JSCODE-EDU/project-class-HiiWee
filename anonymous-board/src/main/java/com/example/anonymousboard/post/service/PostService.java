@@ -1,0 +1,30 @@
+package com.example.anonymousboard.post.service;
+
+import com.example.anonymousboard.post.domain.Content;
+import com.example.anonymousboard.post.domain.Post;
+import com.example.anonymousboard.post.domain.Title;
+import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.repository.PostRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class PostService {
+
+    private final PostRepository postRepository;
+
+    public PostService(final PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
+
+    @Transactional
+    public Long createPost(final PostSaveRequest postSaveRequest) {
+        Post post = Post.builder()
+                .title(Title.from(postSaveRequest.getTitle()))
+                .content(Content.from(postSaveRequest.getContent()))
+                .build();
+        Post savedPost = postRepository.save(post);
+        return savedPost.getId();
+    }
+}

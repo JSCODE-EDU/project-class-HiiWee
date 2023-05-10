@@ -15,14 +15,22 @@ public class Title {
     protected Title() {
     }
 
-    public Title(final String value) {
-        validate(value);
+    private Title(final String value) {
         this.value = value;
     }
 
-    private void validate(final String value) {
+    public static Title from(final String value) {
+        validate(value);
+        return new Title(value);
+    }
+
+    private static void validate(final String value) {
         if (value.length() > LIMIT_LENGTH) {
             throw new InvalidTitleException();
         }
+    }
+
+    public String getValue() {
+        return value;
     }
 }
