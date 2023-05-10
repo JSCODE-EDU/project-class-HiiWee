@@ -4,6 +4,7 @@ import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
+import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.service.PostService;
 import java.net.URI;
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,5 +45,12 @@ public class PostController {
     public ResponseEntity<PostResponse> findPost(@PathVariable Long postId) {
         PostResponse findPost = postService.findPostById(postId);
         return ResponseEntity.ok(findPost);
+    }
+
+    @PutMapping("/posts/{postId}")
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId,
+                                                  @Valid @RequestBody PostUpdateRequest postUpdateRequest) {
+        PostResponse updatePost = postService.updatePostById(postId, postUpdateRequest);
+        return ResponseEntity.ok(updatePost);
     }
 }

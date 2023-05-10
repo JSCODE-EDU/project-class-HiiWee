@@ -5,18 +5,19 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.anonymousboard.post.domain.Content;
 import com.example.anonymousboard.post.domain.Post;
-import com.example.anonymousboard.post.domain.Title;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.InvalidContentException;
 import com.example.anonymousboard.post.exception.InvalidTitleException;
 import com.example.anonymousboard.post.exception.PostErrorCode;
+import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -173,6 +174,67 @@ public class PostControllerTest {
                         jsonPath("$.id").value(1L),
                         jsonPath("$.title").value("제목1"),
                         jsonPath("$.content").value("내용1")
+                );
+    }
+
+    @DisplayName("특정 게시글을 조회할 수 없다면 400을 반환한다.")
+    @Test
+    void findPost_exception_notFoundPostId() throws Exception {
+        // given
+        doThrow(new PostNotFoundException()).when(postService)
+                .findPostById(any());
+
+        // when & then
+        mockMvc.perform(get("/posts/1"))
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.errorCode").value(PostErrorCode.POST_NOT_FOUND.value()),
+                        jsonPath("$.message").value("게시글을 찾을 수 없습니다.")
+                );
+    }
+
+    @DisplayName("특정 게시글을 수정할 수 있다면 200을 반환한다.")
+    @Test
+    void updatePost() throws Exception {
+        // given
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("제목1")
+                .content("내용1")
+                .build();
+        doReturn(postResponse).when(postService)
+                .updatePostById(any(), any());
+
+        // when & then
+        mockMvc.perform(put("/posts/1")
+                        .content(objectMapper.writeValueAsString(updateRequest))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(1L),
+                        jsonPath("$.title").value("제목1"),
+                        jsonPath("$.content").value("내용1")
+                );
+    }
+
+    @DisplayName("특정 게시글을 수정할 수 없다면 400을 반환한다.")
+    @Test
+    void updatePost_exception_notFoundPostId() throws Exception {
+        // given
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("제목1")
+                .content("내용1")
+                .build();
+        doThrow(new PostNotFoundException()).when(postService)
+                .updatePostById(any(), any());
+
+        // when & then
+        mockMvc.perform(put("/posts/1")
+                        .content(objectMapper.writeValueAsString(updateRequest))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.errorCode").value(PostErrorCode.POST_NOT_FOUND.value()),
+                        jsonPath("$.message").value("게시글을 찾을 수 없습니다.")
                 );
     }
 }
