@@ -13,6 +13,7 @@ import com.example.anonymousboard.post.domain.Title;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
 import java.util.List;
@@ -143,6 +144,45 @@ class PostServiceTest {
 
         // when & then
         assertThatThrownBy(() -> postService.findPostById(11111L))
+                .isInstanceOf(PostNotFoundException.class)
+                .hasMessageContaining("게시글을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("특정 게시글을 수정할 수 있다.")
+    @Test
+    void updatePost() {
+        // given
+        given(postRepository.findById(any())).willReturn(Optional.of(post1));
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .build();
+
+        // when
+        PostResponse updatedPost = postService.updatePostById(1L, updateRequest);
+
+        // then
+        assertAll(
+                () -> assertThat(updatedPost.getId()).isEqualTo(1L),
+                () -> assertThat(updatedPost.getTitle()).isEqualTo("수정된 제목"),
+                () -> assertThat(updatedPost.getContent()).isEqualTo("수정된 내용"),
+                () -> assertThat(updatedPost.getCreatedAt()).isEqualTo(post1.getCreatedAt())
+        );
+    }
+
+    @DisplayName("존재하지 않는 게시글을 수정할 수 없다.")
+    @Test
+    void updatePost_exception_notFoundPostId() {
+        // given
+        doThrow(new PostNotFoundException()).when(postRepository)
+                .findById(any());
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> postService.updatePostById(1111L, updateRequest))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
     }
