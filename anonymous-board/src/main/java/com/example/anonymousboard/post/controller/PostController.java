@@ -1,6 +1,7 @@
 package com.example.anonymousboard.post.controller;
 
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.service.PostService;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,5 +37,11 @@ public class PostController {
             @PageableDefault(sort = "createdAt", direction = Direction.DESC, size = 100) final Pageable pageable) {
         PagePostsResponse findPosts = postService.findPosts(pageable);
         return ResponseEntity.ok(findPosts);
+    }
+
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<PostResponse> findPost(@PathVariable Long postId) {
+        PostResponse findPost = postService.findPostById(postId);
+        return ResponseEntity.ok(findPost);
     }
 }

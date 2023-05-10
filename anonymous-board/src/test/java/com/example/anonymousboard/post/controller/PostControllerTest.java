@@ -12,6 +12,7 @@ import com.example.anonymousboard.post.domain.Content;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.domain.Title;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.exception.InvalidContentException;
 import com.example.anonymousboard.post.exception.InvalidTitleException;
@@ -43,6 +44,8 @@ public class PostControllerTest {
 
     PagePostsResponse pagePostsResponse;
 
+    PostResponse postResponse;
+
     Post post1;
 
     Post post2;
@@ -67,6 +70,7 @@ public class PostControllerTest {
                 .content(Content.from("내용3"))
                 .build();
         pagePostsResponse = PagePostsResponse.of(List.of(post3, post2, post1));
+        postResponse = PostResponse.from(post1);
     }
 
     @DisplayName("게시글 작성을 하면 201을 반환한다.")
@@ -152,6 +156,23 @@ public class PostControllerTest {
                         jsonPath("$.postResponses[0].id").value(3L),
                         jsonPath("$.postResponses[1].id").value(2L),
                         jsonPath("$.postResponses[2].id").value(1L)
+                );
+    }
+
+    @DisplayName("특정 게시글을 조회할 수 있으면 200을 반환한다.")
+    @Test
+    void findPost() throws Exception {
+        // given
+        doReturn(postResponse).when(postService)
+                .findPostById(any());
+
+        // when & then
+        mockMvc.perform(get("/posts/1"))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(1L),
+                        jsonPath("$.title").value("제목1"),
+                        jsonPath("$.content").value("내용1")
                 );
     }
 }
