@@ -7,10 +7,9 @@ import lombok.Getter;
 @Getter
 public class PostSaveRequest {
 
-    @NotBlank
+    @NotBlank(message = "제목을 반드시 입력해야 합니다.")
     private String title;
 
-    @NotBlank
     private String content;
 
     private PostSaveRequest() {
