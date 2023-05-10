@@ -109,6 +109,14 @@ public class PostAcceptanceTest {
                 .extract();
     }
 
+    private static ExtractableResponse<Response> httpGetFindAllPostWithKeyword() {
+        return given().param("keyword", "특정").log().all()
+                .when()
+                .get("/posts")
+                .then().log().all()
+                .extract();
+    }
+
     @DisplayName("게시글 작성을 할 수 있다.")
     @Test
     void createPost() throws JsonProcessingException {
@@ -302,6 +310,33 @@ public class PostAcceptanceTest {
         assertAll(
                 () -> assertThat(errorResponse.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND.value()),
                 () -> assertThat(errorResponse.getMessage()).isEqualTo("게시글을 찾을 수 없습니다.")
+        );
+    }
+
+    @DisplayName("게시글을 저장하고 키워드를 가지고 특정 게시글만 조회할 수 있다.")
+    @Test
+    void findPosts_with_keyword() throws JsonProcessingException {
+        // given
+        PostSaveRequest customRequest = PostSaveRequest.builder()
+                .title("특정 키워드")
+                .content("내용")
+                .build();
+        httpPostSavePost(customRequest);
+        httpPostSavePost(postSaveRequest1);
+        httpPostSavePost(postSaveRequest2);
+        httpPostSavePost(postSaveRequest3);
+
+        // when
+        ExtractableResponse<Response> response = httpGetFindAllPostWithKeyword();
+        PagePostsResponse pagePostsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
+        PostResponse postResponse = pagePostsResponse.getPostResponses().get(0);
+
+        // then
+        assertAll(
+                () -> assertThat(postResponse.getId()).isEqualTo(1L),
+                () -> assertThat(postResponse.getTitle()).isEqualTo("특정 키워드"),
+                () -> assertThat(postResponse.getContent()).isEqualTo("내용"),
+                () -> assertThat(postResponse.getCreatedAt()).isNotNull()
         );
     }
 }

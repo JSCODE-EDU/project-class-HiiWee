@@ -1,5 +1,6 @@
 package com.example.anonymousboard.post.service;
 
+import com.example.anonymousboard.post.domain.Keyword;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -7,6 +8,7 @@ import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,12 @@ public class PostService {
         return savedPost.getId();
     }
 
-    public PagePostsResponse findPosts(Pageable pageable) {
+    public PagePostsResponse findPosts(final String keyword, Pageable pageable) {
+        Keyword validKeyword = Keyword.createValidKeyword(keyword);
+        if (validKeyword != null) {
+            List<Post> posts = postRepository.findPostsByKeyword(validKeyword.getQueryKeyword(), pageable);
+            return PagePostsResponse.of(posts);
+        }
         Page<Post> posts = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
         return PagePostsResponse.of(posts.getContent());
     }

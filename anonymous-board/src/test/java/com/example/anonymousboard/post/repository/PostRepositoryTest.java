@@ -32,19 +32,19 @@ class PostRepositoryTest {
     @BeforeEach
     void setUp() {
         post1 = Post.builder()
-                .title("제목1")
+                .title("제목1 입니다.")
                 .content("내용1")
                 .build();
         post2 = Post.builder()
-                .title("제목2")
+                .title("제목2 아닙니다.")
                 .content("내용2")
                 .build();
         post3 = Post.builder()
-                .title("제목3")
+                .title("제목3 입니다.")
                 .content("내용3")
                 .build();
         post4 = Post.builder()
-                .title("제목4")
+                .title("제목4 아닙니다.")
                 .content("내용4")
                 .build();
 
@@ -68,7 +68,7 @@ class PostRepositoryTest {
         assertThat(posts.size()).isEqualTo(3);
     }
 
-    @DisplayName("게시글은 생성일 기준으로 정렬하여 가져올 수 있다.")
+    @DisplayName("게시글은 생성일 기준으로 정렬하여 조회할 수 있다.")
     @Test
     void findPosts_with_createdAtDesc() {
         // given
@@ -79,5 +79,19 @@ class PostRepositoryTest {
 
         // then
         assertThat(posts).containsExactly(post4, post3, post2, post1);
+    }
+
+    @DisplayName("특정 키워드 및 생성일 내림차순 기준으로 정렬하여 조회할 수 있다.")
+    @Test
+    void findPosts_with_keyword() {
+        // given
+        String keyword = "%입니%";
+        Pageable pageable = PageRequest.of(0, 4, Direction.DESC, "createdAt");
+
+        // when
+        List<Post> posts = postRepository.findPostsByKeyword(keyword, pageable);
+
+        // then
+        assertThat(posts).containsExactly(post3, post1);
     }
 }
