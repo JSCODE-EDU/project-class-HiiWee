@@ -3,8 +3,11 @@ package com.example.anonymousboard.post.service;
 import com.example.anonymousboard.post.domain.Content;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.domain.Title;
+import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.repository.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,4 +30,10 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         return savedPost.getId();
     }
+
+    public PagePostsResponse findPosts(Pageable pageable) {
+        Page<Post> posts = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
+        return PagePostsResponse.of(posts.getContent(), posts.getTotalElements());
+    }
+
 }

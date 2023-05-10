@@ -18,6 +18,7 @@ class TitleTest {
         // when
         Title title = Title.from(value);
 
+        // then
         assertThat(title.getValue()).isEqualTo(value);
     }
 
