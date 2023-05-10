@@ -3,9 +3,7 @@ package com.example.anonymousboard.post.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.anonymousboard.config.JpaConfig;
-import com.example.anonymousboard.post.domain.Content;
 import com.example.anonymousboard.post.domain.Post;
-import com.example.anonymousboard.post.domain.Title;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
