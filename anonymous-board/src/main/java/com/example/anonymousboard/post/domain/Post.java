@@ -26,7 +26,8 @@ public class Post {
     }
 
     @Builder
-    private Post(final Title title, final Content content) {
+    private Post(final Long id, final Title title, final Content content) {
+        this.id = id;
         this.title = title;
         this.content = content;
     }
