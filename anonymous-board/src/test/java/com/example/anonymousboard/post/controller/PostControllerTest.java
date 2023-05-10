@@ -3,16 +3,23 @@ package com.example.anonymousboard.post.controller;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.anonymousboard.post.domain.Content;
+import com.example.anonymousboard.post.domain.Post;
+import com.example.anonymousboard.post.domain.Title;
+import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.exception.InvalidContentException;
 import com.example.anonymousboard.post.exception.InvalidTitleException;
 import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +40,34 @@ public class PostControllerTest {
     @MockBean
     PostService postService;
 
+
+    PagePostsResponse pagePostsResponse;
+
+    Post post1;
+
+    Post post2;
+
+    Post post3;
+
+    @BeforeEach
+    void setUp() {
+        post1 = Post.builder()
+                .id(1L)
+                .title(Title.from("제목1"))
+                .content(Content.from("내용1"))
+                .build();
+        post2 = Post.builder()
+                .id(2L)
+                .title(Title.from("제목2"))
+                .content(Content.from("내용2"))
+                .build();
+        post3 = Post.builder()
+                .id(3L)
+                .title(Title.from("제목3"))
+                .content(Content.from("내용3"))
+                .build();
+        pagePostsResponse = PagePostsResponse.of(List.of(post3, post2, post1));
+    }
 
     @DisplayName("게시글 작성을 하면 201을 반환한다.")
     @Test
@@ -99,6 +134,24 @@ public class PostControllerTest {
                         status().isBadRequest(),
                         jsonPath("$.errorCode").value(PostErrorCode.INVALID_CONTENT.value()),
                         jsonPath("$.message").value("게시글 본문은 5000자 이하여야 합니다.")
+                );
+    }
+
+    @DisplayName("모든 게시글을 조회할 수 있으며 200을 반환한다.")
+    @Test
+    void findPosts() throws Exception {
+        // given
+        doReturn(pagePostsResponse).when(postService)
+                .findPosts(any());
+
+        // when & then
+        mockMvc.perform(get("/posts"))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.postResponses.size()").value(3),
+                        jsonPath("$.postResponses[0].id").value(3L),
+                        jsonPath("$.postResponses[1].id").value(2L),
+                        jsonPath("$.postResponses[2].id").value(1L)
                 );
     }
 }

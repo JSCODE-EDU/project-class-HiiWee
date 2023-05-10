@@ -20,5 +20,4 @@ public class PostSaveRequest {
         this.title = title;
         this.content = content;
     }
-
 }
