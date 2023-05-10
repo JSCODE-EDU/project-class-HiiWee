@@ -2,9 +2,9 @@ package com.example.anonymousboard.post.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.anonymousboard.post.exception.InvalidContentException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ class ContentTest {
         Content content = Content.from(value);
 
         // then
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(content.getValue()).isEqualTo(value)
         );
 

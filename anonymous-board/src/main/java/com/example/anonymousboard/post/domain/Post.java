@@ -43,4 +43,16 @@ public class Post {
     public Long getId() {
         return id;
     }
+
+    public String getTitleValue() {
+        return title.getValue();
+    }
+
+    public String getContentValue() {
+        return content.getValue();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

@@ -12,7 +12,6 @@ import com.example.anonymousboard.post.exception.InvalidContentException;
 import com.example.anonymousboard.post.exception.InvalidTitleException;
 import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.service.PostService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

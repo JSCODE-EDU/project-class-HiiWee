@@ -2,7 +2,6 @@ package com.example.anonymousboard.post.acceptance;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
