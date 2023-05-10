@@ -4,6 +4,7 @@ import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,6 @@ public class PostService {
 
     public PagePostsResponse findPosts(Pageable pageable) {
         Page<Post> posts = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
-        System.out.println(pageable);
         return PagePostsResponse.of(posts.getContent());
     }
 
@@ -41,5 +41,19 @@ public class PostService {
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
         return PostResponse.from(findPost);
+    }
+
+    @Transactional
+    public PostResponse updatePostById(final Long postId, final PostUpdateRequest postUpdateRequest) {
+        Post post = findPostObject(postId);
+
+        post.updateTitle(postUpdateRequest.getTitle());
+        post.updateContent(postUpdateRequest.getContent());
+        return PostResponse.from(post);
+    }
+
+    private Post findPostObject(final Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
     }
 }
