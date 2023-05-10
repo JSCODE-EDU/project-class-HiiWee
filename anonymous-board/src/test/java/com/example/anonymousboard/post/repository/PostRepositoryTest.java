@@ -32,20 +32,20 @@ class PostRepositoryTest {
     @BeforeEach
     void setUp() {
         post1 = Post.builder()
-                .title(Title.from("제목1"))
-                .content(Content.from("내용1"))
+                .title("제목1")
+                .content("내용1")
                 .build();
         post2 = Post.builder()
-                .title(Title.from("제목2"))
-                .content(Content.from("내용2"))
+                .title("제목2")
+                .content("내용2")
                 .build();
         post3 = Post.builder()
-                .title(Title.from("제목3"))
-                .content(Content.from("내용3"))
+                .title("제목3")
+                .content("내용3")
                 .build();
         post4 = Post.builder()
-                .title(Title.from("제목4"))
-                .content(Content.from("내용4"))
+                .title("제목4")
+                .content("내용4")
                 .build();
 
         postRepository.save(post1);
