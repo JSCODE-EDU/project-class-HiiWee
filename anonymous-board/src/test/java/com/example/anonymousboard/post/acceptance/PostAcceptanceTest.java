@@ -3,6 +3,7 @@ package com.example.anonymousboard.post.acceptance;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.doThrow;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.advice.ErrorResponse;
@@ -10,6 +11,7 @@ import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
+import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.repository.PostRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -176,5 +178,51 @@ public class PostAcceptanceTest {
 
         // then
         assertThat(postsResponse.getTotalPostCount()).isEqualTo(100);
+    }
+
+    @DisplayName("특정 게시글 1개를 저장하고 조회할 수 있다.")
+    @Test
+    void findPost_with_createdPost() throws JsonProcessingException {
+        // given
+        given().log().all()
+                .body(objectMapper.writeValueAsString(postSaveRequest1))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post("/posts")
+                .then().log().all();
+
+        // when
+        ExtractableResponse<Response> response = given().log().all()
+                .when()
+                .get("/posts/1")
+                .then().log().all()
+                .extract();
+        PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(postResponse.getId()).isEqualTo(1L),
+                () -> assertThat(postResponse.getTitle()).isEqualTo("제목1"),
+                () -> assertThat(postResponse.getContent()).isEqualTo("내용1"),
+                () -> assertThat(postResponse.getCreatedAt()).isNotNull()
+        );
+    }
+
+    @DisplayName("없는 게시글은 조회할 수 없다.")
+    @Test
+    void findPost_exception_noPost() {
+        // when
+        ExtractableResponse<Response> response = given().log().all()
+                .when()
+                .get("/posts/123123")
+                .then().log().all()
+                .extract();
+        ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND.value()),
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("게시글을 찾을 수 없습니다.")
+        );
     }
 }
