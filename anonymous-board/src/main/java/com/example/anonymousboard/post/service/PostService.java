@@ -1,8 +1,6 @@
 package com.example.anonymousboard.post.service;
 
-import com.example.anonymousboard.post.domain.Content;
 import com.example.anonymousboard.post.domain.Post;
-import com.example.anonymousboard.post.domain.Title;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
@@ -26,8 +24,8 @@ public class PostService {
     @Transactional
     public Long createPost(final PostSaveRequest postSaveRequest) {
         Post post = Post.builder()
-                .title(Title.from(postSaveRequest.getTitle()))
-                .content(Content.from(postSaveRequest.getContent()))
+                .title(postSaveRequest.getTitle())
+                .content(postSaveRequest.getContent())
                 .build();
         Post savedPost = postRepository.save(post);
         return savedPost.getId();
@@ -39,8 +37,8 @@ public class PostService {
         return PagePostsResponse.of(posts.getContent());
     }
 
-    public PostResponse findPostById(final Long id) {
-        Post findPost = postRepository.findById(id)
+    public PostResponse findPostById(final Long postId) {
+        Post findPost = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
         return PostResponse.from(findPost);
     }

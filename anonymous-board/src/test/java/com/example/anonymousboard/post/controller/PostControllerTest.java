@@ -56,18 +56,18 @@ public class PostControllerTest {
     void setUp() {
         post1 = Post.builder()
                 .id(1L)
-                .title(Title.from("제목1"))
-                .content(Content.from("내용1"))
+                .title("제목1")
+                .content("내용1")
                 .build();
         post2 = Post.builder()
                 .id(2L)
-                .title(Title.from("제목2"))
-                .content(Content.from("내용2"))
+                .title("제목2")
+                .content("내용2")
                 .build();
         post3 = Post.builder()
                 .id(3L)
-                .title(Title.from("제목3"))
-                .content(Content.from("내용3"))
+                .title("제목3")
+                .content("내용3")
                 .build();
         pagePostsResponse = PagePostsResponse.of(List.of(post3, post2, post1));
         postResponse = PostResponse.from(post1);

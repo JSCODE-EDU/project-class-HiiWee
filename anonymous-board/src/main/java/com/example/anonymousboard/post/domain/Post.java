@@ -34,10 +34,10 @@ public class Post {
     }
 
     @Builder
-    private Post(final Long id, final Title title, final Content content) {
+    private Post(final Long id, final String title, final String content) {
         this.id = id;
-        this.title = title;
-        this.content = content;
+        this.title = Title.from(title);
+        this.content = Content.from(content);
     }
 
     public Long getId() {
