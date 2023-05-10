@@ -85,7 +85,7 @@ public class PostAcceptanceTest {
 
     }
 
-    private static ExtractableResponse<Response> httpGetFindAllPost() {
+    private ExtractableResponse<Response> httpGetFindAllPost() {
         return given().log().all()
                 .when()
                 .get("/posts")
@@ -93,7 +93,7 @@ public class PostAcceptanceTest {
                 .extract();
     }
 
-    private static ExtractableResponse<Response> httpGetFindPost() {
+    private ExtractableResponse<Response> httpGetFindPost() {
         return given().log().all()
                 .when()
                 .get("/posts/1")
@@ -101,7 +101,7 @@ public class PostAcceptanceTest {
                 .extract();
     }
 
-    private static ExtractableResponse<Response> httpDeletePost() {
+    private ExtractableResponse<Response> httpDeletePost() {
         return given().log().all()
                 .when()
                 .delete("/posts/1")
