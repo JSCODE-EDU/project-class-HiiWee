@@ -3,7 +3,6 @@ package com.example.anonymousboard.post.acceptance;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.doThrow;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.advice.ErrorResponse;
@@ -63,32 +62,58 @@ public class PostAcceptanceTest {
         postUpdateRequest = PostUpdateRequest.builder().title("수정된 제목").content("수정된 내용").build();
     }
 
-    private void savePostRequest(final PostSaveRequest postSaveRequest1) throws JsonProcessingException {
-        given().log().all()
+    private ExtractableResponse<Response> httpPostSavePost(final PostSaveRequest postSaveRequest1)
+            throws JsonProcessingException {
+        return given().log().all()
                 .body(objectMapper.writeValueAsString(postSaveRequest1))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .post("/posts")
-                .then().log().all();
-    }
-
-    @DisplayName("게시글 작성을 할 수 있다.")
-    @Test
-    void createPost() throws JsonProcessingException {
-        // given
-        PostSaveRequest postSaveRequest = PostSaveRequest.builder()
-                .title("게시글 제목입니다.")
-                .content("게시글 내용입니다.")
-                .build();
-
-        // when
-        ExtractableResponse<Response> response = given().log().all()
-                .body(objectMapper.writeValueAsString(postSaveRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .post("/posts")
                 .then().log().all()
                 .extract();
+    }
+
+    private ExtractableResponse<Response> httpPutUpdatePost(final PostUpdateRequest postUpdateRequest)
+            throws JsonProcessingException {
+        return given().log().all()
+                .body(objectMapper.writeValueAsString(postUpdateRequest))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .put("/posts/1")
+                .then().log().all()
+                .extract();
+
+    }
+
+    private static ExtractableResponse<Response> httpGetFindAllPost() {
+        return given().log().all()
+                .when()
+                .get("/posts")
+                .then().log().all()
+                .extract();
+    }
+
+    private static ExtractableResponse<Response> httpGetFindPost() {
+        return given().log().all()
+                .when()
+                .get("/posts/1")
+                .then().log().all()
+                .extract();
+    }
+
+    private static ExtractableResponse<Response> httpDeletePost() {
+        return given().log().all()
+                .when()
+                .delete("/posts/1")
+                .then().log().all()
+                .extract();
+    }
+
+    @DisplayName("게시글 작성을 할 수 있다.")
+    @Test
+    void createPost() throws JsonProcessingException {
+        // when
+        ExtractableResponse<Response> response = httpPostSavePost(postSaveRequest1);
         PostSaveResponse postSaveResponse = response.jsonPath().getObject(".", PostSaveResponse.class);
 
         //then
@@ -110,13 +135,7 @@ public class PostAcceptanceTest {
                 .build();
 
         // when
-        ExtractableResponse<Response> response = given().log().all()
-                .body(objectMapper.writeValueAsString(postSaveRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .post("/posts")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = httpPostSavePost(postSaveRequest);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -132,16 +151,12 @@ public class PostAcceptanceTest {
     @Test
     void findPosts() throws JsonProcessingException {
         // given
-        savePostRequest(postSaveRequest1);
-        savePostRequest(postSaveRequest2);
-        savePostRequest(postSaveRequest3);
+        httpPostSavePost(postSaveRequest1);
+        httpPostSavePost(postSaveRequest2);
+        httpPostSavePost(postSaveRequest3);
 
         // when
-        ExtractableResponse<Response> response = given().log().all()
-                .when()
-                .get("/posts")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = httpGetFindAllPost();
         PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
         List<String> titles = postsResponse.getPostResponses()
                 .stream()
@@ -160,18 +175,11 @@ public class PostAcceptanceTest {
     void findPosts_withLimit() throws JsonProcessingException {
         // given
         for (int sequence = 1; sequence <= 200; sequence++) {
-            given().body(objectMapper.writeValueAsString(postSaveRequest1))
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .when()
-                    .post("/posts");
+            httpPostSavePost(postSaveRequest1);
         }
 
         // when
-        ExtractableResponse<Response> response = given().log().all()
-                .when()
-                .get("/posts")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = httpGetFindAllPost();
         PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
 
         // then
@@ -182,14 +190,10 @@ public class PostAcceptanceTest {
     @Test
     void findPost_with_createdPost() throws JsonProcessingException {
         // given
-        savePostRequest(postSaveRequest1);
+        httpPostSavePost(postSaveRequest1);
 
         // when
-        ExtractableResponse<Response> response = given().log().all()
-                .when()
-                .get("/posts/1")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = httpGetFindPost();
         PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
         // then
@@ -205,11 +209,7 @@ public class PostAcceptanceTest {
     @Test
     void findPost_exception_noPost() {
         // when
-        ExtractableResponse<Response> response = given().log().all()
-                .when()
-                .get("/posts/123123")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = httpGetFindPost();
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -223,16 +223,10 @@ public class PostAcceptanceTest {
     @Test
     void updatePost_with_createdPost() throws JsonProcessingException {
         // given
-        savePostRequest(postSaveRequest1);
+        httpPostSavePost(postSaveRequest1);
 
         // when
-        ExtractableResponse<Response> response = given().log().all()
-                .body(objectMapper.writeValueAsString(postUpdateRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .put("/posts/1")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = httpPutUpdatePost(postUpdateRequest);
         PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
         // then
@@ -248,22 +242,18 @@ public class PostAcceptanceTest {
     @Test
     void updatePost_exception_invalidTitle() throws JsonProcessingException {
         // given
-        savePostRequest(postSaveRequest1);
+        httpPostSavePost(postSaveRequest1);
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().content("내용만 존재").build();
 
         // when
-        ExtractableResponse<Response> response = given().log().all()
-                .body(objectMapper.writeValueAsString(postUpdateRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .put("/posts/1")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = httpPutUpdatePost(
+                postUpdateRequest);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
         assertAll(
-                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value()),
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(
+                        CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value()),
                 () -> assertThat(errorResponse.getMessage()).isEqualTo("제목이 없습니다.")
         );
     }
@@ -272,24 +262,46 @@ public class PostAcceptanceTest {
     @Test
     void updatePost_exception_invalidContent() throws JsonProcessingException {
         // given
-        savePostRequest(postSaveRequest1);
+        httpPostSavePost(postSaveRequest1);
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("제목만 존재").build();
 
         // when
-        ExtractableResponse<Response> response = given().log().all()
-                .body(objectMapper.writeValueAsString(postUpdateRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .put("/posts/1")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = httpPutUpdatePost(postUpdateRequest);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
         assertAll(
-                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value()),
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(
+                        CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value()),
                 () -> assertThat(errorResponse.getMessage()).isEqualTo("내용이 없습니다.")
         );
     }
 
+
+    @DisplayName("특정 게시글을 작성하고 삭제할 수 있다.")
+    @Test
+    void deletePost_with_createdPost() throws JsonProcessingException {
+        // given
+        httpPostSavePost(postSaveRequest1);
+
+        // when
+        ExtractableResponse<Response> response = httpDeletePost();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
+    @DisplayName("없는 게시글은 삭제할 수 없다.")
+    @Test
+    void deletePost_exception_notFoundPostId() {
+        // when
+        ExtractableResponse<Response> response = httpDeletePost();
+        ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND.value()),
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("게시글을 찾을 수 없습니다.")
+        );
+    }
 }

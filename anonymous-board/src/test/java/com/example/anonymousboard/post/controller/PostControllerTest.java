@@ -1,8 +1,11 @@
 package com.example.anonymousboard.post.controller;
 
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -231,6 +234,35 @@ public class PostControllerTest {
         mockMvc.perform(put("/posts/1")
                         .content(objectMapper.writeValueAsString(updateRequest))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.errorCode").value(PostErrorCode.POST_NOT_FOUND.value()),
+                        jsonPath("$.message").value("게시글을 찾을 수 없습니다.")
+                );
+    }
+
+    @DisplayName("특정 게시글을 삭제하면 204를 반환한다.")
+    @Test
+    void deletePost() throws Exception {
+        // given
+        doNothing().when(postService).deletePostById(any());
+
+        // when & then
+        mockMvc.perform(delete("/posts/1"))
+                .andExpectAll(
+                        status().isNoContent()
+                );
+    }
+
+    @DisplayName("특정 게시글을 삭제할 수 없다면 404를 반환한다.")
+    @Test
+    void deletePost_exception_notFountPostId() throws Exception {
+        // given
+        doThrow(new PostNotFoundException()).when(postService)
+                .deletePostById(any());
+
+        // when & then
+        mockMvc.perform(delete("/posts/1"))
                 .andExpectAll(
                         status().isNotFound(),
                         jsonPath("$.errorCode").value(PostErrorCode.POST_NOT_FOUND.value()),
