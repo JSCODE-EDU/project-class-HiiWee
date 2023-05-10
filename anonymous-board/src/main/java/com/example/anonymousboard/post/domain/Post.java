@@ -1,14 +1,19 @@
 package com.example.anonymousboard.post.domain;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.Builder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Post {
 
     @Id
@@ -21,6 +26,9 @@ public class Post {
 
     @Embedded
     private Content content;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     protected Post() {
     }
