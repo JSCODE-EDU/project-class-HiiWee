@@ -33,7 +33,9 @@ public class PostService {
 
     public PagePostsResponse findPosts(Pageable pageable) {
         Page<Post> posts = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
-        return PagePostsResponse.of(posts.getContent(), posts.getTotalElements());
+        System.out.println(pageable);
+        ;
+        return PagePostsResponse.of(posts.getContent());
     }
 
 }

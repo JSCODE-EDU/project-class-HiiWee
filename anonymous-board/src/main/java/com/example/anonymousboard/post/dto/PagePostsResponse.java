@@ -18,14 +18,13 @@ public class PagePostsResponse {
         this.totalPostCount = totalPostCount;
     }
 
-    public static PagePostsResponse of(final List<Post> posts, final long totalPostCount) {
+    public static PagePostsResponse of(final List<Post> posts) {
         List<PostResponse> postResponses = posts.stream()
                 .map(PostResponse::from)
                 .collect(Collectors.toList());
         return PagePostsResponse.builder()
                 .postResponses(postResponses)
-                .totalPostCount(totalPostCount)
+                .totalPostCount(posts.size())
                 .build();
     }
-
 }
