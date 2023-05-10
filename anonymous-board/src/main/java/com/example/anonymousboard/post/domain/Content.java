@@ -17,14 +17,22 @@ public class Content {
     protected Content() {
     }
 
-    public Content(final String value) {
-        validate(value);
+    private Content(final String value) {
         this.value = value;
     }
 
-    private void validate(final String value) {
+    public static Content from(final String value) {
+        validate(value);
+        return new Content(value);
+    }
+
+    private static void validate(final String value) {
         if (value.length() > LIMIT_LENGTH) {
             throw new InvalidContentException();
         }
+    }
+
+    public String getValue() {
+        return value;
     }
 }
