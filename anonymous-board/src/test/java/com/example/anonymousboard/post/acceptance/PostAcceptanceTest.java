@@ -73,13 +73,13 @@ public class PostAcceptanceTest {
                 .extract();
     }
 
-    private ExtractableResponse<Response> httpPutUpdatePost(final PostUpdateRequest postUpdateRequest)
+    private ExtractableResponse<Response> httpPutUpdatePost(final PostUpdateRequest postUpdateRequest, final Long postId)
             throws JsonProcessingException {
         return given().log().all()
                 .body(objectMapper.writeValueAsString(postUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .put("/posts/1")
+                .put("/posts/" + postId)
                 .then().log().all()
                 .extract();
 
@@ -93,24 +93,24 @@ public class PostAcceptanceTest {
                 .extract();
     }
 
-    private ExtractableResponse<Response> httpGetFindPost() {
+    private ExtractableResponse<Response> httpGetFindPost(final Long postId) {
         return given().log().all()
                 .when()
-                .get("/posts/1")
+                .get("/posts/" + postId)
                 .then().log().all()
                 .extract();
     }
 
-    private ExtractableResponse<Response> httpDeletePost() {
+    private ExtractableResponse<Response> httpDeletePost(final Long postId) {
         return given().log().all()
                 .when()
-                .delete("/posts/1")
+                .delete("/posts/" + postId)
                 .then().log().all()
                 .extract();
     }
 
-    private static ExtractableResponse<Response> httpGetFindAllPostWithKeyword() {
-        return given().param("keyword", "특정").log().all()
+    private static ExtractableResponse<Response> httpGetFindAllPostWithKeyword(final String keyword) {
+        return given().param("keyword", keyword).log().all()
                 .when()
                 .get("/posts")
                 .then().log().all()
@@ -201,7 +201,7 @@ public class PostAcceptanceTest {
         httpPostSavePost(postSaveRequest1);
 
         // when
-        ExtractableResponse<Response> response = httpGetFindPost();
+        ExtractableResponse<Response> response = httpGetFindPost(1L);
         PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
         // then
@@ -217,7 +217,7 @@ public class PostAcceptanceTest {
     @Test
     void findPost_exception_noPost() {
         // when
-        ExtractableResponse<Response> response = httpGetFindPost();
+        ExtractableResponse<Response> response = httpGetFindPost(1L);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -234,7 +234,7 @@ public class PostAcceptanceTest {
         httpPostSavePost(postSaveRequest1);
 
         // when
-        ExtractableResponse<Response> response = httpPutUpdatePost(postUpdateRequest);
+        ExtractableResponse<Response> response = httpPutUpdatePost(postUpdateRequest, 1L);
         PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
         // then
@@ -254,8 +254,7 @@ public class PostAcceptanceTest {
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().content("내용만 존재").build();
 
         // when
-        ExtractableResponse<Response> response = httpPutUpdatePost(
-                postUpdateRequest);
+        ExtractableResponse<Response> response = httpPutUpdatePost(postUpdateRequest, 1L);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -274,7 +273,7 @@ public class PostAcceptanceTest {
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("제목만 존재").build();
 
         // when
-        ExtractableResponse<Response> response = httpPutUpdatePost(postUpdateRequest);
+        ExtractableResponse<Response> response = httpPutUpdatePost(postUpdateRequest, 1L);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -293,7 +292,7 @@ public class PostAcceptanceTest {
         httpPostSavePost(postSaveRequest1);
 
         // when
-        ExtractableResponse<Response> response = httpDeletePost();
+        ExtractableResponse<Response> response = httpDeletePost(1L);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
@@ -303,7 +302,7 @@ public class PostAcceptanceTest {
     @Test
     void deletePost_exception_notFoundPostId() {
         // when
-        ExtractableResponse<Response> response = httpDeletePost();
+        ExtractableResponse<Response> response = httpDeletePost(1L);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -327,7 +326,7 @@ public class PostAcceptanceTest {
         httpPostSavePost(postSaveRequest3);
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAllPostWithKeyword();
+        ExtractableResponse<Response> response = httpGetFindAllPostWithKeyword("특정");
         PagePostsResponse pagePostsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
         PostResponse postResponse = pagePostsResponse.getPostResponses().get(0);
 
