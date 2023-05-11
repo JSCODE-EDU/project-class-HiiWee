@@ -7,6 +7,7 @@ import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.service.PostService;
 import java.net.URI;
+import java.util.Objects;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -41,7 +42,11 @@ public class PostController {
     public ResponseEntity<PagePostsResponse> findPosts(
             @Nullable @RequestParam final String keyword,
             @PageableDefault(sort = "createdAt", direction = Direction.DESC, size = 100) final Pageable pageable) {
-        PagePostsResponse findPosts = postService.findPosts(keyword, pageable);
+        if (Objects.isNull(keyword)) {
+            PagePostsResponse findPosts = postService.findPosts(pageable);
+            return ResponseEntity.ok(findPosts);
+        }
+        PagePostsResponse findPosts = postService.findPostsByKeyword(keyword, pageable);
         return ResponseEntity.ok(findPosts);
     }
 
