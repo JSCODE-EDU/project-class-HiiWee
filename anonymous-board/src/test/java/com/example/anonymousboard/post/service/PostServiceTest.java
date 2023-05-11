@@ -243,7 +243,7 @@ class PostServiceTest {
 
     @DisplayName("키워드가 조건을 충족하지 않는다면 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"", "d", "    "})
+    @ValueSource(strings = {"", "d", "    ", "d    "})
     void findPostsByKeyword_invalidKeyword(String invalidKeyword) {
         // when & then
         assertThatThrownBy(() -> postService.findPostsByKeyword(invalidKeyword,
