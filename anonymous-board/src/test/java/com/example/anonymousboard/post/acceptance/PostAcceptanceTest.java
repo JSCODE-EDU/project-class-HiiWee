@@ -181,7 +181,7 @@ public class PostAcceptanceTest {
 
     @DisplayName("게시글은 최대 100개까지 조회할 수 있다.")
     @Test
-    void findPosts_withLimit() throws JsonProcessingException {
+    void findPosts_with_limit100() throws JsonProcessingException {
         // given
         for (int sequence = 1; sequence <= 200; sequence++) {
             httpPostSavePost(postSaveRequest1);
@@ -359,5 +359,21 @@ public class PostAcceptanceTest {
                 () -> assertThat(errorResponse.getErrorCode()).isEqualTo(PostErrorCode.INVALID_POST_KEYWORD.value()),
                 () -> assertThat(errorResponse.getMessage()).isEqualTo("검색 키워드는 공백을 입력할 수 없으며, 2글자 이상 입력해야 합니다.")
         );
+    }
+
+    @DisplayName("특정 키워드를 통한 게시글 검색은 최대 100개까지 조회할 수 있다.")
+    @Test
+    void findPostsByKeyword_with_limit100() throws JsonProcessingException {
+        // given
+        for (int sequence = 1; sequence <= 200; sequence++) {
+            httpPostSavePost(postSaveRequest1);
+        }
+
+        // when
+        ExtractableResponse<Response> response = httpGetFindAllPostWithKeyword("제목");
+        PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
+
+        // then
+        assertThat(postsResponse.getTotalPostCount()).isEqualTo(100);
     }
 }
