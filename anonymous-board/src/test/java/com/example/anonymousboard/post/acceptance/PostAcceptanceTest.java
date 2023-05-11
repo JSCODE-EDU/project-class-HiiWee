@@ -73,7 +73,8 @@ public class PostAcceptanceTest {
                 .extract();
     }
 
-    private ExtractableResponse<Response> httpPutUpdatePost(final PostUpdateRequest postUpdateRequest, final Long postId)
+    private ExtractableResponse<Response> httpPutUpdatePost(final PostUpdateRequest postUpdateRequest,
+                                                            final Long postId)
             throws JsonProcessingException {
         return given().log().all()
                 .body(objectMapper.writeValueAsString(postUpdateRequest))
@@ -314,7 +315,7 @@ public class PostAcceptanceTest {
 
     @DisplayName("게시글을 저장하고 키워드를 가지고 특정 게시글만 조회할 수 있다.")
     @Test
-    void findPosts_with_keyword() throws JsonProcessingException {
+    void findPostsByKeyword_with_keyword() throws JsonProcessingException {
         // given
         PostSaveRequest customRequest = PostSaveRequest.builder()
                 .title("특정 키워드")
@@ -336,6 +337,27 @@ public class PostAcceptanceTest {
                 () -> assertThat(postResponse.getTitle()).isEqualTo("특정 키워드"),
                 () -> assertThat(postResponse.getContent()).isEqualTo("내용"),
                 () -> assertThat(postResponse.getCreatedAt()).isNotNull()
+        );
+    }
+
+    @DisplayName("게시글을 저장후 잘못된 검색 키워드로 조회하면 실패한다.")
+    @Test
+    void findPostsByKeyword_exception_invalidKeyword() throws JsonProcessingException {
+        // given
+        PostSaveRequest customRequest = PostSaveRequest.builder()
+                .title("특정 키워드")
+                .content("내용")
+                .build();
+        httpPostSavePost(customRequest);
+
+        // when
+        ExtractableResponse<Response> response = httpGetFindAllPostWithKeyword("      d");
+        ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(PostErrorCode.INVALID_POST_KEYWORD.value()),
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("검색 키워드는 공백을 입력할 수 없으며, 2글자 이상 입력해야 합니다.")
         );
     }
 }
