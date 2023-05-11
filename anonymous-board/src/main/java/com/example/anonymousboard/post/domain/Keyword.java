@@ -1,5 +1,7 @@
 package com.example.anonymousboard.post.domain;
 
+import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
+
 public class Keyword {
 
     private static final int MINIMUM_LENGTH = 2;
@@ -11,14 +13,13 @@ public class Keyword {
     }
 
     public static Keyword createValidKeyword(final String keyword) {
-        if (keyword != null && !"".equals(keyword.trim()) && keyword.length() >= MINIMUM_LENGTH) {
+        if (!"".equals(keyword.trim()) && keyword.length() >= MINIMUM_LENGTH) {
             return new Keyword(String.format("%%%s%%", keyword));
         }
-        return null;
+        throw new InvalidPostKeywordException();
     }
 
     public String getValue() {
         return value;
     }
-
 }
