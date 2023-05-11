@@ -80,9 +80,22 @@ class PostRepositoryTest {
         assertThat(posts).containsExactly(post4, post3, post2, post1);
     }
 
+    @DisplayName("특정 키워드를 통한 게시글 조회시 임의의 개수를 정해 조회할 수 있다.")
+    void findPostsByKeyword_with_limit() {
+        // given
+        String keyword = "%제목%";
+        Pageable pageable = PageRequest.of(0, 3, Direction.DESC, "createdAt");
+
+        // when
+        List<Post> posts = postRepository.findPostsByKeyword(keyword, pageable);
+
+        // then
+        assertThat(posts.size()).isEqualTo(3);
+    }
+
     @DisplayName("특정 키워드 및 생성일 내림차순 기준으로 정렬하여 조회할 수 있다.")
     @Test
-    void findPosts_with_keyword() {
+    void findPostsByKeyword() {
         // given
         String keyword = "입니";
         Keyword validKeyword = Keyword.createValidKeyword(keyword);
