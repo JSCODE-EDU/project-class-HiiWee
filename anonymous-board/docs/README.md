@@ -14,7 +14,7 @@
 
 ## 게시글 엔티티
 - **기능사항**
-  - [x] ID, TITLE, CONTENT를 가진다.
+  - [x] ID, TITLE, CONTENT, CREATED_AT를 가진다.
   - [x] 게시글의 TITLE, CONTENT는 값 객체를 통해 포장한다.
 
 - **검증 사항**
