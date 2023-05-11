@@ -35,14 +35,15 @@ public class PostService {
         return savedPost.getId();
     }
 
-    public PagePostsResponse findPosts(@Nullable final String keyword, Pageable pageable) {
-        Keyword validKeyword = Keyword.createValidKeyword(keyword);
-        if (validKeyword != null) {
-            List<Post> posts = postRepository.findPostsByKeyword(validKeyword.getValue(), pageable);
-            return PagePostsResponse.of(posts);
-        }
+    public PagePostsResponse findPosts(Pageable pageable) {
         Page<Post> posts = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
         return PagePostsResponse.of(posts.getContent());
+    }
+
+    public PagePostsResponse findPostsByKeyword(final String keyword, Pageable pageable) {
+        Keyword validKeyword = Keyword.createValidKeyword(keyword);
+        List<Post> posts = postRepository.findPostsByKeyword(validKeyword.getValue(), pageable);
+        return PagePostsResponse.of(posts);
     }
 
     public PostResponse findPostById(final Long postId) {
