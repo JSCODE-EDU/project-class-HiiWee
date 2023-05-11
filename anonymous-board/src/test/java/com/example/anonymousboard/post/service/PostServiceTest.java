@@ -14,6 +14,7 @@ import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
+import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
 import java.util.List;
@@ -119,7 +120,7 @@ class PostServiceTest {
         Pageable pageable = PageRequest.of(0, 4, Direction.DESC, "createdAt");
 
         // when
-        PagePostsResponse posts = postService.findPosts(null, pageable);
+        PagePostsResponse posts = postService.findPosts(pageable);
         PostResponse postResponse = posts.getPostResponses().get(0);
         List<String> titles = posts.getPostResponses()
                 .stream()
@@ -156,10 +157,6 @@ class PostServiceTest {
     @DisplayName("존재하지 않는 id의 게시글을 조회하면 예외가 발생한다.")
     @Test
     void findPostById_exception_notFoundPostId() {
-        // given
-        doThrow(new PostNotFoundException()).when(postRepository)
-                .findById(any());
-
         // when & then
         assertThatThrownBy(() -> postService.findPostById(11111L))
                 .isInstanceOf(PostNotFoundException.class)
@@ -192,8 +189,6 @@ class PostServiceTest {
     @Test
     void updatePost_exception_notFoundPostId() {
         // given
-        doThrow(new PostNotFoundException()).when(postRepository)
-                .findById(any());
         PostUpdateRequest updateRequest = PostUpdateRequest.builder()
                 .title("수정된 제목")
                 .content("수정된 내용")
@@ -231,12 +226,12 @@ class PostServiceTest {
 
     @DisplayName("특정 키워드를 통해 게시글을 검색할 수 있다.")
     @Test
-    void findPosts_with_keyword() {
+    void findPostsByKeyword_with_keyword() {
         // given
         given(postRepository.findPostsByKeyword(any(), any())).willReturn(List.of(keywordPost1, keywordPost2));
 
         // when
-        PagePostsResponse pagePostsResponse = postService.findPosts("비슷한",
+        PagePostsResponse pagePostsResponse = postService.findPostsByKeyword("비슷한",
                 PageRequest.of(0, 100, Direction.DESC, "createdAt"));
         List<String> titles = pagePostsResponse.getPostResponses().stream()
                 .map(PostResponse::getTitle)
@@ -246,19 +241,14 @@ class PostServiceTest {
         assertThat(titles).containsExactly("비슷한 제목", "비슷한2 제목");
     }
 
-    @DisplayName("키워드가 조건을 충족하지 않는다면 전체 게시글을 조회한다.")
+    @DisplayName("키워드가 조건을 충족하지 않는다면 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"", "d"})
-    void findPosts_with_invalidKeyword(String invalidKeyword) {
-        // given
-        given(postRepository.findPostsByOrderByCreatedAtDesc(any())).willReturn(
-                new PageImpl<>(List.of(post1, post2, post3, post4)));
-
-        // when
-        PagePostsResponse pagePostsResponse = postService.findPosts(invalidKeyword,
-                PageRequest.of(0, 100, Direction.DESC, "createdAt"));
-
-        // then
-        assertThat(pagePostsResponse.getTotalPostCount()).isEqualTo(4);
+    @ValueSource(strings = {"", "d", "    "})
+    void findPostsByKeyword_invalidKeyword(String invalidKeyword) {
+        // when & then
+        assertThatThrownBy(() -> postService.findPostsByKeyword(invalidKeyword,
+                PageRequest.of(0, 100, Direction.DESC, "createdAt")))
+                .isInstanceOf(InvalidPostKeywordException.class)
+                .hasMessageContaining("검색 키워드는 공백을 입력할 수 없으며, 2글자 이상 입력해야 합니다.");
     }
 }

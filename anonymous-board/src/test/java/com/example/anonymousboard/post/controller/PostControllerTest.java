@@ -44,7 +44,6 @@ public class PostControllerTest {
     @MockBean
     PostService postService;
 
-
     PagePostsResponse pagePostsResponse;
 
     PagePostsResponse keywordPosts;
@@ -88,6 +87,7 @@ public class PostControllerTest {
                 .title("비슷한2 제목")
                 .content("내용4")
                 .build();
+
         pagePostsResponse = PagePostsResponse.of(List.of(post3, post2, post1));
         keywordPosts = PagePostsResponse.of(List.of(keywordPost1, keywordPost2));
         postResponse = PostResponse.from(post1);
@@ -166,7 +166,7 @@ public class PostControllerTest {
     void findPosts() throws Exception {
         // given
         doReturn(pagePostsResponse).when(postService)
-                .findPosts(any(), any());
+                .findPosts(any());
 
         // when & then
         mockMvc.perform(get("/posts"))
@@ -288,9 +288,9 @@ public class PostControllerTest {
 
     @DisplayName("특정 키워드를 기준으로 게시글을 조회하면 200을 반환한다.")
     @Test
-    void findPosts_with_keyword() throws Exception {
+    void findPostsByKeyword_with_keyword() throws Exception {
         // given
-        doReturn(keywordPosts).when(postService).findPosts(any(), any());
+        doReturn(keywordPosts).when(postService).findPostsByKeyword(any(), any());
 
         // when & then
         mockMvc.perform(get("/posts").param("keyword", "비슷한"))
