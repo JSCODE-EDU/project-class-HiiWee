@@ -17,6 +17,7 @@ import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.InvalidContentException;
+import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 import com.example.anonymousboard.post.exception.InvalidTitleException;
 import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
@@ -299,6 +300,22 @@ public class PostControllerTest {
                         jsonPath("$.postResponses.size()").value(2),
                         jsonPath("$.postResponses[0].title").value("비슷한 제목"),
                         jsonPath("$.postResponses[1].title").value("비슷한2 제목")
+                );
+    }
+
+    @DisplayName("잘못된 키워드를 기준으로 게시글을 조회하면 400을 반환한다.")
+    @Test
+    void findPostsByKeyword_exception_InvalidKeyword() throws Exception {
+        // given
+        doThrow(new InvalidPostKeywordException()).when(postService)
+                .findPostsByKeyword(any(), any());
+
+        // when & then
+        mockMvc.perform(get("/posts").param("keyword", " "))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.errorCode").value(PostErrorCode.INVALID_POST_KEYWORD.value()),
+                        jsonPath("$.message").value("검색 키워드는 공백을 입력할 수 없으며, 2글자 이상 입력해야 합니다.")
                 );
     }
 }
