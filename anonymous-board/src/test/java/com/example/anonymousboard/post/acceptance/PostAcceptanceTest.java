@@ -81,7 +81,6 @@ public class PostAcceptanceTest {
                 () -> assertThat(postSaveResponse.getSavedId()).isEqualTo(1L),
                 () -> assertThat(postSaveResponse.getMessage()).isEqualTo("게시글 작성을 완료했습니다.")
         );
-
     }
 
     @DisplayName("빈 제목으로 게시글을 작성할 수 없다.")
@@ -101,6 +100,28 @@ public class PostAcceptanceTest {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(errorResponse.getMessage()).isEqualTo("제목을 반드시 입력해야 합니다."),
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(
+                        CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value())
+        );
+    }
+
+    @DisplayName("빈 내용으로 게시글을 작성할 수 없다.")
+    @Test
+    void createPost_exception_emptyContent() throws JsonProcessingException {
+        // given
+        PostSaveRequest postSaveRequest = PostSaveRequest.builder()
+                .title("게시글 제목입니다.")
+                .content("")
+                .build();
+
+        // when
+        ExtractableResponse<Response> response = httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest));
+        ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("내용을 반드시 입력해야 합니다."),
                 () -> assertThat(errorResponse.getErrorCode()).isEqualTo(
                         CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value())
         );

@@ -118,11 +118,11 @@ public class PostControllerTest {
                 );
     }
 
-    @DisplayName("게시글 제목이 200글자를 넘기면 400을 반환한다.")
+    @DisplayName("게시글 제목이 15글자를 넘기면 400을 반환한다.")
     @Test
     void createPost_exception_invalidTitle() throws Exception {
         // given
-        String title = "A".repeat(201);
+        String title = "A".repeat(16);
         PostSaveRequest post = PostSaveRequest.builder()
                 .title(title)
                 .content("게시글 내용 입니다.")
@@ -137,15 +137,15 @@ public class PostControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$.errorCode").value(PostErrorCode.INVALID_TITLE.value()),
-                        jsonPath("$.message").value("게시글 제목은 200자 이하여야 합니다.")
+                        jsonPath("$.message").value("게시글 제목은 1자 이상 15자 이하까지 입력할 수 있습니다.")
                 );
     }
 
-    @DisplayName("게시글 본문이 5000글자를 넘기면 400을 반환한다.")
+    @DisplayName("게시글 본문이 1000글자를 넘기면 400을 반환한다.")
     @Test
     void createPost_exception_invalidContent() throws Exception {
         // given
-        String content = "A".repeat(5001);
+        String content = "A".repeat(1001);
         PostSaveRequest post = PostSaveRequest.builder()
                 .title("게시글 제목입니다.")
                 .content(content)
@@ -160,7 +160,7 @@ public class PostControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$.errorCode").value(PostErrorCode.INVALID_CONTENT.value()),
-                        jsonPath("$.message").value("게시글 본문은 5000자 이하여야 합니다.")
+                        jsonPath("$.message").value("게시글 내용은 1자 이상 1000자 이하까지 입력할 수 있습니다.")
                 );
     }
 

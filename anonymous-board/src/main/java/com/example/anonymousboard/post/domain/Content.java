@@ -8,7 +8,7 @@ import javax.persistence.Lob;
 @Embeddable
 public class Content {
 
-    private static final int LIMIT_LENGTH = 5000;
+    private static final int LIMIT_LENGTH = 1000;
 
     @Lob
     @Column(name = "content")

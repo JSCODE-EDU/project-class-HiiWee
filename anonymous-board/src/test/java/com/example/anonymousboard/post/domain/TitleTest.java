@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 
 class TitleTest {
 
-    @DisplayName("게시글 제목이 200자 이하라면 정상적으로 생성된다.")
+    @DisplayName("게시글 제목이 15자 이하라면 정상적으로 생성된다.")
     @Test
     void createTitle_success() {
         // given
-        String value = "A".repeat(200);
+        String value = "A".repeat(15);
 
         // when
         Title title = Title.from(value);
@@ -22,16 +22,29 @@ class TitleTest {
         assertThat(title.getValue()).isEqualTo(value);
     }
 
-    @DisplayName("게시글 제목이 200자를 초과하면 예외가 발생한다.")
+    @DisplayName("게시글 제목이 15자를 초과하면 예외가 발생한다.")
     @Test
     void createTitle_exception_invalidTitleLength() {
         // given
-        String value = "A".repeat(201);
+        String value = "A".repeat(16);
 
         // when & then
         assertThatThrownBy(() -> Title.from(value))
                 .isInstanceOf(InvalidTitleException.class)
-                .hasMessageContaining("게시글 제목은 200자 이하여야 합니다.");
+                .hasMessageContaining("게시글 제목은 1자 이상 15자 이하까지 입력할 수 있습니다.");
+    }
+
+    @DisplayName("게시글 제목 앞뒤에 공백을 제거하고 15글자를 넘지 않으면 제목을 생성한다.")
+    @Test
+    void createTitle_success_trim() {
+        // given
+        String value = "                안녕하세요!             ";
+
+        // when
+        Title title = Title.from(value);
+
+        // then
+        assertThat(title.getValue()).isEqualTo(value.trim());
     }
 
 }
