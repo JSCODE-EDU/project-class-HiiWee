@@ -270,12 +270,12 @@ class PostServiceTest {
 
     @DisplayName("키워드가 조건을 충족하지 않는다면 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"", "d", "    ", "d    "})
+    @ValueSource(strings = {"", "  ", "    ", "    "})
     void findPostsByKeyword_invalidKeyword(String invalidKeyword) {
         // when & then
         assertThatThrownBy(() -> postService.findPostsByKeyword(invalidKeyword,
                 PageRequest.of(0, 100, Direction.DESC, "createdAt")))
                 .isInstanceOf(InvalidPostKeywordException.class)
-                .hasMessageContaining("검색 키워드는 공백을 입력할 수 없으며, 2글자 이상 입력해야 합니다.");
+                .hasMessageContaining("검색 키워드는 공백을 입력할 수 없으며, 1글자 이상 입력해야 합니다.");
     }
 }

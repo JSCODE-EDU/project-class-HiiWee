@@ -368,13 +368,13 @@ public class PostAcceptanceTest {
         httpPostSaveOne(objectMapper.writeValueAsString(customRequest));
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAllWithParameter("keyword", "d");
+        ExtractableResponse<Response> response = httpGetFindAllWithParameter("keyword", " ");
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
         assertAll(
                 () -> assertThat(errorResponse.getErrorCode()).isEqualTo(PostErrorCode.INVALID_POST_KEYWORD.value()),
-                () -> assertThat(errorResponse.getMessage()).isEqualTo("검색 키워드는 공백을 입력할 수 없으며, 2글자 이상 입력해야 합니다.")
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("검색 키워드는 공백을 입력할 수 없으며, 1글자 이상 입력해야 합니다.")
         );
     }
 

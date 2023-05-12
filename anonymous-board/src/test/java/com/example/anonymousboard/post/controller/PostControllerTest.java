@@ -317,7 +317,7 @@ public class PostControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$.errorCode").value(PostErrorCode.INVALID_POST_KEYWORD.value()),
-                        jsonPath("$.message").value("검색 키워드는 공백을 입력할 수 없으며, 2글자 이상 입력해야 합니다.")
+                        jsonPath("$.message").value("검색 키워드는 공백을 입력할 수 없으며, 1글자 이상 입력해야 합니다.")
                 );
     }
 }
