@@ -13,7 +13,7 @@ public class PostUpdateRequest {
     @NotBlank(message = "내용이 없습니다.")
     private String content;
 
-    public PostUpdateRequest() {
+    private PostUpdateRequest() {
     }
 
     @Builder
