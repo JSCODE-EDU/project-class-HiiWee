@@ -26,7 +26,7 @@ public class Title {
     }
 
     private static void validate(final String value) {
-        if (value.trim().length() > LIMIT_LENGTH || value.trim().length() == 0) {
+        if (value.length() > LIMIT_LENGTH || value.length() == 0) {
             throw new InvalidTitleException();
         }
     }
