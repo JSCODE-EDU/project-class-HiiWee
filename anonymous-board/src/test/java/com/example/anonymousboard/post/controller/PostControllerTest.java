@@ -15,6 +15,7 @@ import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.InvalidContentException;
 import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
@@ -98,11 +99,12 @@ public class PostControllerTest {
     @Test
     void createPost() throws Exception {
         // given
+        PostSaveResponse saveResponse = PostSaveResponse.createPostSuccess(1L);
         PostSaveRequest post = PostSaveRequest.builder()
                 .title("게시글 제목 입니다.")
                 .content("게시글 내용 입니다.")
                 .build();
-        doReturn(1L).when(postService)
+        doReturn(saveResponse).when(postService)
                 .createPost(any());
 
         // when & then

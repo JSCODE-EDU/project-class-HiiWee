@@ -34,8 +34,8 @@ public class PostController {
 
     @PostMapping("/posts")
     public ResponseEntity<PostSaveResponse> createPost(@Valid @RequestBody final PostSaveRequest postSaveRequest) {
-        Long savedId = postService.createPost(postSaveRequest);
-        return ResponseEntity.created(URI.create("/posts")).body(PostSaveResponse.createPostSuccess(savedId));
+        PostSaveResponse saveResponse = postService.createPost(postSaveRequest);
+        return ResponseEntity.created(URI.create("/posts")).body(saveResponse);
     }
 
     @GetMapping("/posts")
