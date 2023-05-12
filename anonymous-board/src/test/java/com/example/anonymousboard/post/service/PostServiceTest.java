@@ -13,6 +13,7 @@ import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
@@ -106,10 +107,14 @@ class PostServiceTest {
                 .build();
 
         // when
-        Long savedId = postService.createPost(saveRequest);
+        PostSaveResponse saveResponse = postService.createPost(saveRequest);
 
         // then
-        assertThat(savedId).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(saveResponse.getSavedId()).isEqualTo(1L),
+                () -> assertThat(saveResponse.getMessage()).isEqualTo("게시글 작성을 완료했습니다.")
+        );
+
     }
 
     @DisplayName("임의의 검색 조건을 통해 모든 게시글을 조회할 수 있다.")

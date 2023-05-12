@@ -5,6 +5,7 @@ import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
+import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
@@ -25,13 +26,13 @@ public class PostService {
     }
 
     @Transactional
-    public Long createPost(final PostSaveRequest postSaveRequest) {
+    public PostSaveResponse createPost(final PostSaveRequest postSaveRequest) {
         Post post = Post.builder()
                 .title(postSaveRequest.getTitle())
                 .content(postSaveRequest.getContent())
                 .build();
         Post savedPost = postRepository.save(post);
-        return savedPost.getId();
+        return PostSaveResponse.createPostSuccess(savedPost.getId());
     }
 
     public PagePostsResponse findPosts(Pageable pageable) {
