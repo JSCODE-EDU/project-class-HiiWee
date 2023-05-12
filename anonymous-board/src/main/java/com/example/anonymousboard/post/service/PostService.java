@@ -36,13 +36,13 @@ public class PostService {
 
     public PagePostsResponse findPosts(Pageable pageable) {
         Page<Post> posts = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
-        return PagePostsResponse.of(posts.getContent());
+        return PagePostsResponse.from(posts.getContent());
     }
 
     public PagePostsResponse findPostsByKeyword(final String keyword, Pageable pageable) {
         Keyword validKeyword = Keyword.createValidKeyword(keyword);
         List<Post> posts = postRepository.findPostsByKeyword(validKeyword.getValue(), pageable);
-        return PagePostsResponse.of(posts);
+        return PagePostsResponse.from(posts);
     }
 
     public PostResponse findPostById(final Long postId) {
