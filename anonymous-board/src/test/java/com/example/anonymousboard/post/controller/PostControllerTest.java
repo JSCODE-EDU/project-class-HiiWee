@@ -89,8 +89,8 @@ public class PostControllerTest {
                 .content("내용4")
                 .build();
 
-        pagePostsResponse = PagePostsResponse.of(List.of(post3, post2, post1));
-        keywordPosts = PagePostsResponse.of(List.of(keywordPost1, keywordPost2));
+        pagePostsResponse = PagePostsResponse.from(List.of(post3, post2, post1));
+        keywordPosts = PagePostsResponse.from(List.of(keywordPost1, keywordPost2));
         postResponse = PostResponse.from(post1);
     }
 
