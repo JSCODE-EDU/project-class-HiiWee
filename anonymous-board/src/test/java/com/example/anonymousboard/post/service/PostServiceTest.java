@@ -190,6 +190,28 @@ class PostServiceTest {
         );
     }
 
+    @DisplayName("특정 게시글의 내용을 공백으로 수정할 수 있다.")
+    @Test
+    void updatePost_with_blankContent() {
+        // given
+        given(postRepository.findById(any())).willReturn(Optional.of(post1));
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("수정된 제목")
+                .content(" ")
+                .build();
+
+        // when
+        PostResponse updatedPost = postService.updatePostById(1L, updateRequest);
+
+        // then
+        assertAll(
+                () -> assertThat(updatedPost.getId()).isEqualTo(1L),
+                () -> assertThat(updatedPost.getTitle()).isEqualTo("수정된 제목"),
+                () -> assertThat(updatedPost.getContent()).isEqualTo(" "),
+                () -> assertThat(updatedPost.getCreatedAt()).isEqualTo(post1.getCreatedAt())
+        );
+    }
+
     @DisplayName("존재하지 않는 게시글을 수정할 수 없다.")
     @Test
     void updatePost_exception_notFoundPostId() {

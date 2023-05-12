@@ -83,6 +83,24 @@ public class PostAcceptanceTest {
         );
     }
 
+    @DisplayName("공백 내용으로 게시글 작성을 할 수 있다.")
+    @Test
+    void createPost_with_blankContent() throws JsonProcessingException {
+        // given
+        PostSaveRequest postSaveRequest = PostSaveRequest.builder().title("제목").content("  ").build();
+
+        // when
+        ExtractableResponse<Response> response = httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest));
+        PostSaveResponse postSaveResponse = response.jsonPath().getObject(".", PostSaveResponse.class);
+
+        //then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+                () -> assertThat(postSaveResponse.getSavedId()).isEqualTo(1L),
+                () -> assertThat(postSaveResponse.getMessage()).isEqualTo("게시글 작성을 완료했습니다.")
+        );
+    }
+
     @DisplayName("빈 제목으로 게시글을 작성할 수 없다.")
     @Test
     void createPost_exception_emptyTitle() throws JsonProcessingException {
@@ -221,12 +239,33 @@ public class PostAcceptanceTest {
         );
     }
 
+    @DisplayName("작성한 게시글의 내용을 공백으로 수정할 수 있다.")
+    @Test
+    void updatePost_with_blankContent() throws JsonProcessingException {
+        // given
+        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("수정할 제목").content("    ").build();
+        httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1));
+
+        // when
+        ExtractableResponse<Response> response = httpPutUpdateOne(objectMapper.writeValueAsString(postUpdateRequest),
+                1L);
+        PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(postResponse.getId()).isEqualTo(1L),
+                () -> assertThat(postResponse.getTitle()).isEqualTo("수정할 제목"),
+                () -> assertThat(postResponse.getContent()).isEqualTo("    "),
+                () -> assertThat(postResponse.getCreatedAt()).isNotNull()
+        );
+    }
+
     @DisplayName("제목이 비어있다면 수정할 수 없다.")
     @Test
     void updatePost_exception_invalidTitle() throws JsonProcessingException {
         // given
         httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1));
-        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().content("내용만 존재").build();
+        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("").content("내용만 존재").build();
 
         // when
         ExtractableResponse<Response> response = httpPutUpdateOne(objectMapper.writeValueAsString(postUpdateRequest),
@@ -237,7 +276,7 @@ public class PostAcceptanceTest {
         assertAll(
                 () -> assertThat(errorResponse.getErrorCode()).isEqualTo(
                         CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value()),
-                () -> assertThat(errorResponse.getMessage()).isEqualTo("제목이 없습니다.")
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("제목을 반드시 입력해야 합니다.")
         );
     }
 
@@ -246,7 +285,7 @@ public class PostAcceptanceTest {
     void updatePost_exception_invalidContent() throws JsonProcessingException {
         // given
         httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1));
-        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("제목만 존재").build();
+        PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("제목만 존재").content("").build();
 
         // when
         ExtractableResponse<Response> response = httpPutUpdateOne(objectMapper.writeValueAsString(postUpdateRequest),
@@ -257,7 +296,7 @@ public class PostAcceptanceTest {
         assertAll(
                 () -> assertThat(errorResponse.getErrorCode()).isEqualTo(
                         CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value()),
-                () -> assertThat(errorResponse.getMessage()).isEqualTo("내용이 없습니다.")
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("내용을 반드시 입력해야 합니다.")
         );
     }
 
