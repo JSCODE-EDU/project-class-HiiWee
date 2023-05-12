@@ -10,6 +10,17 @@ import org.junit.jupiter.api.Test;
 
 class ContentTest {
 
+    @DisplayName("게시글 내용이 없다면 예외가 발생한다.")
+    void createContent_exception_emptyContent() {
+        // given
+        String value = "";
+
+        // when & then
+        assertThatThrownBy(() -> Content.from(value))
+                .isInstanceOf(InvalidContentException.class)
+                .hasMessageContaining("게시글 내용은 1자 이상 1000자 이하까지 입력할 수 있습니다.");
+    }
+
     @DisplayName("게시글 내용이 1000자 이하라면 정상적으로 생성된다.")
     @Test
     void createContent_success() {

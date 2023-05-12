@@ -27,7 +27,7 @@ public class Content {
     }
 
     private static void validate(final String value) {
-        if (value.length() > LIMIT_LENGTH) {
+        if (value.length() > LIMIT_LENGTH || value.length() == 0) {
             throw new InvalidContentException();
         }
     }
