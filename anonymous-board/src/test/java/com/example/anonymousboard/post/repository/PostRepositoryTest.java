@@ -81,6 +81,7 @@ class PostRepositoryTest {
     }
 
     @DisplayName("특정 키워드를 통한 게시글 조회시 임의의 개수를 정해 조회할 수 있다.")
+    @Test
     void findPostsByKeyword_with_limit() {
         // given
         String keyword = "%제목%";

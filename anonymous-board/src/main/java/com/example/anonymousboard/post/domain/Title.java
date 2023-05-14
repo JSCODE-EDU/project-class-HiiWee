@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Title {
 
-    private static final int LIMIT_LENGTH = 200;
+    private static final int LIMIT_LENGTH = 15;
 
     @Column(name = "title")
     private String value;
@@ -20,12 +20,13 @@ public class Title {
     }
 
     public static Title from(final String value) {
-        validate(value);
-        return new Title(value);
+        String trimValue = value.trim();
+        validate(trimValue);
+        return new Title(trimValue);
     }
 
     private static void validate(final String value) {
-        if (value.length() > LIMIT_LENGTH) {
+        if (value.length() > LIMIT_LENGTH || value.length() == 0) {
             throw new InvalidTitleException();
         }
     }
