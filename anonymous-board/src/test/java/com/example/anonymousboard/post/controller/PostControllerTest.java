@@ -33,6 +33,7 @@ import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -68,8 +69,6 @@ public class PostControllerTest {
 
     PagePostsResponse keywordPosts;
 
-    PostResponse postResponse;
-
     Post updatedPost;
 
     Post post1;
@@ -78,9 +77,15 @@ public class PostControllerTest {
 
     Post post3;
 
-    Post keywordPost1;
+    PostResponse postResponse1;
 
-    Post keywordPost2;
+    PostResponse postResponse2;
+
+    PostResponse postResponse3;
+
+    PostResponse keywordPostResponse1;
+
+    PostResponse keywordPostResponse2;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -108,20 +113,45 @@ public class PostControllerTest {
                 .title("제목3")
                 .content("내용3")
                 .build();
-        keywordPost1 = Post.builder()
+        postResponse1 = PostResponse.builder()
+                .id(1L)
+                .title("제목1")
+                .content("내용1")
+                .createdAt(LocalDateTime.now())
+                .build();
+        postResponse2 = PostResponse.builder()
+                .id(2L)
+                .title("제목2")
+                .content("내용2")
+                .createdAt(LocalDateTime.now())
+                .build();
+        postResponse3 = PostResponse.builder()
+                .id(3L)
+                .title("제목3")
+                .content("내용3")
+                .createdAt(LocalDateTime.now())
+                .build();
+        keywordPostResponse1 = PostResponse.builder()
                 .id(4L)
                 .title("비슷한 제목")
-                .content("내용4")
+                .content("내용")
+                .createdAt(LocalDateTime.now())
                 .build();
-        keywordPost2 = Post.builder()
-                .id(4L)
+        keywordPostResponse2 = PostResponse.builder()
+                .id(5L)
                 .title("비슷한2 제목")
-                .content("내용4")
+                .content("내용")
+                .createdAt(LocalDateTime.now())
                 .build();
 
-        pagePostsResponse = PagePostsResponse.from(List.of(post3, post2, post1));
-        keywordPosts = PagePostsResponse.from(List.of(keywordPost1, keywordPost2));
-        postResponse = PostResponse.from(post1);
+        pagePostsResponse = PagePostsResponse.builder()
+                .postResponses(List.of(postResponse3, postResponse2, postResponse1))
+                .totalPostCount(3)
+                .build();
+        keywordPosts = PagePostsResponse.builder()
+                .postResponses(List.of(keywordPostResponse2, keywordPostResponse1))
+                .totalPostCount(3)
+                .build();
     }
 
     @DisplayName("게시글 작성을 하면 201을 반환한다.")
@@ -144,18 +174,20 @@ public class PostControllerTest {
         result.andExpectAll(status().isCreated(),
                 jsonPath("$.savedId").value(1L),
                 jsonPath("$.message").value("게시글 작성을 완료했습니다.")
-        ).andDo(document("post/create/success",
-                getDocumentRequest(),
-                getDocumentResponse(),
-                requestFields(
-                        fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
-                        fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                ),
-                responseFields(
-                        fieldWithPath("savedId").type(JsonFieldType.NUMBER).description("저장된 게시글 id"),
-                        fieldWithPath("message").type(JsonFieldType.STRING).description("게시글 저장 성공 메시지")
+        ).andDo(
+                document("post/create/success",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
+                        ),
+                        responseFields(
+                                fieldWithPath("savedId").type(JsonFieldType.NUMBER).description("저장된 게시글 id"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("게시글 저장 성공 메시지")
+                        )
                 )
-        ));
+        );
     }
 
     @DisplayName("게시글 제목이 비어있는 경우 400을 반환한다.")
@@ -333,8 +365,8 @@ public class PostControllerTest {
                                         .optional(),
                                 fieldWithPath("postResponses[].content").type(JsonFieldType.STRING)
                                         .description("게시글 내용").optional(),
-                                fieldWithPath("postResponses[].createdAt").type(JsonFieldType.NULL)
-                                        .description("게시글 작성일자(실제 응답은 정상 데이터 전달)").optional(),
+                                fieldWithPath("postResponses[].createdAt").type(JsonFieldType.STRING)
+                                        .description("게시글 작성일자").optional(),
                                 fieldWithPath("totalPostCount").type(JsonFieldType.NUMBER).description("조회한 게시글 개수")
                         )
                 )
@@ -345,7 +377,7 @@ public class PostControllerTest {
     @Test
     void findPost() throws Exception {
         // given
-        given(postService.findPostById(any())).willReturn(postResponse);
+        given(postService.findPostById(any())).willReturn(postResponse1);
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 1L));
@@ -355,7 +387,8 @@ public class PostControllerTest {
                 status().isOk(),
                 jsonPath("$.id").value(1L),
                 jsonPath("$.title").value("제목1"),
-                jsonPath("$.content").value("내용1")
+                jsonPath("$.content").value("내용1"),
+                jsonPath("$.createdAt").isNotEmpty()
         ).andDo(
                 document("post/findById/success",
                         getDocumentRequest(),
@@ -367,8 +400,7 @@ public class PostControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
-                                fieldWithPath("createdAt").type(JsonFieldType.NULL)
-                                        .description("게시글 작성일자(실제 응답은 정상 데이터 전달)")
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글 작성일자")
                         )
                 )
         );
@@ -411,7 +443,12 @@ public class PostControllerTest {
                 .title("수정된 제목")
                 .content("수정된 내용")
                 .build();
-        PostResponse updatedPostResponse = PostResponse.from(updatedPost);
+        PostResponse updatedPostResponse = PostResponse.builder()
+                .id(1L)
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .createdAt(LocalDateTime.now())
+                .build();
         given(postService.updatePostById(any(), any())).willReturn(updatedPostResponse);
 
         // when
@@ -424,7 +461,8 @@ public class PostControllerTest {
                 status().isOk(),
                 jsonPath("$.id").value(1L),
                 jsonPath("$.title").value("수정된 제목"),
-                jsonPath("$.content").value("수정된 내용")
+                jsonPath("$.content").value("수정된 내용"),
+                jsonPath("$.createdAt").isNotEmpty()
         ).andDo(
                 document("post/update/success",
                         getDocumentRequest(),
@@ -440,8 +478,7 @@ public class PostControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
-                                fieldWithPath("createdAt").type(JsonFieldType.NULL)
-                                        .description("게시글 작성일자(실제 응답은 정상 데이터 전달)")
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글 작성일자")
                         )
                 )
         );
@@ -705,8 +742,8 @@ public class PostControllerTest {
         result.andExpectAll(
                 status().isOk(),
                 jsonPath("$.postResponses.size()").value(2),
-                jsonPath("$.postResponses[0].title").value("비슷한 제목"),
-                jsonPath("$.postResponses[1].title").value("비슷한2 제목")
+                jsonPath("$.postResponses[0].title").value("비슷한2 제목"),
+                jsonPath("$.postResponses[1].title").value("비슷한 제목")
         ).andDo(
                 document("post/findAllWithKeyword/success",
                         getDocumentRequest(),
@@ -722,8 +759,7 @@ public class PostControllerTest {
                                         .optional(),
                                 fieldWithPath("postResponses[].content").type(JsonFieldType.STRING)
                                         .description("게시글 내용").optional(),
-                                fieldWithPath("postResponses[].createdAt").type(JsonFieldType.NULL)
-                                        .description("게시글 작성일자(실제 응답은 정상 데이터 전달)").optional(),
+                                fieldWithPath("postResponses[].createdAt").type(JsonFieldType.STRING).description("게시글 작성일자").optional(),
                                 fieldWithPath("totalPostCount").type(JsonFieldType.NUMBER).description("조회한 게시글 개수")
                         )
                 )
@@ -737,7 +773,7 @@ public class PostControllerTest {
         given(postService.findPostsByKeyword(any(), any())).willThrow(new InvalidPostKeywordException());
 
         // when
-        ResultActions result = mockMvc.perform(get("/posts").param("keyword", " "));
+        ResultActions result = mockMvc.perform(get("/posts").param("keyword", ""));
 
         // then
         result.andExpectAll(
