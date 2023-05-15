@@ -8,23 +8,6 @@
 :sectnums:
 :docinfo: shared-head
 
-////
-    - 요청 형태
-      - Path Parmas
-      - Query Params
-      - Body Params
-      - 필수 여부
-      - 데이터 타입
-    - 응답 형태
-      - 응답 코드(status code)
-      - 각 응답 코드별 설명
-      - 응답 형태 (response value)
-      - 응답 값에서 각 파라미터의 의미
-      - 응답 값에서 각 파라미터의 필수 여부
-      - 응답 값에서 각 파라미터의 데이터 타입
-////
-
-
 == 게시글
 === 게시글 작성
 ==== 성공
