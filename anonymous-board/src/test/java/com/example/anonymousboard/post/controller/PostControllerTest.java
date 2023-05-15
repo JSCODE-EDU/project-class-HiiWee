@@ -759,7 +759,8 @@ public class PostControllerTest {
                                         .optional(),
                                 fieldWithPath("postResponses[].content").type(JsonFieldType.STRING)
                                         .description("게시글 내용").optional(),
-                                fieldWithPath("postResponses[].createdAt").type(JsonFieldType.STRING).description("게시글 작성일자").optional(),
+                                fieldWithPath("postResponses[].createdAt").type(JsonFieldType.STRING)
+                                        .description("게시글 작성일자").optional(),
                                 fieldWithPath("totalPostCount").type(JsonFieldType.NUMBER).description("조회한 게시글 개수")
                         )
                 )
