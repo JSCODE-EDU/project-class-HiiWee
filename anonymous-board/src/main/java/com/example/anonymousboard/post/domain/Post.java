@@ -34,8 +34,7 @@ public class Post {
     }
 
     @Builder
-    private Post(final Long id, final String title, final String content) {
-        this.id = id;
+    private Post(final String title, final String content) {
         this.title = Title.from(title);
         this.content = Content.from(content);
     }
