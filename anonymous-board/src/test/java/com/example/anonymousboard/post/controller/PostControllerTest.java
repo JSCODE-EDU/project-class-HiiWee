@@ -2,6 +2,7 @@ package com.example.anonymousboard.post.controller;
 
 import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentRequest;
 import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentResponse;
+import static com.example.anonymousboard.util.DocumentFormatGenerator.getConstraints;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
@@ -20,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
-import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
@@ -150,8 +150,10 @@ public class PostControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("savedId").type(JsonFieldType.NUMBER).description("저장된 게시글 id"),
@@ -186,8 +188,10 @@ public class PostControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -223,8 +227,10 @@ public class PostControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -259,8 +265,10 @@ public class PostControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -296,8 +304,10 @@ public class PostControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -442,8 +452,10 @@ public class PostControllerTest {
                                 parameterWithName("postId").description("게시글 아이디")
                         ),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("수정될 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
@@ -483,8 +495,10 @@ public class PostControllerTest {
                                 parameterWithName("postId").description("게시글 아이디")
                         ),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("수정될 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -521,8 +535,10 @@ public class PostControllerTest {
                                 parameterWithName("postId").description("게시글 아이디")
                         ),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("수정될 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -560,8 +576,10 @@ public class PostControllerTest {
                                 parameterWithName("postId").description("게시글 아이디")
                         ),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("수정될 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -598,8 +616,10 @@ public class PostControllerTest {
                                 parameterWithName("postId").description("게시글 아이디")
                         ),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("수정될 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -637,8 +657,10 @@ public class PostControllerTest {
                                 parameterWithName("postId").description("게시글 아이디")
                         ),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정될 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("수정될 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
@@ -721,6 +743,7 @@ public class PostControllerTest {
                         getDocumentResponse(),
                         requestParameters(
                                 parameterWithName("keyword").description("검색할 제목 키워드").optional()
+                                        .attributes(getConstraints("constraints", "검색 키워드는 공백 제외 1글자 이상이어야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("postResponses").type(JsonFieldType.ARRAY).description("게시글 조회 배열"),
@@ -758,6 +781,7 @@ public class PostControllerTest {
                         getDocumentResponse(),
                         requestParameters(
                                 parameterWithName("keyword").description("검색할 제목 키워드").optional()
+                                        .attributes(getConstraints("constraints", "검색 키워드는 공백 제외 1글자 이상이어야 합니다."))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
