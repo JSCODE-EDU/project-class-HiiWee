@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 class ContentTest {
 
     @DisplayName("게시글 내용이 없다면 예외가 발생한다.")
+    @Test
     void createContent_exception_emptyContent() {
         // given
         String value = "";

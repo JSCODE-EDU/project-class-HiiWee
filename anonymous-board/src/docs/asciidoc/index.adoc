@@ -9,6 +9,7 @@
 :docinfo: shared-head
 
 == 게시글
+
 === 게시글 작성
 ==== 성공
 operation::post/create/success[snippets='request-fields,http-request,http-response,response-fields']
