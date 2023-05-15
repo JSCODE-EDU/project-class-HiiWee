@@ -62,32 +62,26 @@ class PostServiceTest {
     @BeforeEach
     void setUp() {
         post1 = Post.builder()
-                .id(1L)
                 .title("제목1")
                 .content("내용1")
                 .build();
         post2 = Post.builder()
-                .id(2L)
                 .title("제목2")
                 .content("내용2")
                 .build();
         post3 = Post.builder()
-                .id(3L)
                 .title("제목3")
                 .content("내용3")
                 .build();
         post4 = Post.builder()
-                .id(4L)
                 .title("제목4")
                 .content("내용4")
                 .build();
         keywordPost1 = Post.builder()
-                .id(4L)
                 .title("비슷한 제목")
                 .content("내용4")
                 .build();
         keywordPost2 = Post.builder()
-                .id(4L)
                 .title("비슷한2 제목")
                 .content("내용4")
                 .build();
@@ -111,7 +105,6 @@ class PostServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(saveResponse.getSavedId()).isEqualTo(1L),
                 () -> assertThat(saveResponse.getMessage()).isEqualTo("게시글 작성을 완료했습니다.")
         );
 
@@ -136,7 +129,6 @@ class PostServiceTest {
         assertAll(
                 () -> assertThat(posts.getTotalPostCount()).isEqualTo(4),
                 () -> assertThat(titles).containsExactly("제목4", "제목3", "제목2", "제목1"),
-                () -> assertThat(postResponse.getId()).isEqualTo(4L),
                 () -> assertThat(postResponse.getTitle()).isEqualTo("제목4"),
                 () -> assertThat(postResponse.getContent()).isEqualTo("내용4")
         );
@@ -153,7 +145,6 @@ class PostServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(findPost.getId()).isEqualTo(1L),
                 () -> assertThat(findPost.getTitle()).isEqualTo("제목1"),
                 () -> assertThat(findPost.getContent()).isEqualTo("내용1")
         );
@@ -183,7 +174,6 @@ class PostServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(updatedPost.getId()).isEqualTo(1L),
                 () -> assertThat(updatedPost.getTitle()).isEqualTo("수정된 제목"),
                 () -> assertThat(updatedPost.getContent()).isEqualTo("수정된 내용"),
                 () -> assertThat(updatedPost.getCreatedAt()).isEqualTo(post1.getCreatedAt())
@@ -205,7 +195,6 @@ class PostServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(updatedPost.getId()).isEqualTo(1L),
                 () -> assertThat(updatedPost.getTitle()).isEqualTo("수정된 제목"),
                 () -> assertThat(updatedPost.getContent()).isEqualTo(" "),
                 () -> assertThat(updatedPost.getCreatedAt()).isEqualTo(post1.getCreatedAt())

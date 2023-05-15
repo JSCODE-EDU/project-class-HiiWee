@@ -69,14 +69,6 @@ public class PostControllerTest {
 
     PagePostsResponse keywordPosts;
 
-    Post updatedPost;
-
-    Post post1;
-
-    Post post2;
-
-    Post post3;
-
     PostResponse postResponse1;
 
     PostResponse postResponse2;
@@ -91,27 +83,6 @@ public class PostControllerTest {
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
-                .build();
-
-        updatedPost = Post.builder()
-                .id(1L)
-                .title("수정된 제목")
-                .content("수정된 내용")
-                .build();
-        post1 = Post.builder()
-                .id(1L)
-                .title("제목1")
-                .content("내용1")
-                .build();
-        post2 = Post.builder()
-                .id(2L)
-                .title("제목2")
-                .content("내용2")
-                .build();
-        post3 = Post.builder()
-                .id(3L)
-                .title("제목3")
-                .content("내용3")
                 .build();
         postResponse1 = PostResponse.builder()
                 .id(1L)
