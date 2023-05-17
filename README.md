@@ -18,6 +18,6 @@
 - 익명 게시판의 API를 문서화 하기
 
 ### ✅ 학습 및 과제 진행
-- [API 문서](https://github.com/JSCODE-EDU/project-class-HiiWee/blob/develop/anonymous-board/src/main/resources/static/index.html)
+- [API 문서](https://jscode-edu.github.io/project-class-HiiWee/anonymous-board/src/main/resources/static/index.html)
 - [2회차 PR - 프로젝트 생성](https://github.com/JSCODE-EDU/project-class-HiiWee/pull/4)
 - [2회차 블로그 글 - 익명 게시판 유효성 검사, 예외 처리 및 API 문서 만들기](https://hiiwee.tistory.com/39)
