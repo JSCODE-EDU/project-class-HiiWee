@@ -4,7 +4,7 @@ import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 
 public class Keyword {
 
-    private static final int MINIMUM_LENGTH = 2;
+    private static final int MINIMUM_LENGTH = 1;
 
     private final String value;
 
@@ -14,7 +14,7 @@ public class Keyword {
 
     public static Keyword createValidKeyword(final String keyword) {
         if (keyword.trim().length() >= MINIMUM_LENGTH) {
-            return new Keyword(String.format("%%%s%%", keyword));
+            return new Keyword(String.format("%%%s%%", keyword.trim()));
         }
         throw new InvalidPostKeywordException();
     }

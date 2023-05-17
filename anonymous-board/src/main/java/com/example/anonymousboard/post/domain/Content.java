@@ -8,7 +8,7 @@ import javax.persistence.Lob;
 @Embeddable
 public class Content {
 
-    private static final int LIMIT_LENGTH = 5000;
+    private static final int LIMIT_LENGTH = 1000;
 
     @Lob
     @Column(name = "content")
@@ -27,7 +27,7 @@ public class Content {
     }
 
     private static void validate(final String value) {
-        if (value.length() > LIMIT_LENGTH) {
+        if (value.length() > LIMIT_LENGTH || value.length() == 0) {
             throw new InvalidContentException();
         }
     }

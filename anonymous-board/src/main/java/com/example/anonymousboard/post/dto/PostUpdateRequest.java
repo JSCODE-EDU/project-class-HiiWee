@@ -1,16 +1,17 @@
 package com.example.anonymousboard.post.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class PostUpdateRequest {
 
-    @NotBlank(message = "제목이 없습니다.")
+    @NotBlank(message = "제목을 반드시 입력해야 합니다.")
     private String title;
 
-    @NotBlank(message = "내용이 없습니다.")
+    @NotEmpty(message = "내용을 반드시 입력해야 합니다.")
     private String content;
 
     private PostUpdateRequest() {
