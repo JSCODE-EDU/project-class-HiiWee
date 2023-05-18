@@ -20,6 +20,10 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    enabled = false
+}
+
 ext {
     set('snippetsDir', file("build/generated-snippets"))
 }

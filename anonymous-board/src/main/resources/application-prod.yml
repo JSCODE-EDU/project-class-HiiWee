@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/jscode-spring-class?characterEncoding=UTF-8
-    username: hoseok
-    password: 1234
+    url: jdbc:mysql://${RDS_ENDPOINT}:${3306}/${RDS_SCHEMA}?characterEncoding=UTF-8
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
 
   jpa:
     hibernate:
@@ -15,8 +15,6 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-
-
 
 logging:
   level:
