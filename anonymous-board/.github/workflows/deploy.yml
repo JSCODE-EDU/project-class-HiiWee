@@ -1,0 +1,38 @@
+name: anonymous-board
+on:
+  push:
+    branches:
+      - develop # (1) 실습하시는분들은 master로 하시면 됩니다. (저는 별도 브랜치로 지정)
+  workflow_dispatch: # (2) 수동 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # (3)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2 # (4)
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1 # (5)
+        with:
+          java-version: 11
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew # (6)
+        shell: bash
+
+      - name: Build with Gradle
+        run: ./gradlew clean build # (7)
+        shell: bash
+
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH-mm-ss # (1)
+          utcOffset: "+09:00"
+
+      - name: Show Current Time
+        run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # (2)
+        shell: bash
