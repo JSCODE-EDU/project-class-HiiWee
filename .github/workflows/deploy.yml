@@ -37,10 +37,6 @@ jobs:
         with:
           format: YYYY-MM-DDTHH-mm-ss # (1)
           utcOffset: "+09:00"
-
-      - name: Show Current Time
-        run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # (2)
-        shell: bash
         
       - name: Generate deployment package # (1)
         run: |
@@ -50,15 +46,8 @@ jobs:
           cp -r .ebextensions deploy/.ebextensions
           cp -r .platform deploy/.platform
           cd deploy && zip -r deploy.zip .
-          cd ..
-          if [ -f "deploy/deploy.zip" ]; then
-            cat deploy/deploy.zip
-          else
-            echo "deploy.zip file not found"
-          fi
 
       - name: Deploy to EB
-
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -67,4 +56,4 @@ jobs:
           environment_name: anonymous-board
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
-          deployment_package: deploy/deploy.zip
+          deployment_package: anonymous-board/deploy/deploy.zip
