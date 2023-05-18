@@ -50,7 +50,6 @@ jobs:
           cp -r .ebextensions deploy/.ebextensions
           cp -r .platform deploy/.platform
           cd deploy && zip -r deploy.zip .
-          pwd
         
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
