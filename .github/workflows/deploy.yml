@@ -50,7 +50,13 @@ jobs:
           cp -r .ebextensions deploy/.ebextensions
           cp -r .platform deploy/.platform
           cd deploy && zip -r deploy.zip .
-        
+          
+          if [ -f "deploy/deploy.zip" ]; then
+            cat deploy/deploy.zip
+          else
+            echo "deploy.zip file not found"
+          fi
+
       - name: Deploy to EB
 
         uses: einaregilsson/beanstalk-deploy@v21
