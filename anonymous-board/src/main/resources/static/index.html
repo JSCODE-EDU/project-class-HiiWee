@@ -567,6 +567,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 201 Created
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Location: /posts
 Content-Type: application/json
 Content-Length: 76
@@ -678,6 +681,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 86
 
@@ -712,6 +718,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 120
 
@@ -746,6 +755,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 86
 
@@ -780,6 +792,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 122
 
@@ -883,6 +898,9 @@ Host: docs.api.com</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 410
 
@@ -891,17 +909,17 @@ Content-Length: 410
     "id" : 3,
     "title" : "제목3",
     "content" : "내용3",
-    "createdAt" : "2023-05-15T20:38:25.011502"
+    "createdAt" : "2023-05-18T00:02:20.458034"
   }, {
     "id" : 2,
     "title" : "제목2",
     "content" : "내용2",
-    "createdAt" : "2023-05-15T20:38:25.011502"
+    "createdAt" : "2023-05-18T00:02:20.458033"
   }, {
     "id" : 1,
     "title" : "제목1",
     "content" : "내용1",
-    "createdAt" : "2023-05-15T20:38:25.011497"
+    "createdAt" : "2023-05-18T00:02:20.458028"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -1001,6 +1019,9 @@ Host: docs.api.com</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 108
 
@@ -1008,7 +1029,7 @@ Content-Length: 108
   "id" : 1,
   "title" : "제목1",
   "content" : "내용1",
-  "createdAt" : "2023-05-15T20:38:24.960774"
+  "createdAt" : "2023-05-18T00:02:20.397922"
 }</code></pre>
 </div>
 </div>
@@ -1091,6 +1112,9 @@ Host: docs.api.com</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 79
 
@@ -1239,6 +1263,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 126
 
@@ -1246,7 +1273,7 @@ Content-Length: 126
   "id" : 1,
   "title" : "수정된 제목",
   "content" : "수정된 내용",
-  "createdAt" : "2023-05-15T20:38:24.990852"
+  "createdAt" : "2023-05-18T00:02:20.433408"
 }</code></pre>
 </div>
 </div>
@@ -1373,6 +1400,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 79
 
@@ -1407,6 +1437,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 86
 
@@ -1441,6 +1474,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 120
 
@@ -1475,6 +1511,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 86
 
@@ -1509,6 +1548,9 @@ Host: docs.api.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 122
 
@@ -1561,7 +1603,10 @@ Host: docs.api.com</code></pre>
 <h5 id="_성공_5_http_response"><a class="link" href="#_성공_5_http_response">HTTP response</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 204 No Content</code></pre>
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 204 No Content
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers</code></pre>
 </div>
 </div>
 </div>
@@ -1643,6 +1688,9 @@ Host: docs.api.com</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 79
 
@@ -1766,6 +1814,9 @@ Host: docs.api.com</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 307
 
@@ -1774,12 +1825,12 @@ Content-Length: 307
     "id" : 5,
     "title" : "비슷한2 제목",
     "content" : "내용",
-    "createdAt" : "2023-05-15T20:38:24.913768"
+    "createdAt" : "2023-05-18T00:02:20.344676"
   }, {
     "id" : 4,
     "title" : "비슷한 제목",
     "content" : "내용",
-    "createdAt" : "2023-05-15T20:38:24.913767"
+    "createdAt" : "2023-05-18T00:02:20.344675"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -1869,6 +1920,9 @@ Host: docs.api.com</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 Content-Length: 135
 
@@ -1888,7 +1942,7 @@ Content-Length: 135
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-05-15 20:04:41 +0900
+Last updated 2023-05-17 16:31:02 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
