@@ -1,0 +1,77 @@
+= 익명 게시판 API 명세
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:sectnums:
+:docinfo: shared-head
+
+== 게시글
+
+
+=== 게시글 작성
+==== 성공
+operation::post/create/success[snippets='request-fields,response-fields,http-request,http-response']
+==== 실패
+operation::post/create/fail/emptyTitle[snippets='request-fields,response-fields']
+===== 게시글의 제목이 비어있는 경우
+operation::post/create/fail/emptyTitle[snippets='http-request,http-response']
+===== 게시글의 제목 길이가 15자를 넘어가는 경우
+operation::post/create/fail/tooLongTitle[snippets='http-request,http-response']
+===== 게시글의 내용이 비어있는 경우
+operation::post/create/fail/emptyContent[snippets='http-request,http-response']
+===== 게시글의 내용 길이가 1000자를 넘어가는 경우
+operation::post/create/fail/tooLongContent[snippets='http-request,http-response']
+
+=== 전체 게시글 조회
+==== 성공
+operation::post/findAll/success[snippets='request-fields']
+없음
+
+operation::post/findAll/success[snippets='response-fields,http-request,http-response']
+
+=== 특정 게시글 조회
+==== 성공
+operation::post/findById/success[snippets='path-parameters,response-fields']
+operation::post/findById/success[snippets='http-request,http-response']
+==== 실패
+operation::post/findById/fail/notFoundPost[snippets='path-parameters,response-fields']
+===== 존재하지 않는 게시글을 조회했을 경우
+operation::post/findById/fail/notFoundPost[snippets='http-request,http-response']
+
+
+=== 특정 게시글 수정
+==== 성공
+operation::post/update/success[snippets='path-parameters,request-fields,response-fields,http-request,http-response']
+==== 실패
+operation::post/update/fail/notFoundPost[snippets='path-parameters,request-fields,response-fields']
+===== 존재하지 않는 게시글일 경우
+operation::post/update/fail/notFoundPost[snippets='http-request,http-response']
+===== 수정할 게시글의 제목이 비어있는 경우
+operation::post/update/fail/emptyTitle[snippets='http-request,http-response']
+===== 수정할 게시글의 제목이 15글자를 넘긴 경우
+operation::post/update/fail/tooLongTitle[snippets='http-request,http-response']
+===== 수정할 게시글의 내용이 비어있는 경우
+operation::post/update/fail/emptyContent[snippets='http-request,http-response']
+===== 수정할 게시글의 내용이 1000글자를 넘긴 경우
+operation::post/update/fail/tooLongContent[snippets='http-request,http-response']
+
+
+=== 특정 게시글 삭제
+==== 성공
+operation::post/delete/success[snippets='path-parameters,http-request,http-response']
+==== 실패
+operation::post/delete/fail/notFoundPost[snippets='path-parameters,response-fields']
+===== 존재하지 않는 게시글일 경우
+operation::post/delete/fail/notFoundPost[snippets='http-request,http-response']
+
+
+=== 게시글 검색
+==== 성공
+operation::post/findAllWithKeyword/success[snippets='request-parameters,response-fields,http-request,http-response']
+==== 실패
+operation::post/findAllWithKeyword/fail/invalidKeyword[snippets='request-parameters,response-fields']
+===== 공백 제거 1글자 미만의 키워드로 검색한 경우
+operation::post/findAllWithKeyword/fail/invalidKeyword[snippets='http-request,http-response']
