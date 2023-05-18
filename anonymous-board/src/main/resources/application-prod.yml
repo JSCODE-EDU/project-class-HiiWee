@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://${RDS_ENDPOINT}:${3306}/${RDS_SCHEMA}?characterEncoding=UTF-8
-    username: ${RDS_USERNAME}
-    password: ${RDS_PASSWORD}
+    url: jdbc:mysql://${rds.endpoint}:${rds.port}/${rds.schema}?characterEncoding=UTF-8
+    username: ${rds.username}
+    password: ${rds.password}
 
   jpa:
     hibernate:
