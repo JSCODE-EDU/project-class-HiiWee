@@ -50,9 +50,10 @@ jobs:
           cp -r .ebextensions deploy/.ebextensions
           cp -r .platform deploy/.platform
           cd deploy && zip -r deploy.zip .
-          pwd
+          cd ..
         
       - name: Deploy to EB
+
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -61,4 +62,4 @@ jobs:
           environment_name: anonymous-board
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
-          deployment_package: ./deploy.zip
+          deployment_package: deploy/deploy.zip
