@@ -170,7 +170,8 @@ class PostServiceTest {
                 .build();
 
         // when
-        PostResponse updatedPost = postService.updatePostById(1L, updateRequest);
+        postService.updatePostById(1L, updateRequest);
+        PostResponse updatedPost = postService.findPostById(1L);
 
         // then
         assertAll(
@@ -191,7 +192,8 @@ class PostServiceTest {
                 .build();
 
         // when
-        PostResponse updatedPost = postService.updatePostById(1L, updateRequest);
+        postService.updatePostById(1L, updateRequest);
+        PostResponse updatedPost = postService.findPostById(1L);
 
         // then
         assertAll(

@@ -53,11 +53,10 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponse updatePostById(final Long postId, final PostUpdateRequest postUpdateRequest) {
+    public void updatePostById(final Long postId, final PostUpdateRequest postUpdateRequest) {
         Post post = findPostObject(postId);
         post.updateTitle(postUpdateRequest.getTitle());
         post.updateContent(postUpdateRequest.getContent());
-        return PostResponse.from(post);
     }
 
     private Post findPostObject(final Long postId) {
