@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +36,7 @@ public class PostController {
     @PostMapping("/posts")
     public ResponseEntity<PostSaveResponse> createPost(@Valid @RequestBody final PostSaveRequest postSaveRequest) {
         PostSaveResponse saveResponse = postService.createPost(postSaveRequest);
-        return ResponseEntity.created(URI.create("/posts")).body(saveResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saveResponse);
     }
 
     @GetMapping("/posts")
