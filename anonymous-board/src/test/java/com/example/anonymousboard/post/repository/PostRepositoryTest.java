@@ -84,11 +84,11 @@ class PostRepositoryTest {
     @Test
     void findPostsByKeyword_with_limit() {
         // given
-        String keyword = "%제목%";
+        String keyword = "제목";
         Pageable pageable = PageRequest.of(0, 3, Direction.DESC, "createdAt");
 
         // when
-        List<Post> posts = postRepository.findPostsByKeyword(keyword, pageable);
+        List<Post> posts = postRepository.findPostsByTitleValueContaining(keyword, pageable);
 
         // then
         assertThat(posts.size()).isEqualTo(3);
@@ -99,11 +99,10 @@ class PostRepositoryTest {
     void findPostsByKeyword() {
         // given
         String keyword = "입니";
-        Keyword validKeyword = Keyword.createValidKeyword(keyword);
         Pageable pageable = PageRequest.of(0, 4, Direction.DESC, "createdAt");
 
         // when
-        List<Post> posts = postRepository.findPostsByKeyword(validKeyword.getValue(), pageable);
+        List<Post> posts = postRepository.findPostsByTitleValueContaining(keyword, pageable);
 
         // then
         assertThat(posts).containsExactly(post3, post1);

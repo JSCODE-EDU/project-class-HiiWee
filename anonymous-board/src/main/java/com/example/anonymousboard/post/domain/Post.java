@@ -43,11 +43,11 @@ public class Post {
         return id;
     }
 
-    public String getTitleValue() {
+    public String getTitle() {
         return title.getValue();
     }
 
-    public String getContentValue() {
+    public String getContent() {
         return content.getValue();
     }
 

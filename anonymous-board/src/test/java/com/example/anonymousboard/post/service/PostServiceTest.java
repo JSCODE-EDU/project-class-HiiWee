@@ -246,7 +246,7 @@ class PostServiceTest {
     @Test
     void findPostsByKeyword_with_keyword() {
         // given
-        given(postRepository.findPostsByKeyword(any(), any())).willReturn(List.of(keywordPost1, keywordPost2));
+        given(postRepository.findPostsByTitleValueContaining(any(), any())).willReturn(List.of(keywordPost1, keywordPost2));
 
         // when
         PagePostsResponse pagePostsResponse = postService.findPostsByKeyword("비슷한",

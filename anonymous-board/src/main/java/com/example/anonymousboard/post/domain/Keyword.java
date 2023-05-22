@@ -14,7 +14,7 @@ public class Keyword {
 
     public static Keyword createValidKeyword(final String keyword) {
         if (keyword.trim().length() >= MINIMUM_LENGTH) {
-            return new Keyword(String.format("%%%s%%", keyword.trim()));
+            return new Keyword(keyword.trim());
         }
         throw new InvalidPostKeywordException();
     }

@@ -42,7 +42,7 @@ public class PostService {
 
     public PagePostsResponse findPostsByKeyword(final String keyword, Pageable pageable) {
         Keyword validKeyword = Keyword.createValidKeyword(keyword);
-        List<Post> posts = postRepository.findPostsByKeyword(validKeyword.getValue(), pageable);
+        List<Post> posts = postRepository.findPostsByTitleValueContaining(validKeyword.getValue(), pageable);
         return PagePostsResponse.from(posts);
     }
 
