@@ -1,6 +1,7 @@
 package com.example.anonymousboard.member.domain;
 
 import com.example.anonymousboard.member.exception.InvalidEmailFormatException;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -33,5 +34,22 @@ public class Email {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Email email = (Email) o;
+        return Objects.equals(value, email.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
     }
 }
