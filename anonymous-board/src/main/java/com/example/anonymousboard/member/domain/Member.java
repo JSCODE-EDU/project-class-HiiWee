@@ -39,11 +39,15 @@ public class Member {
         this.password = Password.from(password);
     }
 
-    public String getEmailValue() {
+    public Long getIdValue() {
+        return id;
+    }
+
+    public String getEmail() {
         return email.getValue();
     }
 
-    public String getPasswordValue() {
+    public String getPassword() {
         return password.getValue();
     }
 }

@@ -28,8 +28,8 @@ class MemberTest {
 
         // then
         assertAll(
-                () -> assertThat(member.getEmailValue()).isEqualTo(email),
-                () -> assertThat(member.getPasswordValue()).isEqualTo(password)
+                () -> assertThat(member.getEmail()).isEqualTo(email),
+                () -> assertThat(member.getPassword()).isEqualTo(password)
         );
     }
 
@@ -42,7 +42,8 @@ class MemberTest {
 
         // when & then
         assertThatThrownBy(() -> Member.builder().email(invalidEmail).password(password).build())
-                .isInstanceOf(InvalidEmailFormatException.class);
+                .isInstanceOf(InvalidEmailFormatException.class)
+                .hasMessageContaining("잘못된 이메일 형식입니다! (이메일 아이디는 영어로 시작해야 하며, 하나의 '@'를 포함하고 있어야 합니다.");
     }
 
     @DisplayName("잘못된 패스워드 형식이 입력되면 예외가 발생한다.")
@@ -54,6 +55,7 @@ class MemberTest {
 
         // when & then
         assertThatThrownBy(() -> Member.builder().email(email).password(invalidPassword).build())
-                .isInstanceOf(InvalidPasswordFormatException.class);
+                .isInstanceOf(InvalidPasswordFormatException.class)
+                .hasMessageContaining("패스워드는 최소 8자이상 ~ 15자이하 까지 이며 하나 이상의 영문, 숫자, 특수 문자(@$!%*#?&)를 포함해야 합니다.");
     }
 }
