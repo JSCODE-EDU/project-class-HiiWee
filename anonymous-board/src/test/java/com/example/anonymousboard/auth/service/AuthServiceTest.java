@@ -26,7 +26,7 @@ class AuthServiceTest {
     MemberRepository memberRepository;
 
     Member member;
-    
+
     @BeforeEach
     void setUp() {
         member = Member.builder()

@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
-import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.member.dto.MyInfoResponse;
 import com.example.anonymousboard.member.dto.SignUpRequest;
 import com.example.anonymousboard.member.exception.DuplicateEmailException;

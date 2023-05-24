@@ -4,7 +4,6 @@ import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentReques
 import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentResponse;
 import static com.example.anonymousboard.util.DocumentFormatGenerator.getConstraints;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -572,7 +571,7 @@ public class PostControllerTest {
                 .content("내용1")
                 .build();
         doThrow(new InvalidTitleException()).when(postService)
-                        .updatePostById(any(), any());
+                .updatePostById(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
@@ -654,7 +653,7 @@ public class PostControllerTest {
                 .content("A".repeat(1001))
                 .build();
         doThrow(new InvalidContentException()).when(postService)
-                        .updatePostById(any(), any());
+                .updatePostById(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)

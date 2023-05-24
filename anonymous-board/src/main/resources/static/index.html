@@ -464,6 +464,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_회원">2. 회원</a>
 <ul class="sectlevel2">
 <li><a href="#_회원가입">2.1. 회원가입</a></li>
+<li><a href="#_내_정보_조회">2.2. 내 정보 조회</a></li>
 </ul>
 </li>
 <li><a href="#_로그인로그아웃">3. 로그인/로그아웃</a>
@@ -918,17 +919,17 @@ Content-Length: 410
     "id" : 3,
     "title" : "제목3",
     "content" : "내용3",
-    "createdAt" : "2023-05-25T01:37:33.597609"
+    "createdAt" : "2023-05-25T06:12:48.198544"
   }, {
     "id" : 2,
     "title" : "제목2",
     "content" : "내용2",
-    "createdAt" : "2023-05-25T01:37:33.597608"
+    "createdAt" : "2023-05-25T06:12:48.198543"
   }, {
     "id" : 1,
     "title" : "제목1",
     "content" : "내용1",
-    "createdAt" : "2023-05-25T01:37:33.597603"
+    "createdAt" : "2023-05-25T06:12:48.198538"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -1038,7 +1039,7 @@ Content-Length: 108
   "id" : 1,
   "title" : "제목1",
   "content" : "내용1",
-  "createdAt" : "2023-05-25T01:37:33.553221"
+  "createdAt" : "2023-05-25T06:12:48.126167"
 }</code></pre>
 </div>
 </div>
@@ -1282,7 +1283,7 @@ Content-Length: 126
   "id" : 1,
   "title" : "수정된 제목",
   "content" : "수정된 내용",
-  "createdAt" : "2023-05-25T01:37:33.579964"
+  "createdAt" : "2023-05-25T06:12:48.171382"
 }</code></pre>
 </div>
 </div>
@@ -1827,19 +1828,19 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 307
+Content-Length: 306
 
 {
   "postResponses" : [ {
     "id" : 5,
     "title" : "비슷한2 제목",
     "content" : "내용",
-    "createdAt" : "2023-05-25T01:37:33.514507"
+    "createdAt" : "2023-05-25T06:12:48.054461"
   }, {
     "id" : 4,
     "title" : "비슷한 제목",
     "content" : "내용",
-    "createdAt" : "2023-05-25T01:37:33.514506"
+    "createdAt" : "2023-05-25T06:12:48.05446"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -2302,6 +2303,156 @@ Content-Length: 89
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_내_정보_조회"><a class="link" href="#_내_정보_조회">2.2. 내 정보 조회</a></h3>
+<div class="sect3">
+<h4 id="_성공_8"><a class="link" href="#_성공_8">2.2.1. 성공</a></h4>
+<div class="sect4">
+<h5 id="_성공_8_response_fields"><a class="link" href="#_성공_8_response_fields">Response fields</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">양식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내 고유 회원 id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내 이메일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내 가입일자</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_성공_8_http_request"><a class="link" href="#_성공_8_http_request">HTTP request</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /members/me HTTP/1.1
+Authorization: any
+Host: docs.api.com</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_성공_8_http_response"><a class="link" href="#_성공_8_http_response">HTTP response</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 90
+
+{
+  "id" : 1,
+  "email" : "valid@main.com",
+  "createdAt" : "2023-05-25T06:12:36.794096"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_실패_7"><a class="link" href="#_실패_7">2.2.2. 실패</a></h4>
+<div class="sect4">
+<h5 id="_없는_id_값으로_내_정보를_조회한_경우"><a class="link" href="#_없는_id_값으로_내_정보를_조회한_경우">없는 id 값으로 내 정보를 조회한 경우</a></h5>
+<div class="sect5">
+<h6 id="_없는_id_값으로_내_정보를_조회한_경우_response_fields"><a class="link" href="#_없는_id_값으로_내_정보를_조회한_경우_response_fields">Response fields</a></h6>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">양식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">실패 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorCode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러 코드</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_없는_id_값으로_내_정보를_조회한_경우_http_request"><a class="link" href="#_없는_id_값으로_내_정보를_조회한_경우_http_request">HTTP request</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /members/me HTTP/1.1
+Authorization: any
+Host: docs.api.com</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_없는_id_값으로_내_정보를_조회한_경우_http_response"><a class="link" href="#_없는_id_값으로_내_정보를_조회한_경우_http_response">HTTP response</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 76
+
+{
+  "message" : "회원을 찾을 수 없습니다.",
+  "errorCode" : 2005
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2310,9 +2461,9 @@ Content-Length: 89
 <div class="sect2">
 <h3 id="_로그인"><a class="link" href="#_로그인">3.1. 로그인</a></h3>
 <div class="sect3">
-<h4 id="_성공_8"><a class="link" href="#_성공_8">3.1.1. 성공</a></h4>
+<h4 id="_성공_9"><a class="link" href="#_성공_9">3.1.1. 성공</a></h4>
 <div class="sect4">
-<h5 id="_성공_8_request_fields"><a class="link" href="#_성공_8_request_fields">Request fields</a></h5>
+<h5 id="_성공_9_request_fields"><a class="link" href="#_성공_9_request_fields">Request fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2349,7 +2500,7 @@ Content-Length: 89
 </table>
 </div>
 <div class="sect4">
-<h5 id="_성공_8_response_fields"><a class="link" href="#_성공_8_response_fields">Response fields</a></h5>
+<h5 id="_성공_9_response_fields"><a class="link" href="#_성공_9_response_fields">Response fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2379,7 +2530,7 @@ Content-Length: 89
 </table>
 </div>
 <div class="sect4">
-<h5 id="_성공_8_http_request"><a class="link" href="#_성공_8_http_request">HTTP request</a></h5>
+<h5 id="_성공_9_http_request"><a class="link" href="#_성공_9_http_request">HTTP request</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /login HTTP/1.1
@@ -2395,7 +2546,7 @@ Host: docs.api.com
 </div>
 </div>
 <div class="sect4">
-<h5 id="_성공_8_http_response"><a class="link" href="#_성공_8_http_response">HTTP response</a></h5>
+<h5 id="_성공_9_http_response"><a class="link" href="#_성공_9_http_response">HTTP response</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -2413,9 +2564,9 @@ Content-Length: 41
 </div>
 </div>
 <div class="sect3">
-<h4 id="_실패_7"><a class="link" href="#_실패_7">3.1.2. 실패</a></h4>
+<h4 id="_실패_8"><a class="link" href="#_실패_8">3.1.2. 실패</a></h4>
 <div class="sect4">
-<h5 id="_실패_7_request_fields"><a class="link" href="#_실패_7_request_fields">Request fields</a></h5>
+<h5 id="_실패_8_request_fields"><a class="link" href="#_실패_8_request_fields">Request fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2452,7 +2603,7 @@ Content-Length: 41
 </table>
 </div>
 <div class="sect4">
-<h5 id="_실패_7_response_fields"><a class="link" href="#_실패_7_response_fields">Response fields</a></h5>
+<h5 id="_실패_8_response_fields"><a class="link" href="#_실패_8_response_fields">Response fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2533,7 +2684,7 @@ Content-Length: 97
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-05-25 01:32:01 +0900
+Last updated 2023-05-25 06:12:14 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

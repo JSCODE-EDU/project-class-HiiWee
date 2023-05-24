@@ -6,7 +6,6 @@ import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.service.PostService;
-import java.net.URI;
 import java.util.Objects;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;

@@ -3,7 +3,6 @@ package com.example.anonymousboard.auth.controller;
 
 import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentRequest;
 import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentResponse;
-import static com.example.anonymousboard.util.DocumentFormatGenerator.getConstraints;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -20,10 +19,8 @@ import com.example.anonymousboard.auth.dto.TokenResponse;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
 import com.example.anonymousboard.auth.exception.LoginFailedException;
 import com.example.anonymousboard.auth.service.AuthService;
-import com.example.anonymousboard.member.controller.MemberController;
 import com.example.anonymousboard.support.AuthInterceptor;
 import com.example.anonymousboard.support.token.JwtTokenProvider;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

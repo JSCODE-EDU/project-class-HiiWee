@@ -9,7 +9,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Password {
 
-    private static final Pattern PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,15}$");
+    private static final Pattern PATTERN = Pattern.compile(
+            "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,15}$");
 
     @Column(name = "password")
     private String value;
