@@ -96,3 +96,13 @@ operation::member/signUp/fail/invalidPasswordFormat[snippets='http-request,http-
 ===== 이메일, 패스워드 중 하나라도 빈 값인 경우
 operation::member/signUp/fail/emptyRequest[snippets='http-request,http-response']
 
+
+== 로그인/로그아웃
+
+=== 로그인
+==== 성공
+operation::auth/login/success[snippets='request-fields,response-fields,http-request,http-response']
+==== 실패
+operation::auth/login/fail/wrongEmailOrPassword[snippets='request-fields,response-fields']
+===== 이메일 혹은 패스워드가 일치하지 않는 경우
+operation::auth/login/fail/wrongEmailOrPassword[snippets='http-request,http-response']

@@ -151,5 +151,5 @@
 ### 로그인 기능
 - **기능 사항**
   - [x] 로그인 시 `이메일`, `패스워드` 값을 받는다.
-  - [ ] 로그인에 성공했을 때, JWT를 활용해 Access Token 값을 응답해야 한다.
-  - [ ] JWT의 payload에는 사용자의 `id`(PK, primary key)가 반드시 담겨있어야 한다.
+  - [x] 로그인에 성공했을 때, JWT를 활용해 Access Token 값을 응답해야 한다.
+  - [x] JWT의 payload에는 사용자의 `id`(PK, primary key)가 반드시 담겨있어야 한다.
