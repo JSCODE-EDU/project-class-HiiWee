@@ -5,7 +5,10 @@ import static com.example.anonymousboard.auth.exception.AuthErrorCode.INVALID_SI
 import static com.example.anonymousboard.auth.exception.AuthErrorCode.MALFORMED_JWT;
 import static com.example.anonymousboard.auth.exception.AuthErrorCode.UNSUPPORTED_JWT;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -64,6 +67,18 @@ public class JwtTokenProvider {
         } catch (SignatureException e) {
             log.info("Invalid JWT signature : {}", token);
             throw new JwtException(String.format("잘못된 JWT 시그니처:%d", INVALID_SIGNATURE.value()));
+        }
+    }
+
+    public AuthInfo getParsedAuthInfo(final String token) {
+        try {
+            Jws<Claims> claimsJws = Jwts.parserBuilder()
+                    .setSigningKey(signingKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return AuthInfo.from(claimsJws.getBody().get(AUTHORIZATION_ID));
+        } catch (ExpiredJwtException e) {
+            return AuthInfo.from(e.getClaims().get(AUTHORIZATION_ID));
         }
     }
 }
