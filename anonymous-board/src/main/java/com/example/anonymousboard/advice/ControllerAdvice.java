@@ -1,5 +1,6 @@
 package com.example.anonymousboard.advice;
 
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,17 @@ public class ControllerAdvice {
                 .body(ErrorResponse.builder()
                         .errorCode(e.getErrorCode())
                         .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ErrorResponse> handleJwtException(final JwtException e) {
+        String[] messageAndErrorCode = e.getMessage().split(":");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.builder()
+                        .message(messageAndErrorCode[0])
+                        .errorCode(Integer.parseInt(messageAndErrorCode[1]))
                         .build()
                 );
     }

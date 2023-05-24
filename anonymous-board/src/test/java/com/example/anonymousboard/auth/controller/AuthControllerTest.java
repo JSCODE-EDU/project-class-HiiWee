@@ -21,6 +21,7 @@ import com.example.anonymousboard.auth.exception.AuthErrorCode;
 import com.example.anonymousboard.auth.exception.LoginFailedException;
 import com.example.anonymousboard.auth.service.AuthService;
 import com.example.anonymousboard.member.controller.MemberController;
+import com.example.anonymousboard.support.AuthInterceptor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,9 @@ class AuthControllerTest {
     @MockBean
     AuthService authService;
 
+    @MockBean
+    AuthInterceptor authInterceptor;
+
     LoginRequest loginRequest;
 
     TokenResponse tokenResponse;
@@ -61,6 +65,8 @@ class AuthControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
+        given(authInterceptor.preHandle(any(), any(), any()))
+                .willReturn(true);
 
         loginRequest = LoginRequest.builder()
                 .email("test@mail.com")

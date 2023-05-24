@@ -33,6 +33,7 @@ import com.example.anonymousboard.post.exception.InvalidTitleException;
 import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.service.PostService;
+import com.example.anonymousboard.support.AuthInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -66,6 +67,9 @@ public class PostControllerTest {
     @MockBean
     PostService postService;
 
+    @MockBean
+    AuthInterceptor authInterceptor;
+
     PagePostsResponse pagePostsResponse;
 
     PagePostsResponse keywordPosts;
@@ -85,6 +89,9 @@ public class PostControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
+        given(authInterceptor.preHandle(any(), any(), any()))
+                .willReturn(true);
+
         postResponse1 = PostResponse.builder()
                 .id(1L)
                 .title("제목1")

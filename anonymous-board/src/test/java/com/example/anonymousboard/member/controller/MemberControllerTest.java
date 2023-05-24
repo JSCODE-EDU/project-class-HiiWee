@@ -4,6 +4,7 @@ import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentReques
 import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentResponse;
 import static com.example.anonymousboard.util.DocumentFormatGenerator.getConstraints;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -23,6 +24,7 @@ import com.example.anonymousboard.member.exception.InvalidPasswordConfirmationEx
 import com.example.anonymousboard.member.exception.InvalidPasswordFormatException;
 import com.example.anonymousboard.member.exception.MemberErrorCode;
 import com.example.anonymousboard.member.service.MemberService;
+import com.example.anonymousboard.support.AuthInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,6 +55,9 @@ class MemberControllerTest {
     @MockBean
     MemberService memberService;
 
+    @MockBean
+    AuthInterceptor authInterceptor;
+
     SignUpRequest signUpRequest;
 
     @BeforeEach
@@ -60,6 +65,8 @@ class MemberControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
+        given(authInterceptor.preHandle(any(), any(), any()))
+                .willReturn(true);
 
         signUpRequest = SignUpRequest.builder()
                 .email("valid@mail.com")
