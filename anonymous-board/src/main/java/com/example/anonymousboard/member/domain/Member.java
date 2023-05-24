@@ -39,7 +39,7 @@ public class Member {
         this.password = Password.from(password);
     }
 
-    public Long getIdValue() {
+    public Long getId() {
         return id;
     }
 
