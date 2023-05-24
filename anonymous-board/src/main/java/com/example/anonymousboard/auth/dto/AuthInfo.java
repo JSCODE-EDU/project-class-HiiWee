@@ -7,7 +7,7 @@ public class AuthInfo {
 
     private final Long id;
 
-    private AuthInfo(final Long id) {
+    public AuthInfo(final Long id) {
         this.id = id;
     }
 

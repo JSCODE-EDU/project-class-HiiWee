@@ -34,6 +34,7 @@ import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.service.PostService;
 import com.example.anonymousboard.support.AuthInterceptor;
+import com.example.anonymousboard.support.token.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,6 +70,9 @@ public class PostControllerTest {
 
     @MockBean
     AuthInterceptor authInterceptor;
+
+    @MockBean
+    JwtTokenProvider jwtTokenProvider;
 
     PagePostsResponse pagePostsResponse;
 

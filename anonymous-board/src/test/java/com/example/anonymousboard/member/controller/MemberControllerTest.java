@@ -25,6 +25,7 @@ import com.example.anonymousboard.member.exception.InvalidPasswordFormatExceptio
 import com.example.anonymousboard.member.exception.MemberErrorCode;
 import com.example.anonymousboard.member.service.MemberService;
 import com.example.anonymousboard.support.AuthInterceptor;
+import com.example.anonymousboard.support.token.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,6 +58,9 @@ class MemberControllerTest {
 
     @MockBean
     AuthInterceptor authInterceptor;
+
+    @MockBean
+    JwtTokenProvider jwtTokenProvider;
 
     SignUpRequest signUpRequest;
 

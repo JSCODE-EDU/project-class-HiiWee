@@ -1,15 +1,18 @@
 package com.example.anonymousboard.member.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.doThrow;
 import static org.mockito.BDDMockito.given;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.dto.MyInfoResponse;
 import com.example.anonymousboard.member.dto.SignUpRequest;
 import com.example.anonymousboard.member.exception.DuplicateEmailException;
 import com.example.anonymousboard.member.exception.InvalidPasswordConfirmationException;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +32,11 @@ class MemberServiceTest {
     @Mock
     MemberRepository memberRepository;
 
-    Member newMember;
+    Member member;
 
     @BeforeEach
     void setUp() {
-        newMember = Member.builder()
+        member = Member.builder()
                 .email("valid@mail.com")
                 .password("!qwer123")
                 .build();
@@ -48,7 +51,7 @@ class MemberServiceTest {
                 .password("!qwer123")
                 .passwordConfirmation("!qwer123")
                 .build();
-        given(memberRepository.save(any())).willReturn(newMember);
+        given(memberRepository.save(any())).willReturn(member);
 
         // when & then
         assertThatNoException()
@@ -88,4 +91,29 @@ class MemberServiceTest {
                 .hasMessageContaining("이미 사용중인 이메일 입니다.");
     }
 
+    @DisplayName("내 정보를 조회할 수 있다.")
+    @Test
+    void findMyInfo() {
+        // given
+        AuthInfo authInfo = new AuthInfo(1L);
+        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
+
+        // when
+        MyInfoResponse myInfoResponse = memberService.findMyInfo(authInfo);
+
+        // then
+        assertThat(myInfoResponse.getEmail()).isEqualTo("valid@mail.com");
+    }
+
+    @DisplayName("잘못된 id로 내 정보를 조회시 실패한다.")
+    @Test
+    void findMyInfo_exception_invalidId() {
+        // given
+        AuthInfo authInfo = new AuthInfo(1111L);
+
+        // when & then
+        assertThatThrownBy(() -> memberService.findMyInfo(authInfo))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining("회원을 찾을 수 없습니다.");
+    }
 }

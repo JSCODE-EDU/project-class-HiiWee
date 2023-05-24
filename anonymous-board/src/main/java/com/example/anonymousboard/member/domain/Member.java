@@ -50,4 +50,8 @@ public class Member {
     public String getPassword() {
         return password.getValue();
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

@@ -49,6 +49,18 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public AuthInfo getParsedAuthInfo(final String token) {
+        try {
+            Jws<Claims> claimsJws = Jwts.parserBuilder()
+                    .setSigningKey(signingKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return AuthInfo.from(claimsJws.getBody().get(AUTHORIZATION_ID));
+        } catch (ExpiredJwtException e) {
+            return AuthInfo.from(e.getClaims().get(AUTHORIZATION_ID));
+        }
+    }
+
     public void validateToken(final String token) {
         try {
             Jwts.parserBuilder()
@@ -67,18 +79,6 @@ public class JwtTokenProvider {
         } catch (SignatureException e) {
             log.info("Invalid JWT signature : {}", token);
             throw new JwtException(String.format("잘못된 JWT 시그니처:%d", INVALID_SIGNATURE.value()));
-        }
-    }
-
-    public AuthInfo getParsedAuthInfo(final String token) {
-        try {
-            Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(signingKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return AuthInfo.from(claimsJws.getBody().get(AUTHORIZATION_ID));
-        } catch (ExpiredJwtException e) {
-            return AuthInfo.from(e.getClaims().get(AUTHORIZATION_ID));
         }
     }
 }

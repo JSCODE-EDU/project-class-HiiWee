@@ -1,9 +1,12 @@
 package com.example.anonymousboard.member.service;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.dto.MyInfoResponse;
 import com.example.anonymousboard.member.dto.SignUpRequest;
 import com.example.anonymousboard.member.exception.DuplicateEmailException;
 import com.example.anonymousboard.member.exception.InvalidPasswordConfirmationException;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import java.util.Objects;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,11 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
+    public MyInfoResponse findMyInfo(final AuthInfo authInfo) {
+        Member member = findMemberObject(authInfo);
+        return MyInfoResponse.from(member);
+    }
+
     @Transactional
     public void signUp(final SignUpRequest signUpRequest) {
         validate(signUpRequest);
@@ -27,6 +35,11 @@ public class MemberService {
                 .password(signUpRequest.getPassword())
                 .build();
         memberRepository.save(member);
+    }
+
+    private Member findMemberObject(final AuthInfo authInfo) {
+        return memberRepository.findById(authInfo.getId())
+                .orElseThrow(MemberNotFoundException::new);
     }
 
     private void validate(final SignUpRequest signUpRequest) {

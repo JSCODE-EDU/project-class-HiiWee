@@ -22,6 +22,7 @@ import com.example.anonymousboard.auth.exception.LoginFailedException;
 import com.example.anonymousboard.auth.service.AuthService;
 import com.example.anonymousboard.member.controller.MemberController;
 import com.example.anonymousboard.support.AuthInterceptor;
+import com.example.anonymousboard.support.token.JwtTokenProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,6 +56,9 @@ class AuthControllerTest {
 
     @MockBean
     AuthInterceptor authInterceptor;
+
+    @MockBean
+    JwtTokenProvider jwtTokenProvider;
 
     LoginRequest loginRequest;
 
