@@ -75,7 +75,7 @@ class MemberControllerTest {
         doNothing().when(memberService).signUp(any());
 
         // when
-        ResultActions result = mockMvc.perform(post("/members")
+        ResultActions result = mockMvc.perform(post("/members/signup")
                 .content(objectMapper.writeValueAsString(signUpRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -108,7 +108,7 @@ class MemberControllerTest {
                 .signUp(any());
 
         // when
-        ResultActions result = mockMvc.perform(post("/members")
+        ResultActions result = mockMvc.perform(post("/members/signup")
                 .content(objectMapper.writeValueAsString(signUpRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -152,7 +152,7 @@ class MemberControllerTest {
                 .signUp(any());
 
         // when
-        ResultActions result = mockMvc.perform(post("/members")
+        ResultActions result = mockMvc.perform(post("/members/signup")
                 .content(objectMapper.writeValueAsString(invalidEmailRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -181,7 +181,7 @@ class MemberControllerTest {
                 .signUp(any());
 
         // when
-        ResultActions result = mockMvc.perform(post("/members")
+        ResultActions result = mockMvc.perform(post("/members/signup")
                 .content(objectMapper.writeValueAsString(invalidPasswordConfirmationRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -210,7 +210,7 @@ class MemberControllerTest {
                 .signUp(any());
 
         // when
-        ResultActions result = mockMvc.perform(post("/members")
+        ResultActions result = mockMvc.perform(post("/members/signup")
                 .content(objectMapper.writeValueAsString(invalidPasswordFormatRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -237,7 +237,7 @@ class MemberControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(post("/members")
+        ResultActions result = mockMvc.perform(post("/members/signup")
                 .content(objectMapper.writeValueAsString(emptyRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
