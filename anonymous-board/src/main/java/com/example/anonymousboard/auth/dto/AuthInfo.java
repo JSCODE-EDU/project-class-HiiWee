@@ -12,6 +12,7 @@ public class AuthInfo {
     }
 
     public static AuthInfo from(final Object idObject) {
-        return new AuthInfo((Long) idObject);
+        int id = (int) idObject;
+        return new AuthInfo((long) id);
     }
 }

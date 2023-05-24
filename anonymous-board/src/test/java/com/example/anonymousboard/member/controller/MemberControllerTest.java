@@ -12,21 +12,26 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
+import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.member.dto.MyInfoResponse;
 import com.example.anonymousboard.member.dto.SignUpRequest;
 import com.example.anonymousboard.member.exception.DuplicateEmailException;
 import com.example.anonymousboard.member.exception.InvalidEmailFormatException;
 import com.example.anonymousboard.member.exception.InvalidPasswordConfirmationException;
 import com.example.anonymousboard.member.exception.InvalidPasswordFormatException;
 import com.example.anonymousboard.member.exception.MemberErrorCode;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.member.service.MemberService;
 import com.example.anonymousboard.support.AuthInterceptor;
 import com.example.anonymousboard.support.token.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -260,6 +265,67 @@ class MemberControllerTest {
                 document("member/signUp/fail/emptyRequest",
                         getDocumentRequest(),
                         getDocumentResponse()
+                )
+        );
+    }
+
+    @DisplayName("내 정보를 조회하면 200을 반환한다.")
+    @Test
+    void findMyInfo() throws Exception {
+        // given
+        MyInfoResponse myInfoResponse = MyInfoResponse.builder()
+                .id(1L)
+                .email("valid@main.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+        given(memberService.findMyInfo(any())).willReturn(myInfoResponse);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/members/me")
+                .header("Authorization", "any"));
+
+        // then
+        result.andExpectAll(
+                status().isOk(),
+                jsonPath("$.id").value(1L),
+                jsonPath("$.email").value("valid@main.com"),
+                jsonPath("$.createdAt").isNotEmpty()
+        ).andDo(
+                document("member/findMyInfo/success",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("내 고유 회원 id"),
+                                fieldWithPath("email").type(JsonFieldType.STRING).description("내 이메일"),
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("내 가입일자")
+                        )
+                )
+        );
+    }
+
+    @DisplayName("없는 id를 통해 내 정보 조회시 404를 반환")
+    @Test
+    void findMyInfo_exception_notFoundId() throws Exception {
+        // given
+        given(memberService.findMyInfo(any())).willThrow(new MemberNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(get("/members/me")
+                .header("Authorization", "any"));
+
+        // then
+        result.andExpectAll(
+                status().isNotFound(),
+                jsonPath("$.errorCode").value(MemberErrorCode.MEMBER_NOT_FOUND.value()),
+                jsonPath("$.message").value("회원을 찾을 수 없습니다.")
+        ).andDo(
+                document("member/findMyInfo/fail/notFountId",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
+                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
+                        )
                 )
         );
     }
