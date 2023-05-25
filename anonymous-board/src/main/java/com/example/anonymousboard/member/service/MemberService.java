@@ -23,7 +23,7 @@ public class MemberService {
     }
 
     public MyInfoResponse findMyInfo(final AuthInfo authInfo) {
-        Member member = findMemberObject(authInfo);
+        Member member = findMemberObject(authInfo.getId());
         return MyInfoResponse.from(member);
     }
 
@@ -37,8 +37,8 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    private Member findMemberObject(final AuthInfo authInfo) {
-        return memberRepository.findById(authInfo.getId())
+    private Member findMemberObject(final Long memberId) {
+        return memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
     }
 
