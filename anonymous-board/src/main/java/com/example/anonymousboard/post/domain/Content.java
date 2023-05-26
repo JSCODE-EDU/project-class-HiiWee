@@ -1,6 +1,7 @@
 package com.example.anonymousboard.post.domain;
 
 import com.example.anonymousboard.post.exception.InvalidContentException;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
@@ -34,5 +35,22 @@ public class Content {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Content content = (Content) o;
+        return Objects.equals(value, content.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
     }
 }

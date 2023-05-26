@@ -21,7 +21,7 @@ class KeywordTest {
         Keyword validKeyword = Keyword.createValidKeyword(value);
 
         // then
-        assertThat(validKeyword.getValue()).isEqualTo("%안녕%");
+        assertThat(validKeyword.getValue()).isEqualTo("안녕");
     }
 
     @DisplayName("앞뒤에 공백이 포함된 키워드라면 공백은 제거된다.")
@@ -34,7 +34,7 @@ class KeywordTest {
         Keyword validKeyword = Keyword.createValidKeyword(value);
 
         // then
-        assertThat(validKeyword.getValue()).isEqualTo("%안녕%");
+        assertThat(validKeyword.getValue()).isEqualTo("안녕");
     }
 
     @DisplayName("키워드가 공백으로만 구성되면 예외가 발생한다.")

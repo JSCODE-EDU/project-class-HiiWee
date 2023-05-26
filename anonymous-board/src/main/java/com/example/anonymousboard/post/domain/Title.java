@@ -1,6 +1,7 @@
 package com.example.anonymousboard.post.domain;
 
 import com.example.anonymousboard.post.exception.InvalidTitleException;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -33,5 +34,22 @@ public class Title {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Title title = (Title) o;
+        return Objects.equals(value, title.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
     }
 }

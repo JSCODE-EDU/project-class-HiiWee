@@ -24,8 +24,8 @@ public class PostResponse {
     public static PostResponse from(final Post post) {
         return PostResponse.builder()
                 .id(post.getId())
-                .title(post.getTitleValue())
-                .content(post.getContentValue())
+                .title(post.getTitle())
+                .content(post.getContent())
                 .createdAt(post.getCreatedAt())
                 .build();
     }

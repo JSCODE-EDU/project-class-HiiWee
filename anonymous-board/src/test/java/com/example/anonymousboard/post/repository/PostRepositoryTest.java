@@ -3,7 +3,6 @@ package com.example.anonymousboard.post.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.anonymousboard.config.JpaConfig;
-import com.example.anonymousboard.post.domain.Keyword;
 import com.example.anonymousboard.post.domain.Post;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,11 +83,11 @@ class PostRepositoryTest {
     @Test
     void findPostsByKeyword_with_limit() {
         // given
-        String keyword = "%제목%";
+        String keyword = "제목";
         Pageable pageable = PageRequest.of(0, 3, Direction.DESC, "createdAt");
 
         // when
-        List<Post> posts = postRepository.findPostsByKeyword(keyword, pageable);
+        List<Post> posts = postRepository.findPostsByTitleValueContaining(keyword, pageable);
 
         // then
         assertThat(posts.size()).isEqualTo(3);
@@ -99,11 +98,10 @@ class PostRepositoryTest {
     void findPostsByKeyword() {
         // given
         String keyword = "입니";
-        Keyword validKeyword = Keyword.createValidKeyword(keyword);
         Pageable pageable = PageRequest.of(0, 4, Direction.DESC, "createdAt");
 
         // when
-        List<Post> posts = postRepository.findPostsByKeyword(validKeyword.getValue(), pageable);
+        List<Post> posts = postRepository.findPostsByTitleValueContaining(keyword, pageable);
 
         // then
         assertThat(posts).containsExactly(post3, post1);

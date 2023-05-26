@@ -6,12 +6,12 @@ import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.service.PostService;
-import java.net.URI;
 import java.util.Objects;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +35,7 @@ public class PostController {
     @PostMapping("/posts")
     public ResponseEntity<PostSaveResponse> createPost(@Valid @RequestBody final PostSaveRequest postSaveRequest) {
         PostSaveResponse saveResponse = postService.createPost(postSaveRequest);
-        return ResponseEntity.created(URI.create("/posts")).body(saveResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saveResponse);
     }
 
     @GetMapping("/posts")
@@ -59,8 +59,9 @@ public class PostController {
     @PutMapping("/posts/{postId}")
     public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId,
                                                    @Valid @RequestBody PostUpdateRequest postUpdateRequest) {
-        PostResponse updatePost = postService.updatePostById(postId, postUpdateRequest);
-        return ResponseEntity.ok(updatePost);
+        postService.updatePostById(postId, postUpdateRequest);
+        PostResponse updatedPost = postService.findPostById(postId);
+        return ResponseEntity.ok(updatedPost);
     }
 
     @DeleteMapping("/posts/{postId}")
