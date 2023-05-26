@@ -32,6 +32,8 @@ import com.example.anonymousboard.post.exception.InvalidTitleException;
 import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.service.PostService;
+import com.example.anonymousboard.support.AuthInterceptor;
+import com.example.anonymousboard.support.token.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,6 +67,12 @@ public class PostControllerTest {
     @MockBean
     PostService postService;
 
+    @MockBean
+    AuthInterceptor authInterceptor;
+
+    @MockBean
+    JwtTokenProvider jwtTokenProvider;
+
     PagePostsResponse pagePostsResponse;
 
     PagePostsResponse keywordPosts;
@@ -84,6 +92,9 @@ public class PostControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
+        given(authInterceptor.preHandle(any(), any(), any()))
+                .willReturn(true);
+
         postResponse1 = PostResponse.builder()
                 .id(1L)
                 .title("제목1")
@@ -430,7 +441,9 @@ public class PostControllerTest {
                 .content("수정된 내용")
                 .createdAt(LocalDateTime.now())
                 .build();
-        given(postService.updatePostById(any(), any())).willReturn(updatedPostResponse);
+        given(postService.findPostById(any())).willReturn(updatedPostResponse);
+        doNothing().when(postService)
+                .updatePostById(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
@@ -475,7 +488,8 @@ public class PostControllerTest {
                 .title("제목1")
                 .content("내용1")
                 .build();
-        given(postService.updatePostById(any(), any())).willThrow(new PostNotFoundException());
+        doThrow(new PostNotFoundException()).when(postService)
+                .updatePostById(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
@@ -556,7 +570,8 @@ public class PostControllerTest {
                 .title("15글자가 넘는 게시글 제목입니다.")
                 .content("내용1")
                 .build();
-        given(postService.updatePostById(any(), any())).willThrow(new InvalidTitleException());
+        doThrow(new InvalidTitleException()).when(postService)
+                .updatePostById(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
@@ -637,7 +652,8 @@ public class PostControllerTest {
                 .title("제목")
                 .content("A".repeat(1001))
                 .build();
-        given(postService.updatePostById(any(), any())).willThrow(new InvalidContentException());
+        doThrow(new InvalidContentException()).when(postService)
+                .updatePostById(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)

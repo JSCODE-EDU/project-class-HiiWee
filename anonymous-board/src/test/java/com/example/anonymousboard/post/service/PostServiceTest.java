@@ -170,7 +170,8 @@ class PostServiceTest {
                 .build();
 
         // when
-        PostResponse updatedPost = postService.updatePostById(1L, updateRequest);
+        postService.updatePostById(1L, updateRequest);
+        PostResponse updatedPost = postService.findPostById(1L);
 
         // then
         assertAll(
@@ -191,7 +192,8 @@ class PostServiceTest {
                 .build();
 
         // when
-        PostResponse updatedPost = postService.updatePostById(1L, updateRequest);
+        postService.updatePostById(1L, updateRequest);
+        PostResponse updatedPost = postService.findPostById(1L);
 
         // then
         assertAll(
@@ -244,7 +246,8 @@ class PostServiceTest {
     @Test
     void findPostsByKeyword_with_keyword() {
         // given
-        given(postRepository.findPostsByKeyword(any(), any())).willReturn(List.of(keywordPost1, keywordPost2));
+        given(postRepository.findPostsByTitleValueContaining(any(), any())).willReturn(
+                List.of(keywordPost1, keywordPost2));
 
         // when
         PagePostsResponse pagePostsResponse = postService.findPostsByKeyword("비슷한",
