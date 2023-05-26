@@ -18,6 +18,7 @@ import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
+import com.example.anonymousboard.util.controller.ServiceTest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,14 +37,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 
-@ExtendWith(MockitoExtension.class)
-class PostServiceTest {
-
-    @InjectMocks
-    PostService postService;
-
-    @Mock
-    PostRepository postRepository;
+class PostServiceTest extends ServiceTest {
 
     Post post1;
 
