@@ -1,4 +1,4 @@
-package com.example.anonymousboard.util.controller;
+package com.example.anonymousboard.util;
 
 import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.member.service.MemberService;

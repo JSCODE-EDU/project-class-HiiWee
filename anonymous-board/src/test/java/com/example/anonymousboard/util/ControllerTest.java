@@ -1,4 +1,4 @@
-package com.example.anonymousboard.util.controller;
+package com.example.anonymousboard.util;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

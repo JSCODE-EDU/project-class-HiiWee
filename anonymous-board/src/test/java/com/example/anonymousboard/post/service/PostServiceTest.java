@@ -17,7 +17,7 @@ import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
-import com.example.anonymousboard.util.controller.ServiceTest;
+import com.example.anonymousboard.util.ServiceTest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

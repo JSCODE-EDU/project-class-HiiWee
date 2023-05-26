@@ -1,4 +1,4 @@
-package com.example.anonymousboard.util.controller;
+package com.example.anonymousboard.util;
 
 import com.example.anonymousboard.config.JpaConfig;
 import com.example.anonymousboard.member.repository.MemberRepository;

@@ -13,7 +13,7 @@ import com.example.anonymousboard.member.dto.SignUpRequest;
 import com.example.anonymousboard.member.exception.DuplicateEmailException;
 import com.example.anonymousboard.member.exception.InvalidPasswordConfirmationException;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
-import com.example.anonymousboard.util.controller.ServiceTest;
+import com.example.anonymousboard.util.ServiceTest;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

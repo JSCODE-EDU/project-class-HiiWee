@@ -3,7 +3,7 @@ package com.example.anonymousboard.member.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.anonymousboard.member.domain.Member;
-import com.example.anonymousboard.util.controller.RepositoryTest;
+import com.example.anonymousboard.util.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

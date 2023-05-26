@@ -18,7 +18,7 @@ import com.example.anonymousboard.auth.dto.LoginRequest;
 import com.example.anonymousboard.auth.dto.TokenResponse;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
 import com.example.anonymousboard.auth.exception.LoginFailedException;
-import com.example.anonymousboard.util.controller.ControllerTest;
+import com.example.anonymousboard.util.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

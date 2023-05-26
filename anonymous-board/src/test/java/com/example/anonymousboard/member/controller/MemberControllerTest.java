@@ -26,7 +26,7 @@ import com.example.anonymousboard.member.exception.InvalidPasswordConfirmationEx
 import com.example.anonymousboard.member.exception.InvalidPasswordFormatException;
 import com.example.anonymousboard.member.exception.MemberErrorCode;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
-import com.example.anonymousboard.util.controller.ControllerTest;
+import com.example.anonymousboard.util.ControllerTest;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
