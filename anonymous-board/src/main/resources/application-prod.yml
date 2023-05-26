@@ -16,6 +16,13 @@ spring:
           time_zone: Asia/Seoul
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
+security:
+  jwt:
+    token:
+      secret-key: ${jwt.secret.key}
+      expire-length:
+        access: 3600000
+
 logging:
   level:
     org:
