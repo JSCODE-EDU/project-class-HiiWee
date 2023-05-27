@@ -1,9 +1,9 @@
-package com.example.anonymousboard.post.domain;
+package com.example.anonymousboard.comment.domain;
 
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.post.domain.Post;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -18,17 +18,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Post {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "comment_id")
     private Long id;
 
-    @Embedded
-    private Title title;
-
-    @Embedded
     private Content content;
 
     @CreatedDate
@@ -38,37 +34,21 @@ public class Post {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    protected Post() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    protected Comment() {
     }
 
     @Builder
-    private Post(final String title, final String content, final Member member) {
-        this.title = Title.from(title);
+    private Comment(final String content, final Member member, final Post post) {
         this.content = Content.from(content);
         this.member = member;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title.getValue();
+        this.post = post;
     }
 
     public String getContent() {
         return content.getValue();
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void updateTitle(final String value) {
-        this.title = Title.from(value);
-    }
-
-    public void updateContent(final String value) {
-        this.content = Content.from(value);
     }
 }
