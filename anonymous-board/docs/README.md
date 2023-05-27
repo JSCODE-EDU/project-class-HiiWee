@@ -1,6 +1,9 @@
 # 😁 익명 게시판 요구사항 분석
 
 ---
+## ERD
+![board-project](https://github.com/JSCODE-EDU/project-class-HiiWee/assets/66772624/aea64be9-0e34-4345-9420-8001d033055f)
+
 ## API 문서 만들기
 
 - 제약 조건
