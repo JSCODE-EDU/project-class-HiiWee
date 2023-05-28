@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -109,10 +110,11 @@ public class PostControllerTest extends ControllerTest {
                 .title("게시글 제목 입니다.")
                 .content("게시글 내용 입니다.")
                 .build();
-        given(postService.createPost(any(PostSaveRequest.class))).willReturn(saveResponse);
+        given(postService.createPost(any(), any())).willReturn(saveResponse);
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                        .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -150,6 +152,7 @@ public class PostControllerTest extends ControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -185,10 +188,11 @@ public class PostControllerTest extends ControllerTest {
                 .title(title)
                 .content("게시글 내용 입니다.")
                 .build();
-        given(postService.createPost(any())).willThrow(new InvalidTitleException());
+        given(postService.createPost(any(), any())).willThrow(new InvalidTitleException());
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -227,6 +231,7 @@ public class PostControllerTest extends ControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -262,10 +267,11 @@ public class PostControllerTest extends ControllerTest {
                 .title("게시글 제목입니다.")
                 .content(content)
                 .build();
-        given(postService.createPost(any())).willThrow(new InvalidContentException());
+        given(postService.createPost(any(), any())).willThrow(new InvalidContentException());
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header("Authorization", "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 

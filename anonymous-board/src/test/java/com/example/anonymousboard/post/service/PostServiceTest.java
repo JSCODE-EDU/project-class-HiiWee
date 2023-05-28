@@ -9,6 +9,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -83,14 +85,20 @@ class PostServiceTest extends ServiceTest {
     @Test
     void createProduct_success() {
         // given
+        Member member = Member.builder()
+                .email("valid@mail.com")
+                .password("!qwer123")
+                .build();
         given(postRepository.save(any(Post.class))).willReturn(post1);
+        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
+        AuthInfo authInfo = new AuthInfo(1L);
         PostSaveRequest saveRequest = PostSaveRequest.builder()
                 .title("제목1")
                 .content("내용1")
                 .build();
 
         // when
-        PostSaveResponse saveResponse = postService.createPost(saveRequest);
+        PostSaveResponse saveResponse = postService.createPost(authInfo, saveRequest);
 
         // then
         assertAll(
