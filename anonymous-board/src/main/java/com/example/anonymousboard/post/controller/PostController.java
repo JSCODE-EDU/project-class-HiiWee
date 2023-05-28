@@ -1,11 +1,13 @@
 package com.example.anonymousboard.post.controller;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.service.PostService;
+import com.example.anonymousboard.support.token.Login;
 import java.util.Objects;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +35,9 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<PostSaveResponse> createPost(@Valid @RequestBody final PostSaveRequest postSaveRequest) {
-        PostSaveResponse saveResponse = postService.createPost(postSaveRequest);
+    public ResponseEntity<PostSaveResponse> createPost(@Login AuthInfo authInfo,
+                                                       @Valid @RequestBody final PostSaveRequest postSaveRequest) {
+        PostSaveResponse saveResponse = postService.createPost(authInfo, postSaveRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveResponse);
     }
 

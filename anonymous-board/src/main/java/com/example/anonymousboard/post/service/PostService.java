@@ -1,5 +1,9 @@
 package com.example.anonymousboard.post.service;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
+import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.post.domain.Keyword;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
@@ -20,19 +24,28 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
-    public PostService(final PostRepository postRepository) {
+    public PostService(final PostRepository postRepository, final MemberRepository memberRepository) {
         this.postRepository = postRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Transactional
-    public PostSaveResponse createPost(final PostSaveRequest postSaveRequest) {
+    public PostSaveResponse createPost(final AuthInfo authInfo, final PostSaveRequest postSaveRequest) {
+        Member member = findMember(authInfo);
         Post post = Post.builder()
                 .title(postSaveRequest.getTitle())
                 .content(postSaveRequest.getContent())
+                .member(member)
                 .build();
         Post savedPost = postRepository.save(post);
         return PostSaveResponse.createPostSuccess(savedPost.getId());
+    }
+
+    private Member findMember(final AuthInfo authInfo) {
+        return memberRepository.findById(authInfo.getId())
+                .orElseThrow(MemberNotFoundException::new);
     }
 
     public PagePostsResponse findPosts(Pageable pageable) {

@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -32,24 +32,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 class MemberControllerTest extends ControllerTest {
 
     SignUpRequest signUpRequest;
 
     @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
-                .build();
-        given(authInterceptor.preHandle(any(), any(), any()))
-                .willReturn(true);
-
+    void setUp() {
         signUpRequest = SignUpRequest.builder()
                 .email("valid@mail.com")
                 .password("!qwer123")
@@ -255,7 +246,7 @@ class MemberControllerTest extends ControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(get("/members/me")
-                .header("Authorization", "any"));
+                .header(AUTHORIZATION, "any"));
 
         // then
         result.andExpectAll(
@@ -284,7 +275,7 @@ class MemberControllerTest extends ControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(get("/members/me")
-                .header("Authorization", "any"));
+                .header(AUTHORIZATION, "any"));
 
         // then
         result.andExpectAll(
