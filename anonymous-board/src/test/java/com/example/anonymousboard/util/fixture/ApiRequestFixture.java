@@ -1,6 +1,7 @@
-package com.example.anonymousboard.util;
+package com.example.anonymousboard.util.fixture;
 
 import static io.restassured.RestAssured.given;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -11,13 +12,7 @@ import org.springframework.http.MediaType;
 
 public class ApiRequestFixture {
 
-    public static List<ExtractableResponse<Response>> httpPostSaveAll(final String path, final String... requestBodies) {
-        return Arrays.stream(requestBodies)
-                .map(requestBody -> httpPostSaveOne(requestBody, path))
-                .collect(Collectors.toList());
-    }
-
-    public static ExtractableResponse<Response> httpPostSaveOne(final String requestBody, final String path) {
+    public static ExtractableResponse<Response> httpPost(final Object requestBody, final String path) {
         return given().log().all()
                 .body(requestBody)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -27,14 +22,32 @@ public class ApiRequestFixture {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> httpPutUpdateOne(final String path,
-                                                                 final String requestBody,
-                                                                 final Long pathVariable) {
+    public static List<ExtractableResponse<Response>> httpPostAllWithAuthorization(final String path, final String token, final Object... requestBodies) {
+        return Arrays.stream(requestBodies)
+                .map(requestBody -> httpPostWithAuthorization(requestBody, path, token))
+                .collect(Collectors.toList());
+    }
+
+    public static ExtractableResponse<Response> httpPostWithAuthorization(final Object requestBody, final String path, final String token) {
         return given().log().all()
                 .body(requestBody)
+                .header(AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .put(String.format(path, pathVariable))
+                .post(path)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> httpPutUpdateOne(final Object requestBody,
+                                                                 final String path,
+                                                                 final String token) {
+        return given().log().all()
+                .body(requestBody)
+                .header(AUTHORIZATION, token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .put(path)
                 .then().log().all()
                 .extract();
 
@@ -56,10 +69,11 @@ public class ApiRequestFixture {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> httpDeleteOne(final String path, final Long pathVariable) {
+    public static ExtractableResponse<Response> httpDeleteOne(final String path, final String token) {
         return given().log().all()
+                .header(AUTHORIZATION, token)
                 .when()
-                .delete(String.format(path, pathVariable))
+                .delete(path)
                 .then().log().all()
                 .extract();
     }
@@ -69,7 +83,7 @@ public class ApiRequestFixture {
                                                                             final String parameterValue) {
         return given().param(parameterName, parameterValue).log().all()
                 .when()
-                .get("/posts")
+                .get(path)
                 .then().log().all()
                 .extract();
     }

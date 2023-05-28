@@ -1,12 +1,13 @@
 package com.example.anonymousboard.post.acceptance;
 
-import static com.example.anonymousboard.util.ApiRequestFixture.httpDeleteOne;
-import static com.example.anonymousboard.util.ApiRequestFixture.httpGetFindAll;
-import static com.example.anonymousboard.util.ApiRequestFixture.httpGetFindAllWithParameter;
-import static com.example.anonymousboard.util.ApiRequestFixture.httpGetFindOne;
-import static com.example.anonymousboard.util.ApiRequestFixture.httpPostSaveAll;
-import static com.example.anonymousboard.util.ApiRequestFixture.httpPostSaveOne;
-import static com.example.anonymousboard.util.ApiRequestFixture.httpPutUpdateOne;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpDeleteOne;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindAll;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindAllWithParameter;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindOne;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPostAllWithAuthorization;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPostWithAuthorization;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPutUpdateOne;
+import static com.example.anonymousboard.util.fixture.TokenFixture.getMemberToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -19,13 +20,14 @@ import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.repository.PostRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.anonymousboard.util.DataBaseSetUp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,10 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class PostAcceptanceTest {
 
@@ -50,6 +49,9 @@ public class PostAcceptanceTest {
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    DataBaseSetUp dataBaseSetUp;
+
     PostSaveRequest postSaveRequest1;
 
     PostSaveRequest postSaveRequest2;
@@ -61,18 +63,26 @@ public class PostAcceptanceTest {
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+        dataBaseSetUp.insertInitialData();
         postSaveRequest1 = PostSaveRequest.builder().title("제목1").content("내용1").build();
         postSaveRequest2 = PostSaveRequest.builder().title("제목2").content("내용2").build();
         postSaveRequest3 = PostSaveRequest.builder().title("제목3").content("내용3").build();
         postUpdateRequest = PostUpdateRequest.builder().title("수정된 제목").content("수정된 내용").build();
     }
 
+    @AfterEach
+    void clearDatabase() {
+        dataBaseSetUp.clear();
+    }
+
     @DisplayName("게시글 작성을 할 수 있다.")
     @Test
-    void createPost() throws JsonProcessingException {
+    void createPost() {
+        // given
+        String token = getMemberToken();
+
         // when
-        ExtractableResponse<Response> response = httpPostSaveOne(
-                objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+        ExtractableResponse<Response> response = httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         PostSaveResponse postSaveResponse = response.jsonPath().getObject(".", PostSaveResponse.class);
 
         //then
@@ -83,15 +93,16 @@ public class PostAcceptanceTest {
         );
     }
 
+
     @DisplayName("공백 내용으로 게시글 작성을 할 수 있다.")
     @Test
-    void createPost_with_blankContent() throws JsonProcessingException {
+    void createPost_with_blankContent() {
         // given
+        String token = getMemberToken();
         PostSaveRequest postSaveRequest = PostSaveRequest.builder().title("제목").content("  ").build();
 
         // when
-        ExtractableResponse<Response> response = httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest),
-                "/posts");
+        ExtractableResponse<Response> response = httpPostWithAuthorization(postSaveRequest, "/posts", token);
         PostSaveResponse postSaveResponse = response.jsonPath().getObject(".", PostSaveResponse.class);
 
         //then
@@ -104,16 +115,16 @@ public class PostAcceptanceTest {
 
     @DisplayName("빈 제목으로 게시글을 작성할 수 없다.")
     @Test
-    void createPost_exception_emptyTitle() throws JsonProcessingException {
+    void createPost_exception_emptyTitle() {
         // given
+        String token = getMemberToken();
         PostSaveRequest postSaveRequest = PostSaveRequest.builder()
                 .title("")
                 .content("게시글 내용입니다.")
                 .build();
 
         // when
-        ExtractableResponse<Response> response = httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest),
-                "/posts");
+        ExtractableResponse<Response> response = httpPostWithAuthorization(postSaveRequest, "/posts", token);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -127,16 +138,16 @@ public class PostAcceptanceTest {
 
     @DisplayName("빈 내용으로 게시글을 작성할 수 없다.")
     @Test
-    void createPost_exception_emptyContent() throws JsonProcessingException {
+    void createPost_exception_emptyContent() {
         // given
+        String token = getMemberToken();
         PostSaveRequest postSaveRequest = PostSaveRequest.builder()
                 .title("게시글 제목입니다.")
                 .content("")
                 .build();
 
         // when
-        ExtractableResponse<Response> response = httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest),
-                "/posts");
+        ExtractableResponse<Response> response = httpPostWithAuthorization(postSaveRequest, "/posts", token);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -150,13 +161,15 @@ public class PostAcceptanceTest {
 
     @DisplayName("게시글을 작성하고 작성한 모든 게시글을 조회할 수 있다.")
     @Test
-    void findPosts() throws JsonProcessingException {
+    void findPosts() {
         // given
-        httpPostSaveAll(
+        String token = getMemberToken();
+        httpPostAllWithAuthorization(
                 "/posts",
-                objectMapper.writeValueAsString(postSaveRequest1),
-                objectMapper.writeValueAsString(postSaveRequest2),
-                objectMapper.writeValueAsString(postSaveRequest3)
+                token,
+                postSaveRequest1,
+                postSaveRequest2,
+                postSaveRequest3
         );
 
         // when
@@ -176,10 +189,11 @@ public class PostAcceptanceTest {
 
     @DisplayName("게시글은 최대 100개까지 조회할 수 있다.")
     @Test
-    void findPosts_with_limit100() throws JsonProcessingException {
+    void findPosts_with_limit100() {
         // given
+        String token = getMemberToken();
         for (int sequence = 1; sequence <= 200; sequence++) {
-            httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+            httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         }
 
         // when
@@ -192,9 +206,10 @@ public class PostAcceptanceTest {
 
     @DisplayName("특정 게시글 1개를 저장하고 조회할 수 있다.")
     @Test
-    void findPost_with_createdPost() throws JsonProcessingException {
+    void findPost_with_createdPost() {
         // given
-        httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+        String token = getMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", token);
 
         // when
         ExtractableResponse<Response> response = httpGetFindOne("/posts/%d", 1L);
@@ -225,13 +240,13 @@ public class PostAcceptanceTest {
 
     @DisplayName("작성한 게시글을 수정할 수 있다.")
     @Test
-    void updatePost_with_createdPost() throws JsonProcessingException {
+    void updatePost_with_createdPost() {
         // given
-        httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+        String token = getMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", token);
 
         // when
-        ExtractableResponse<Response> response = httpPutUpdateOne("/posts/%d",
-                objectMapper.writeValueAsString(postUpdateRequest), 1L);
+        ExtractableResponse<Response> response = httpPutUpdateOne(postUpdateRequest, "/posts/1", token);
         PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
         // then
@@ -245,14 +260,14 @@ public class PostAcceptanceTest {
 
     @DisplayName("작성한 게시글의 내용을 공백으로 수정할 수 있다.")
     @Test
-    void updatePost_with_blankContent() throws JsonProcessingException {
+    void updatePost_with_blankContent() {
         // given
+        String token = getMemberToken();
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("수정할 제목").content("    ").build();
-        httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+        httpPostWithAuthorization(postSaveRequest1, "/posts", token);
 
         // when
-        ExtractableResponse<Response> response = httpPutUpdateOne("/posts/%d",
-                objectMapper.writeValueAsString(postUpdateRequest), 1L);
+        ExtractableResponse<Response> response = httpPutUpdateOne(postUpdateRequest, "/posts/1", token);
         PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
         // then
@@ -266,14 +281,14 @@ public class PostAcceptanceTest {
 
     @DisplayName("제목이 비어있다면 수정할 수 없다.")
     @Test
-    void updatePost_exception_invalidTitle() throws JsonProcessingException {
+    void updatePost_exception_invalidTitle() {
         // given
-        httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+        String token = getMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("").content("내용만 존재").build();
 
         // when
-        ExtractableResponse<Response> response = httpPutUpdateOne("/posts/%d",
-                objectMapper.writeValueAsString(postUpdateRequest), 1L);
+        ExtractableResponse<Response> response = httpPutUpdateOne(postUpdateRequest, "/posts/1", token);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -286,14 +301,14 @@ public class PostAcceptanceTest {
 
     @DisplayName("내용이 비어있다면 수정할 수 없다.")
     @Test
-    void updatePost_exception_invalidContent() throws JsonProcessingException {
+    void updatePost_exception_invalidContent() {
         // given
-        httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+        String token = getMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         PostUpdateRequest postUpdateRequest = PostUpdateRequest.builder().title("제목만 존재").content("").build();
 
         // when
-        ExtractableResponse<Response> response = httpPutUpdateOne("/posts/%d",
-                objectMapper.writeValueAsString(postUpdateRequest), 1L);
+        ExtractableResponse<Response> response = httpPutUpdateOne(postUpdateRequest, "/posts/1", token);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -307,12 +322,13 @@ public class PostAcceptanceTest {
 
     @DisplayName("특정 게시글을 작성하고 삭제할 수 있다.")
     @Test
-    void deletePost_with_createdPost() throws JsonProcessingException {
+    void deletePost_with_createdPost() {
         // given
-        httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+        String token = getMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", token);
 
         // when
-        ExtractableResponse<Response> response = httpDeleteOne("/posts/%d", 1L);
+        ExtractableResponse<Response> response = httpDeleteOne("/posts/1", token);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
@@ -321,8 +337,11 @@ public class PostAcceptanceTest {
     @DisplayName("없는 게시글은 삭제할 수 없다.")
     @Test
     void deletePost_exception_notFoundPostId() {
+        // given
+        String token = getMemberToken();
+
         // when
-        ExtractableResponse<Response> response = httpDeleteOne("/posts/%d", 1L);
+        ExtractableResponse<Response> response = httpDeleteOne("/posts/1", token);
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -334,18 +353,20 @@ public class PostAcceptanceTest {
 
     @DisplayName("게시글을 저장하고 키워드를 가지고 특정 게시글만 조회할 수 있다.")
     @Test
-    void findPostsByKeyword_with_keyword() throws JsonProcessingException {
+    void findPostsByKeyword_with_keyword() {
         // given
+        String token = getMemberToken();
         PostSaveRequest customRequest = PostSaveRequest.builder()
                 .title("특정 키워드")
                 .content("내용")
                 .build();
-        httpPostSaveAll(
+        httpPostAllWithAuthorization(
                 "/posts",
-                objectMapper.writeValueAsString(customRequest),
-                objectMapper.writeValueAsString(postSaveRequest1),
-                objectMapper.writeValueAsString(postSaveRequest2),
-                objectMapper.writeValueAsString(postSaveRequest3)
+                token,
+                customRequest,
+                postSaveRequest1,
+                postSaveRequest2,
+                postSaveRequest3
         );
 
         // when
@@ -364,13 +385,14 @@ public class PostAcceptanceTest {
 
     @DisplayName("게시글을 저장후 잘못된 검색 키워드로 조회하면 실패한다.")
     @Test
-    void findPostsByKeyword_exception_invalidKeyword() throws JsonProcessingException {
+    void findPostsByKeyword_exception_invalidKeyword() {
         // given
+        String token = getMemberToken();
         PostSaveRequest customRequest = PostSaveRequest.builder()
                 .title("특정 키워드")
                 .content("내용")
                 .build();
-        httpPostSaveOne(objectMapper.writeValueAsString(customRequest), "/posts");
+        httpPostWithAuthorization(customRequest, "/posts", token);
 
         // when
         ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts", "keyword", " ");
@@ -385,11 +407,11 @@ public class PostAcceptanceTest {
 
     @DisplayName("특정 키워드를 통한 게시글 검색은 최대 100개까지 조회할 수 있다.")
     @Test
-    void findPostsByKeyword_with_limit100() throws JsonProcessingException {
+    void findPostsByKeyword_with_limit100() {
         // given
-
+        String token = getMemberToken();
         for (int sequence = 1; sequence <= 200; sequence++) {
-            httpPostSaveOne(objectMapper.writeValueAsString(postSaveRequest1), "/posts");
+            httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         }
 
         // when
