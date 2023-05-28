@@ -19,38 +19,17 @@ import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostErrorCode;
-import com.example.anonymousboard.post.repository.PostRepository;
-import com.example.anonymousboard.util.DataBaseSetUp;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.RestAssured;
+import com.example.anonymousboard.util.AcceptanceTest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class PostAcceptanceTest {
-
-    @LocalServerPort
-    int port;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    PostRepository postRepository;
-
-    @Autowired
-    DataBaseSetUp dataBaseSetUp;
+public class PostAcceptanceTest extends AcceptanceTest {
 
     PostSaveRequest postSaveRequest1;
 
@@ -62,17 +41,11 @@ public class PostAcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        RestAssured.port = port;
-        dataBaseSetUp.insertInitialData();
+        System.out.println("passsssss");
         postSaveRequest1 = PostSaveRequest.builder().title("제목1").content("내용1").build();
         postSaveRequest2 = PostSaveRequest.builder().title("제목2").content("내용2").build();
         postSaveRequest3 = PostSaveRequest.builder().title("제목3").content("내용3").build();
         postUpdateRequest = PostUpdateRequest.builder().title("수정된 제목").content("수정된 내용").build();
-    }
-
-    @AfterEach
-    void clearDatabase() {
-        dataBaseSetUp.clear();
     }
 
     @DisplayName("게시글 작성을 할 수 있다.")
