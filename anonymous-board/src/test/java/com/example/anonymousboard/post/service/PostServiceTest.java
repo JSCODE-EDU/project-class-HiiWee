@@ -10,7 +10,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.auth.exception.AuthorizationException;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -50,48 +52,54 @@ class PostServiceTest extends ServiceTest {
 
     Page<Post> pagePosts;
 
+    Member member;
+
+    AuthInfo authInfo;
+
     @BeforeEach
     void setUp() {
+        member = new Member(1L, "valid@mail.com", "!qwer123");
         post1 = Post.builder()
                 .title("제목1")
                 .content("내용1")
+                .member(member)
                 .build();
         post2 = Post.builder()
                 .title("제목2")
                 .content("내용2")
+                .member(member)
                 .build();
         post3 = Post.builder()
                 .title("제목3")
                 .content("내용3")
+                .member(member)
                 .build();
         post4 = Post.builder()
                 .title("제목4")
                 .content("내용4")
+                .member(member)
                 .build();
         keywordPost1 = Post.builder()
                 .title("비슷한 제목")
                 .content("내용4")
+                .member(member)
                 .build();
         keywordPost2 = Post.builder()
                 .title("비슷한2 제목")
                 .content("내용4")
+                .member(member)
                 .build();
+        authInfo = new AuthInfo(1L);
 
         pagePosts = new PageImpl<>(List.of(post4, post3, post2, post1));
     }
 
-
-    @DisplayName("상품을 저장한다.")
+    @DisplayName("게시글을 저장한다.")
     @Test
-    void createProduct_success() {
+    void createPost_success() {
         // given
-        Member member = Member.builder()
-                .email("valid@mail.com")
-                .password("!qwer123")
-                .build();
         given(postRepository.save(any(Post.class))).willReturn(post1);
         given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
-        AuthInfo authInfo = new AuthInfo(1L);
         PostSaveRequest saveRequest = PostSaveRequest.builder()
                 .title("제목1")
                 .content("내용1")
@@ -105,6 +113,22 @@ class PostServiceTest extends ServiceTest {
                 () -> assertThat(saveResponse.getMessage()).isEqualTo("게시글 작성을 완료했습니다.")
         );
 
+    }
+
+    @DisplayName("존재하지 않는 사용자라면 게시글을 저장할 수 없다.")
+    @Test
+    void createPost_exception_notFoundMember() {
+        // given
+        given(memberRepository.findById(any())).willReturn(Optional.empty());
+        PostSaveRequest saveRequest = PostSaveRequest.builder()
+                .title("제목1")
+                .content("내용1")
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> postService.createPost(authInfo, saveRequest))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining("회원을 찾을 수 없습니다.");
     }
 
     @DisplayName("임의의 검색 조건을 통해 모든 게시글을 조회할 수 있다.")
@@ -167,7 +191,7 @@ class PostServiceTest extends ServiceTest {
                 .build();
 
         // when
-        postService.updatePostById(1L, updateRequest);
+        postService.updatePostById(authInfo, 1L, updateRequest);
         PostResponse updatedPost = postService.findPostById(1L);
 
         // then
@@ -182,14 +206,14 @@ class PostServiceTest extends ServiceTest {
     @Test
     void updatePost_with_blankContent() {
         // given
-        given(postRepository.findById(any())).willReturn(Optional.of(post1));
+        given(postRepository.findById(any())).willReturn(Optional.ofNullable(post1));
         PostUpdateRequest updateRequest = PostUpdateRequest.builder()
                 .title("수정된 제목")
                 .content(" ")
                 .build();
 
         // when
-        postService.updatePostById(1L, updateRequest);
+        postService.updatePostById(authInfo, 1L, updateRequest);
         PostResponse updatedPost = postService.findPostById(1L);
 
         // then
@@ -210,9 +234,26 @@ class PostServiceTest extends ServiceTest {
                 .build();
 
         // when & then
-        assertThatThrownBy(() -> postService.updatePostById(1111L, updateRequest))
+        assertThatThrownBy(() -> postService.updatePostById(authInfo, 1111L, updateRequest))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("권한이 없는 게시글을 수정할 수 없다.")
+    @Test
+    void updatePost_exception_noAuthorization() {
+        // given
+        given(postRepository.findById(any())).willReturn(Optional.ofNullable(post1));
+        AuthInfo otherAuth = new AuthInfo(2L);
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> postService.updatePostById(otherAuth, 1L, updateRequest))
+                .isInstanceOf(AuthorizationException.class)
+                .hasMessageContaining("권한이 없습니다.");
     }
 
     @DisplayName("특정 게시글을 삭제할 수 있다.")

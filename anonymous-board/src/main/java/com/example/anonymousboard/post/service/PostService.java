@@ -1,6 +1,7 @@
 package com.example.anonymousboard.post.service;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.auth.exception.AuthorizationException;
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.member.repository.MemberRepository;
@@ -14,6 +15,7 @@ import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -43,11 +45,6 @@ public class PostService {
         return PostSaveResponse.createPostSuccess(savedPost.getId());
     }
 
-    private Member findMember(final AuthInfo authInfo) {
-        return memberRepository.findById(authInfo.getId())
-                .orElseThrow(MemberNotFoundException::new);
-    }
-
     public PagePostsResponse findPosts(Pageable pageable) {
         Page<Post> posts = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
         return PagePostsResponse.from(posts.getContent());
@@ -66,10 +63,17 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePostById(final Long postId, final PostUpdateRequest postUpdateRequest) {
+    public void updatePostById(final AuthInfo authInfo, final Long postId, final PostUpdateRequest postUpdateRequest) {
         Post post = findPostObject(postId);
+        validateOwner(authInfo, post);
         post.updateTitle(postUpdateRequest.getTitle());
         post.updateContent(postUpdateRequest.getContent());
+    }
+
+    @Transactional
+    public void deletePostById(final Long postId) {
+        Post post = findPostObject(postId);
+        postRepository.delete(post);
     }
 
     private Post findPostObject(final Long postId) {
@@ -77,9 +81,14 @@ public class PostService {
                 .orElseThrow(PostNotFoundException::new);
     }
 
-    @Transactional
-    public void deletePostById(final Long postId) {
-        Post post = findPostObject(postId);
-        postRepository.delete(post);
+    private Member findMember(final AuthInfo authInfo) {
+        return memberRepository.findById(authInfo.getId())
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private void validateOwner(final AuthInfo authInfo, final Post post) {
+        if (!post.isOwner(authInfo.getId())) {
+            throw new AuthorizationException();
+        }
     }
 }

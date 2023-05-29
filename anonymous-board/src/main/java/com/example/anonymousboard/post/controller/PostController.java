@@ -35,7 +35,7 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<PostSaveResponse> createPost(@Login AuthInfo authInfo,
+    public ResponseEntity<PostSaveResponse> createPost(@Login final AuthInfo authInfo,
                                                        @Valid @RequestBody final PostSaveRequest postSaveRequest) {
         PostSaveResponse saveResponse = postService.createPost(authInfo, postSaveRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveResponse);
@@ -60,9 +60,10 @@ public class PostController {
     }
 
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId,
+    public ResponseEntity<PostResponse> updatePost(@Login AuthInfo authInfo,
+                                                   @PathVariable Long postId,
                                                    @Valid @RequestBody PostUpdateRequest postUpdateRequest) {
-        postService.updatePostById(postId, postUpdateRequest);
+        postService.updatePostById(authInfo, postId, postUpdateRequest);
         PostResponse updatedPost = postService.findPostById(postId);
         return ResponseEntity.ok(updatedPost);
     }

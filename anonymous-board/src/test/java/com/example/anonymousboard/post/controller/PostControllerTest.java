@@ -21,6 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
+import com.example.anonymousboard.auth.exception.AuthErrorCode;
+import com.example.anonymousboard.auth.exception.AuthorizationException;
+import com.example.anonymousboard.member.exception.MemberErrorCode;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
@@ -114,7 +118,7 @@ public class PostControllerTest extends ControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
-                        .header(AUTHORIZATION, "any")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -164,17 +168,7 @@ public class PostControllerTest extends ControllerTest {
         ).andDo(
                 document("post/create/fail/emptyTitle",
                         getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
-                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
-                        ),
-                        responseFields(
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
-                        )
+                        getDocumentResponse()
                 )
         );
     }
@@ -204,17 +198,7 @@ public class PostControllerTest extends ControllerTest {
         ).andDo(
                 document("post/create/fail/tooLongTitle",
                         getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
-                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
-                        ),
-                        responseFields(
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
-                        )
+                        getDocumentResponse()
                 )
         );
     }
@@ -243,17 +227,7 @@ public class PostControllerTest extends ControllerTest {
         ).andDo(
                 document("post/create/fail/emptyContent",
                         getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
-                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
-                        ),
-                        responseFields(
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
-                        )
+                        getDocumentResponse()
                 )
         );
     }
@@ -271,7 +245,7 @@ public class PostControllerTest extends ControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
-                .header("Authorization", "any")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -283,19 +257,38 @@ public class PostControllerTest extends ControllerTest {
         ).andDo(
                 document("post/create/fail/tooLongContent",
                         getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
-                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
-                        ),
-                        responseFields(
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
-                        )
+                        getDocumentResponse()
                 )
         );
+    }
+
+    @DisplayName("존재하지 않는 사용자가 게시글을 작성하면 404를 반환한다.")
+    @Test
+    void createPost_exception_notFoundMember() throws Exception {
+        // given
+        PostSaveRequest post = PostSaveRequest.builder()
+                .title("게시글 제목 입니다.")
+                .content("게시글 내용 입니다.")
+                .build();
+        given(postService.createPost(any(), any())).willThrow(new MemberNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
+                .content(objectMapper.writeValueAsString(post))
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        // then
+        result.andExpectAll(status().isNotFound(),
+                jsonPath("$.message").value("회원을 찾을 수 없습니다."),
+                jsonPath("$.errorCode").value(MemberErrorCode.MEMBER_NOT_FOUND.value())
+        ).andDo(
+                document("post/create/fail/notFoundMember",
+                        getDocumentRequest(),
+                        getDocumentResponse()
+                )
+        );
+
     }
 
     @DisplayName("모든 게시글을 조회할 수 있으며 200을 반환한다.")
@@ -413,10 +406,11 @@ public class PostControllerTest extends ControllerTest {
                 .build();
         given(postService.findPostById(any())).willReturn(updatedPostResponse);
         doNothing().when(postService)
-                .updatePostById(any(), any());
+                .updatePostById(any(), any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -459,10 +453,11 @@ public class PostControllerTest extends ControllerTest {
                 .content("내용1")
                 .build();
         doThrow(new PostNotFoundException()).when(postService)
-                .updatePostById(any(), any());
+                .updatePostById(any(), any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -503,6 +498,7 @@ public class PostControllerTest extends ControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -541,10 +537,11 @@ public class PostControllerTest extends ControllerTest {
                 .content("내용1")
                 .build();
         doThrow(new InvalidTitleException()).when(postService)
-                .updatePostById(any(), any());
+                .updatePostById(any(), any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -585,6 +582,7 @@ public class PostControllerTest extends ControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -623,10 +621,11 @@ public class PostControllerTest extends ControllerTest {
                 .content("A".repeat(1001))
                 .build();
         doThrow(new InvalidContentException()).when(postService)
-                .updatePostById(any(), any());
+                .updatePostById(any(), any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -651,6 +650,39 @@ public class PostControllerTest extends ControllerTest {
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
                                 fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
+                        )
+                )
+        );
+    }
+
+    @DisplayName("게시글을 수정할 권한이 없다면 403을 반환한다.")
+    @Test
+    void updatePost_exception_invalidAuthorization() throws Exception {
+        // given
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .build();
+        doThrow(new AuthorizationException()).when(postService)
+                .updatePostById(any(), any(), any());
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
+                .content(objectMapper.writeValueAsString(updateRequest))
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        // then
+        result.andExpectAll(
+                status().isForbidden(),
+                jsonPath("$.message").value("권한이 없습니다."),
+                jsonPath("$.errorCode").value(AuthErrorCode.AUTHORIZATION.value())
+        ).andDo(
+                document("post/update/fail/invalidAuthorization",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("postId").description("게시글 아이디")
                         )
                 )
         );
