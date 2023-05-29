@@ -4,15 +4,18 @@ import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpDele
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindAll;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindAllWithParameter;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindOne;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPost;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPostAllWithAuthorization;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPostWithAuthorization;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPutUpdateOne;
 import static com.example.anonymousboard.util.fixture.TokenFixture.getMemberToken;
+import static com.example.anonymousboard.util.fixture.TokenFixture.getOtherMemberToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.advice.ErrorResponse;
+import com.example.anonymousboard.auth.exception.AuthErrorCode;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
@@ -20,6 +23,7 @@ import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.util.AcceptanceTest;
+import com.example.anonymousboard.util.fixture.TokenFixture;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
@@ -129,6 +133,25 @@ public class PostAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(errorResponse.getMessage()).isEqualTo("내용을 반드시 입력해야 합니다."),
                 () -> assertThat(errorResponse.getErrorCode()).isEqualTo(
                         CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value())
+        );
+    }
+
+    @DisplayName("로그인을 하지 않았다면 게시글을 작성할 수 없다.")
+    @Test
+    void createPost_exception_notLogin() {
+        // given
+        PostSaveRequest postSaveRequest = PostSaveRequest.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        // when
+        ExtractableResponse<Response> response = httpPost(postSaveRequest, "/posts");
+        ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
+
+        assertAll(
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("인증을 위한 헤더를 찾을 수 없습니다."),
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(AuthErrorCode.NO_AUTHORIZATION_HEADER.value())
         );
     }
 
@@ -292,6 +315,24 @@ public class PostAcceptanceTest extends AcceptanceTest {
         );
     }
 
+    @DisplayName("게시글을 작성한 사용자가 아니라면 게시글을 수정할 수 없다.")
+    @Test
+    void updatePost_exception_noAuthorization() {
+        // given
+        String token = getMemberToken();
+        String otherToken = TokenFixture.getOtherMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", token);
+
+        // when
+        ExtractableResponse<Response> response = httpPutUpdateOne(postUpdateRequest, "/posts/1", otherToken);
+        ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("권한이 없습니다."),
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(AuthErrorCode.AUTHORIZATION.value())
+        );
+    }
 
     @DisplayName("특정 게시글을 작성하고 삭제할 수 있다.")
     @Test
@@ -321,6 +362,25 @@ public class PostAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(errorResponse.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND.value()),
                 () -> assertThat(errorResponse.getMessage()).isEqualTo("게시글을 찾을 수 없습니다.")
+        );
+    }
+
+    @DisplayName("게시글을 작성한 사용자가 아니면 게시글을 삭제할 수 없다.")
+    @Test
+    void deletePost_exception_noAuthorization() {
+        // given
+        String token = getMemberToken();
+        String otherToken = getOtherMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", token);
+
+        // when
+        ExtractableResponse<Response> response = httpDeleteOne("/posts/1", otherToken);
+        ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(errorResponse.getMessage()).isEqualTo("권한이 없습니다."),
+                () -> assertThat(errorResponse.getErrorCode()).isEqualTo(AuthErrorCode.AUTHORIZATION.value())
         );
     }
 

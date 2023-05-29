@@ -48,7 +48,10 @@ public class DatabaseCleaner implements InitializingBean {
     @Transactional
     public void insertInitialData() {
         entityManager.createNativeQuery(
-                "insert into member(email, password, created_at) values('valid01@mail.com', '!qwer123', CURRENT_TIMESTAMP())")
+                        "insert into member(email, password, created_at) values('valid01@mail.com', '!qwer123', CURRENT_TIMESTAMP())")
+                .executeUpdate();
+        entityManager.createNativeQuery(
+                        "insert into member(email, password, created_at) values('valid02@mail.com', '!qwer123', CURRENT_TIMESTAMP())")
                 .executeUpdate();
     }
 }
