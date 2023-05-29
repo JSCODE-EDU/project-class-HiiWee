@@ -25,6 +25,7 @@ import com.example.anonymousboard.util.ServiceTest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.swing.text.html.Option;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -264,20 +265,32 @@ class PostServiceTest extends ServiceTest {
         doNothing().when(postRepository)
                 .delete(any());
 
-        assertThatNoException().isThrownBy(() -> postService.deletePostById(1L));
+        assertThatNoException().isThrownBy(() -> postService.deletePostById(authInfo, 1L));
     }
 
     @DisplayName("존재하지 않는 게시글은 삭제할 수 없다.")
     @Test
     void deletePost_exception_notFoundPostId() {
         // given
-        doThrow(new PostNotFoundException()).when(postRepository)
-                .findById(any());
+        given(postRepository.findById(any())).willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> postService.deletePostById(111L))
+        assertThatThrownBy(() -> postService.deletePostById(authInfo, 111L))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("권한이 없는 게시글은 삭제할 수 없다.")
+    @Test
+    void deletePost_exception_noAuthorization() {
+        // given
+        AuthInfo otherAuth = new AuthInfo(2L);
+        given(postRepository.findById(any())).willReturn(Optional.ofNullable(post1));
+
+        // when & then
+        assertThatThrownBy(() -> postService.deletePostById(otherAuth, 111L))
+                .isInstanceOf(AuthorizationException.class)
+                .hasMessageContaining("권한이 없습니다.");
     }
 
     @DisplayName("특정 키워드를 통해 게시글을 검색할 수 있다.")

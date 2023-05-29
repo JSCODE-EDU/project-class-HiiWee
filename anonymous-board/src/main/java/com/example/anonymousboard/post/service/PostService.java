@@ -71,8 +71,9 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePostById(final Long postId) {
+    public void deletePostById(final AuthInfo authInfo, final Long postId) {
         Post post = findPostObject(postId);
+        validateOwner(authInfo, post);
         postRepository.delete(post);
     }
 

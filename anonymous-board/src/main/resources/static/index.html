@@ -597,77 +597,15 @@ Content-Length: 76
 <h4 id="_실패"><a class="link" href="#_실패">1.1.2. 실패</a></h4>
 <div class="sect4">
 <h5 id="_실패_request_fields"><a class="link" href="#_실패_request_fields">Request fields</a></h5>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">설명</th>
-<th class="tableblock halign-left valign-top">제약사항</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 제목</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 내용</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">내용은 공백 포함 1 ~ 1000자 사이여야 합니다.</p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p>Snippet request-fields not found for operation::post/create/fail/emptyTitle</p>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_실패_response_fields"><a class="link" href="#_실패_response_fields">Response fields</a></h5>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">필드명</th>
-<th class="tableblock halign-left valign-top">타입</th>
-<th class="tableblock halign-left valign-top">필수값</th>
-<th class="tableblock halign-left valign-top">양식</th>
-<th class="tableblock halign-left valign-top">설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">실패 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorCode</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">에러 코드</p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p>Snippet response-fields not found for operation::post/create/fail/emptyTitle</p>
+</div>
 </div>
 <div class="sect4">
 <h5 id="_게시글을_작성하는_사용자를_찾을_수_없는_경우"><a class="link" href="#_게시글을_작성하는_사용자를_찾을_수_없는_경우">게시글을 작성하는 사용자를 찾을 수 없는 경우</a></h5>
@@ -867,7 +805,9 @@ Content-Length: 122
 <h4 id="_성공_2"><a class="link" href="#_성공_2">1.2.1. 성공</a></h4>
 <div class="sect4">
 <h5 id="_성공_2_request_fields"><a class="link" href="#_성공_2_request_fields">Request fields</a></h5>
-
+<div class="paragraph">
+<p>Snippet request-fields not found for operation::post/findAll/success</p>
+</div>
 </div>
 <div class="paragraph">
 <p>없음</p>
@@ -962,17 +902,17 @@ Content-Length: 410
     "id" : 3,
     "title" : "제목3",
     "content" : "내용3",
-    "createdAt" : "2023-05-29T19:15:31.778185"
+    "createdAt" : "2023-05-29T20:52:50.679486"
   }, {
     "id" : 2,
     "title" : "제목2",
     "content" : "내용2",
-    "createdAt" : "2023-05-29T19:15:31.778185"
+    "createdAt" : "2023-05-29T20:52:50.679481"
   }, {
     "id" : 1,
     "title" : "제목1",
     "content" : "내용1",
-    "createdAt" : "2023-05-29T19:15:31.778181"
+    "createdAt" : "2023-05-29T20:52:50.679474"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -1076,13 +1016,13 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 108
+Content-Length: 107
 
 {
   "id" : 1,
   "title" : "제목1",
   "content" : "내용1",
-  "createdAt" : "2023-05-29T19:15:31.720382"
+  "createdAt" : "2023-05-29T20:52:50.62608"
 }</code></pre>
 </div>
 </div>
@@ -1321,13 +1261,13 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 126
+Content-Length: 125
 
 {
   "id" : 1,
   "title" : "수정된 제목",
   "content" : "수정된 내용",
-  "createdAt" : "2023-05-29T19:15:31.748572"
+  "createdAt" : "2023-05-29T20:52:50.65293"
 }</code></pre>
 </div>
 </div>
@@ -1692,6 +1632,7 @@ Content-Length: 122
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /posts/1 HTTP/1.1
+Authorization: any
 Host: docs.api.com</code></pre>
 </div>
 </div>
@@ -1770,12 +1711,44 @@ Vary: Access-Control-Request-Headers</code></pre>
 </table>
 </div>
 <div class="sect4">
+<h5 id="_게시글을_삭제할_권한이_없는_경우"><a class="link" href="#_게시글을_삭제할_권한이_없는_경우">게시글을 삭제할 권한이 없는 경우</a></h5>
+<div class="sect5">
+<h6 id="_게시글을_삭제할_권한이_없는_경우_http_request"><a class="link" href="#_게시글을_삭제할_권한이_없는_경우_http_request">HTTP request</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /posts/1 HTTP/1.1
+Authorization: any
+Host: docs.api.com</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_게시글을_삭제할_권한이_없는_경우_http_response"><a class="link" href="#_게시글을_삭제할_권한이_없는_경우_http_response">HTTP response</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 65
+
+{
+  "message" : "권한이 없습니다.",
+  "errorCode" : 3008
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_존재하지_않는_게시글일_경우_2"><a class="link" href="#_존재하지_않는_게시글일_경우_2">존재하지 않는 게시글일 경우</a></h5>
 <div class="sect5">
 <h6 id="_존재하지_않는_게시글일_경우_2_http_request"><a class="link" href="#_존재하지_않는_게시글일_경우_2_http_request">HTTP request</a></h6>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /posts/1 HTTP/1.1
+Authorization: any
 Host: docs.api.com</code></pre>
 </div>
 </div>
@@ -1915,19 +1888,19 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 306
+Content-Length: 307
 
 {
   "postResponses" : [ {
     "id" : 5,
     "title" : "비슷한2 제목",
     "content" : "내용",
-    "createdAt" : "2023-05-29T19:15:31.67705"
+    "createdAt" : "2023-05-29T20:52:50.582841"
   }, {
     "id" : 4,
     "title" : "비슷한 제목",
     "content" : "내용",
-    "createdAt" : "2023-05-29T19:15:31.677049"
+    "createdAt" : "2023-05-29T20:52:50.582841"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -2462,7 +2435,7 @@ Content-Length: 90
 {
   "id" : 1,
   "email" : "valid@main.com",
-  "createdAt" : "2023-05-29T19:15:26.965944"
+  "createdAt" : "2023-05-29T20:52:45.827858"
 }</code></pre>
 </div>
 </div>
@@ -2771,7 +2744,7 @@ Content-Length: 97
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-05-29 19:13:33 +0900
+Last updated 2023-05-29 20:52:39 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

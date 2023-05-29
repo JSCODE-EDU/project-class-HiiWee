@@ -38,6 +38,7 @@ import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.util.ControllerTest;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.apache.http.auth.AUTH;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -657,7 +658,7 @@ public class PostControllerTest extends ControllerTest {
 
     @DisplayName("게시글을 수정할 권한이 없다면 403을 반환한다.")
     @Test
-    void updatePost_exception_invalidAuthorization() throws Exception {
+    void updatePost_exception_noAuthorization() throws Exception {
         // given
         PostUpdateRequest updateRequest = PostUpdateRequest.builder()
                 .title("수정된 제목")
@@ -678,7 +679,7 @@ public class PostControllerTest extends ControllerTest {
                 jsonPath("$.message").value("권한이 없습니다."),
                 jsonPath("$.errorCode").value(AuthErrorCode.AUTHORIZATION.value())
         ).andDo(
-                document("post/update/fail/invalidAuthorization",
+                document("post/update/fail/noAuthorization",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pathParameters(
@@ -692,10 +693,11 @@ public class PostControllerTest extends ControllerTest {
     @Test
     void deletePost() throws Exception {
         // given
-        doNothing().when(postService).deletePostById(any());
+        doNothing().when(postService).deletePostById(any(), any());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any"));
 
         // then
         result.andExpectAll(status().isNoContent())
@@ -715,10 +717,11 @@ public class PostControllerTest extends ControllerTest {
     void deletePost_exception_notFountPostId() throws Exception {
         // given
         doThrow(new PostNotFoundException()).when(postService)
-                .deletePostById(any());
+                .deletePostById(any(), any());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any"));
 
         // then
         result.andExpectAll(
@@ -736,6 +739,29 @@ public class PostControllerTest extends ControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
                                 fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
                         )
+                )
+        );
+    }
+
+    @DisplayName("게시글을 삭제할 권한이 없다면 403을 반환한다.")
+    @Test
+    void deletePost_exception_noAuthorization() throws Exception {
+        // given
+        doThrow(new AuthorizationException()).when(postService)
+                .deletePostById(any(), any());
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any"));
+
+        result.andExpectAll(
+                status().isForbidden(),
+                jsonPath("$.message").value("권한이 없습니다."),
+                jsonPath("$.errorCode").value(AuthErrorCode.AUTHORIZATION.value())
+        ).andDo(
+                document("post/delete/fail/noAuthorization",
+                        getDocumentRequest(),
+                        getDocumentResponse()
                 )
         );
     }

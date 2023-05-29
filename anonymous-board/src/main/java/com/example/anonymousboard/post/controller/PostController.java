@@ -54,23 +54,24 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostResponse> findPost(@PathVariable Long postId) {
+    public ResponseEntity<PostResponse> findPost(@PathVariable final Long postId) {
         PostResponse findPost = postService.findPostById(postId);
         return ResponseEntity.ok(findPost);
     }
 
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<PostResponse> updatePost(@Login AuthInfo authInfo,
-                                                   @PathVariable Long postId,
-                                                   @Valid @RequestBody PostUpdateRequest postUpdateRequest) {
+    public ResponseEntity<PostResponse> updatePost(@Login final AuthInfo authInfo,
+                                                   @PathVariable final Long postId,
+                                                   @Valid @RequestBody final PostUpdateRequest postUpdateRequest) {
         postService.updatePostById(authInfo, postId, postUpdateRequest);
         PostResponse updatedPost = postService.findPostById(postId);
         return ResponseEntity.ok(updatedPost);
     }
 
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
-        postService.deletePostById(postId);
+    public ResponseEntity<Void> deletePost(@Login final AuthInfo authInfo,
+                                           @PathVariable final Long postId) {
+        postService.deletePostById(authInfo, postId);
         return ResponseEntity.noContent().build();
     }
 }
