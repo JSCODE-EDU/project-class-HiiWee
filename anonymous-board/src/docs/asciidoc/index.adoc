@@ -16,6 +16,8 @@
 operation::post/create/success[snippets='request-fields,response-fields,http-request,http-response']
 ==== 실패
 operation::post/create/fail/emptyTitle[snippets='request-fields,response-fields']
+===== 게시글을 작성하는 사용자를 찾을 수 없는 경우
+operation::post/create/fail/notFoundMember[snippets='http-request,http-response']
 ===== 게시글의 제목이 비어있는 경우
 operation::post/create/fail/emptyTitle[snippets='http-request,http-response']
 ===== 게시글의 제목 길이가 15자를 넘어가는 경우
@@ -47,6 +49,8 @@ operation::post/findById/fail/notFoundPost[snippets='http-request,http-response'
 operation::post/update/success[snippets='path-parameters,request-fields,response-fields,http-request,http-response']
 ==== 실패
 operation::post/update/fail/notFoundPost[snippets='path-parameters,request-fields,response-fields']
+===== 게시글을 수정할 권한이 없는 경우
+operation::post/update/fail/invalidAuthorization[snippets='http-request,http-response']
 ===== 존재하지 않는 게시글일 경우
 operation::post/update/fail/notFoundPost[snippets='http-request,http-response']
 ===== 수정할 게시글의 제목이 비어있는 경우

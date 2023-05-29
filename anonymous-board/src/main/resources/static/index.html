@@ -563,6 +563,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 90
 Host: docs.api.com
 
@@ -669,6 +670,44 @@ Content-Length: 76
 </table>
 </div>
 <div class="sect4">
+<h5 id="_게시글을_작성하는_사용자를_찾을_수_없는_경우"><a class="link" href="#_게시글을_작성하는_사용자를_찾을_수_없는_경우">게시글을 작성하는 사용자를 찾을 수 없는 경우</a></h5>
+<div class="sect5">
+<h6 id="_게시글을_작성하는_사용자를_찾을_수_없는_경우_http_request"><a class="link" href="#_게시글을_작성하는_사용자를_찾을_수_없는_경우_http_request">HTTP request</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts HTTP/1.1
+Content-Type: application/json
+Authorization: any
+Content-Length: 90
+Host: docs.api.com
+
+{
+  "title" : "게시글 제목 입니다.",
+  "content" : "게시글 내용 입니다."
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_게시글을_작성하는_사용자를_찾을_수_없는_경우_http_response"><a class="link" href="#_게시글을_작성하는_사용자를_찾을_수_없는_경우_http_response">HTTP response</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 404 Not Found
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 76
+
+{
+  "message" : "회원을 찾을 수 없습니다.",
+  "errorCode" : 2005
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_게시글의_제목이_비어있는_경우"><a class="link" href="#_게시글의_제목이_비어있는_경우">게시글의 제목이 비어있는 경우</a></h5>
 <div class="sect5">
 <h6 id="_게시글의_제목이_비어있는_경우_http_request"><a class="link" href="#_게시글의_제목이_비어있는_경우_http_request">HTTP request</a></h6>
@@ -676,6 +715,7 @@ Content-Length: 76
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 63
 Host: docs.api.com
 
@@ -713,6 +753,7 @@ Content-Length: 86
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 117
 Host: docs.api.com
 
@@ -750,6 +791,7 @@ Content-Length: 120
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 62
 Host: docs.api.com
 
@@ -787,6 +829,7 @@ Content-Length: 86
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 1063
 Host: docs.api.com
 
@@ -919,17 +962,17 @@ Content-Length: 410
     "id" : 3,
     "title" : "제목3",
     "content" : "내용3",
-    "createdAt" : "2023-05-25T06:12:48.198544"
+    "createdAt" : "2023-05-29T19:15:31.778185"
   }, {
     "id" : 2,
     "title" : "제목2",
     "content" : "내용2",
-    "createdAt" : "2023-05-25T06:12:48.198543"
+    "createdAt" : "2023-05-29T19:15:31.778185"
   }, {
     "id" : 1,
     "title" : "제목1",
     "content" : "내용1",
-    "createdAt" : "2023-05-25T06:12:48.198538"
+    "createdAt" : "2023-05-29T19:15:31.778181"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -1039,7 +1082,7 @@ Content-Length: 108
   "id" : 1,
   "title" : "제목1",
   "content" : "내용1",
-  "createdAt" : "2023-05-25T06:12:48.126167"
+  "createdAt" : "2023-05-29T19:15:31.720382"
 }</code></pre>
 </div>
 </div>
@@ -1258,6 +1301,7 @@ Content-Length: 79
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /posts/1 HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 68
 Host: docs.api.com
 
@@ -1283,7 +1327,7 @@ Content-Length: 126
   "id" : 1,
   "title" : "수정된 제목",
   "content" : "수정된 내용",
-  "createdAt" : "2023-05-25T06:12:48.171382"
+  "createdAt" : "2023-05-29T19:15:31.748572"
 }</code></pre>
 </div>
 </div>
@@ -1388,6 +1432,44 @@ Content-Length: 126
 </table>
 </div>
 <div class="sect4">
+<h5 id="_게시글을_수정할_권한이_없는_경우"><a class="link" href="#_게시글을_수정할_권한이_없는_경우">게시글을 수정할 권한이 없는 경우</a></h5>
+<div class="sect5">
+<h6 id="_게시글을_수정할_권한이_없는_경우_http_request"><a class="link" href="#_게시글을_수정할_권한이_없는_경우_http_request">HTTP request</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /posts/1 HTTP/1.1
+Content-Type: application/json
+Authorization: any
+Content-Length: 68
+Host: docs.api.com
+
+{
+  "title" : "수정된 제목",
+  "content" : "수정된 내용"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_게시글을_수정할_권한이_없는_경우_http_response"><a class="link" href="#_게시글을_수정할_권한이_없는_경우_http_response">HTTP response</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 403 Forbidden
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 65
+
+{
+  "message" : "권한이 없습니다.",
+  "errorCode" : 3008
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
 <h5 id="_존재하지_않는_게시글일_경우"><a class="link" href="#_존재하지_않는_게시글일_경우">존재하지 않는 게시글일 경우</a></h5>
 <div class="sect5">
 <h6 id="_존재하지_않는_게시글일_경우_http_request"><a class="link" href="#_존재하지_않는_게시글일_경우_http_request">HTTP request</a></h6>
@@ -1395,6 +1477,7 @@ Content-Length: 126
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /posts/1 HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 50
 Host: docs.api.com
 
@@ -1432,6 +1515,7 @@ Content-Length: 79
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /posts/1 HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 43
 Host: docs.api.com
 
@@ -1469,6 +1553,7 @@ Content-Length: 86
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /posts/1 HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 88
 Host: docs.api.com
 
@@ -1506,6 +1591,7 @@ Content-Length: 120
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /posts/1 HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 42
 Host: docs.api.com
 
@@ -1543,6 +1629,7 @@ Content-Length: 86
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PUT /posts/1 HTTP/1.1
 Content-Type: application/json
+Authorization: any
 Content-Length: 1043
 Host: docs.api.com
 
@@ -1835,12 +1922,12 @@ Content-Length: 306
     "id" : 5,
     "title" : "비슷한2 제목",
     "content" : "내용",
-    "createdAt" : "2023-05-25T06:12:48.054461"
+    "createdAt" : "2023-05-29T19:15:31.67705"
   }, {
     "id" : 4,
     "title" : "비슷한 제목",
     "content" : "내용",
-    "createdAt" : "2023-05-25T06:12:48.05446"
+    "createdAt" : "2023-05-29T19:15:31.677049"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -2375,7 +2462,7 @@ Content-Length: 90
 {
   "id" : 1,
   "email" : "valid@main.com",
-  "createdAt" : "2023-05-25T06:12:36.794096"
+  "createdAt" : "2023-05-29T19:15:26.965944"
 }</code></pre>
 </div>
 </div>
@@ -2684,7 +2771,7 @@ Content-Length: 97
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-05-25 06:12:14 +0900
+Last updated 2023-05-29 19:13:33 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
