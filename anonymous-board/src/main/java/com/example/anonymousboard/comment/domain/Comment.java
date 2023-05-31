@@ -48,7 +48,18 @@ public class Comment {
         this.post = post;
     }
 
+    public Comment(final Long id, final String content, final Member member, final Post post) {
+        this.id = id;
+        this.content = Content.from(content);
+        this.member = member;
+        this.post = post;
+    }
+
     public String getContent() {
         return content.getValue();
+    }
+
+    public Long getId() {
+        return id;
     }
 }

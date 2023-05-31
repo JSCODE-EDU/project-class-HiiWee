@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.auth.exception.AuthorizationException;
@@ -25,7 +24,6 @@ import com.example.anonymousboard.util.ServiceTest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.swing.text.html.Option;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
