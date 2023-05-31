@@ -12,8 +12,10 @@ import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -27,6 +29,7 @@ public class CommentService {
         this.postRepository = postRepository;
     }
 
+    @Transactional
     public CommentSaveResponse addComment(final AuthInfo authInfo, final Long postId,
                                           final CommentSaveRequest commentSaveRequest) {
         Member member = findMember(authInfo.getId());
