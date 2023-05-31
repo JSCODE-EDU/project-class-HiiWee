@@ -62,4 +62,16 @@ public class Comment {
     public Long getId() {
         return id;
     }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public String getWriterEmail() {
+        return member.getEmail();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

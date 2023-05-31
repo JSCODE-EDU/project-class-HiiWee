@@ -10,10 +10,12 @@ import static org.mockito.Mockito.doNothing;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.auth.exception.AuthorizationException;
+import com.example.anonymousboard.comment.domain.Comment;
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
@@ -37,6 +39,8 @@ import org.springframework.data.domain.Sort.Direction;
 
 class PostServiceTest extends ServiceTest {
 
+    Comment comment;
+
     Post post1;
 
     Post post2;
@@ -58,6 +62,11 @@ class PostServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         member = new Member(1L, "valid@mail.com", "!qwer123");
+        comment = Comment.builder()
+                .content("댓글")
+                .member(member)
+                .post(post1)
+                .build();
         post1 = Post.builder()
                 .title("제목1")
                 .content("내용1")
@@ -159,14 +168,18 @@ class PostServiceTest extends ServiceTest {
     void findPostById() {
         // given
         given(postRepository.findById(any())).willReturn(Optional.of(post1));
+        given(commentRepository.findCommentsByPost(post1)).willReturn(List.of(comment));
 
         // when
-        PostResponse findPost = postService.findPostById(1L);
+        PostDetailResponse findPost = postService.findPostDetailById(1L);
 
         // then
         assertAll(
                 () -> assertThat(findPost.getTitle()).isEqualTo("제목1"),
-                () -> assertThat(findPost.getContent()).isEqualTo("내용1")
+                () -> assertThat(findPost.getContent()).isEqualTo("내용1"),
+                () -> assertThat(findPost.getComments().size()).isEqualTo(1),
+                () -> assertThat(findPost.getComments().get(0).getContent()).isEqualTo("댓글"),
+                () -> assertThat(findPost.getComments().get(0).getEmail()).isEqualTo("valid@mail.com")
         );
     }
 
@@ -174,7 +187,7 @@ class PostServiceTest extends ServiceTest {
     @Test
     void findPostById_exception_notFoundPostId() {
         // when & then
-        assertThatThrownBy(() -> postService.findPostById(11111L))
+        assertThatThrownBy(() -> postService.findPostDetailById(11111L))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
     }

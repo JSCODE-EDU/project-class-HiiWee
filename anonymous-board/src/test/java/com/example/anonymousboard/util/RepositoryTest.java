@@ -1,5 +1,6 @@
 package com.example.anonymousboard.util;
 
+import com.example.anonymousboard.comment.repository.CommentRepository;
 import com.example.anonymousboard.config.JpaConfig;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.post.repository.PostRepository;
@@ -16,5 +17,8 @@ public class RepositoryTest {
 
     @Autowired
     protected PostRepository postRepository;
+
+    @Autowired
+    protected CommentRepository commentRepository;
 
 }

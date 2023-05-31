@@ -2,6 +2,7 @@ package com.example.anonymousboard.post.controller;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
@@ -54,8 +55,8 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostResponse> findPost(@PathVariable final Long postId) {
-        PostResponse findPost = postService.findPostById(postId);
+    public ResponseEntity<PostDetailResponse> findPost(@PathVariable final Long postId) {
+        PostDetailResponse findPost = postService.findPostDetailById(postId);
         return ResponseEntity.ok(findPost);
     }
 

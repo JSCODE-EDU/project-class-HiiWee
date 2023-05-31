@@ -23,9 +23,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
 import com.example.anonymousboard.auth.exception.AuthorizationException;
+import com.example.anonymousboard.comment.dto.CommentResponse;
 import com.example.anonymousboard.member.exception.MemberErrorCode;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
+import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
@@ -53,6 +56,14 @@ public class PostControllerTest extends ControllerTest {
 
     PagePostsResponse keywordPosts;
 
+    PostDetailResponse postDetailResponse;
+
+    CommentResponse commentResponse1;
+
+    CommentResponse commentResponse2;
+
+    CommentResponse commentResponse3;
+
     PostResponse postResponse1;
 
     PostResponse postResponse2;
@@ -65,6 +76,29 @@ public class PostControllerTest extends ControllerTest {
 
     @BeforeEach
     void setUp() {
+        commentResponse1 = CommentResponse.builder()
+                .content("댓글1")
+                .email("valid01@mail.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+        commentResponse2 = CommentResponse.builder()
+                .content("댓글2")
+                .email("valid02@mail.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+        commentResponse3 = CommentResponse.builder()
+                .content("댓글3")
+                .email("valid03@mail.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+        postDetailResponse = PostDetailResponse.builder()
+                .id(1L)
+                .title("제목1")
+                .content("내용1")
+                .createdAt(LocalDateTime.now())
+                .comments(List.of(commentResponse1, commentResponse2, commentResponse3))
+                .build();
+
         postResponse1 = PostResponse.builder()
                 .id(1L)
                 .title("제목1")
@@ -333,7 +367,7 @@ public class PostControllerTest extends ControllerTest {
     @Test
     void findPost() throws Exception {
         // given
-        given(postService.findPostById(any())).willReturn(postResponse1);
+        given(postService.findPostDetailById(any())).willReturn(postDetailResponse);
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 1L));
@@ -344,7 +378,10 @@ public class PostControllerTest extends ControllerTest {
                 jsonPath("$.id").value(1L),
                 jsonPath("$.title").value("제목1"),
                 jsonPath("$.content").value("내용1"),
-                jsonPath("$.createdAt").isNotEmpty()
+                jsonPath("$.createdAt").isNotEmpty(),
+                jsonPath("$.comments[0].email").value("valid01@mail.com"),
+                jsonPath("$.comments[1].email").value("valid02@mail.com"),
+                jsonPath("$.comments[2].email").value("valid03@mail.com")
         ).andDo(
                 document("post/findById/success",
                         getDocumentRequest(),
@@ -356,7 +393,10 @@ public class PostControllerTest extends ControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
-                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글 작성일자")
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글 작성일자"),
+                                fieldWithPath("comments[].content").type(JsonFieldType.STRING).description("해당 게시글 댓글 내용"),
+                                fieldWithPath("comments[].email").type(JsonFieldType.STRING).description("해당 게시글 댓글 작성자 이메일"),
+                                fieldWithPath("comments[].createdAt").type(JsonFieldType.STRING).description("해당 게시글 댓글 작성일자")
                         )
                 )
         );
@@ -366,7 +406,7 @@ public class PostControllerTest extends ControllerTest {
     @Test
     void findPost_exception_notFoundPostId() throws Exception {
         // given
-        given(postService.findPostById(any())).willThrow(new PostNotFoundException());
+        given(postService.findPostDetailById(any())).willThrow(new PostNotFoundException());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 1L));

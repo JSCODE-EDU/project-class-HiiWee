@@ -53,18 +53,10 @@ public class ApiRequestFixture {
 
     }
 
-    public static ExtractableResponse<Response> httpGetFindAll(final String path) {
+    public static ExtractableResponse<Response> httpGet(final String path) {
         return given().log().all()
                 .when()
                 .get(path)
-                .then().log().all()
-                .extract();
-    }
-
-    public static ExtractableResponse<Response> httpGetFindOne(final String path, final Long pathVariable) {
-        return given().log().all()
-                .when()
-                .get(String.format(path, pathVariable))
                 .then().log().all()
                 .extract();
     }

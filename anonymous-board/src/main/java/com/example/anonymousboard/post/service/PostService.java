@@ -2,12 +2,15 @@ package com.example.anonymousboard.post.service;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.auth.exception.AuthorizationException;
+import com.example.anonymousboard.comment.domain.Comment;
+import com.example.anonymousboard.comment.repository.CommentRepository;
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.post.domain.Keyword;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
@@ -15,7 +18,6 @@ import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,10 +29,13 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
-    public PostService(final PostRepository postRepository, final MemberRepository memberRepository) {
+    public PostService(final PostRepository postRepository, final MemberRepository memberRepository,
+                       final CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.memberRepository = memberRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional
@@ -56,10 +61,17 @@ public class PostService {
         return PagePostsResponse.from(posts);
     }
 
-    public PostResponse findPostById(final Long postId) {
-        Post findPost = postRepository.findById(postId)
+    public PostDetailResponse findPostDetailById(final Long postId) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
-        return PostResponse.from(findPost);
+        List<Comment> comments = commentRepository.findCommentsByPost(post);
+        return PostDetailResponse.of(post, comments);
+    }
+
+    public PostResponse findPostById(final Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+        return PostResponse.from(post);
     }
 
     @Transactional

@@ -1,9 +1,8 @@
 package com.example.anonymousboard.post.acceptance;
 
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpDeleteOne;
-import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindAll;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindAllWithParameter;
-import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindOne;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGet;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPost;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPostAllWithAuthorization;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPostWithAuthorization;
@@ -17,6 +16,7 @@ import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.advice.ErrorResponse;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
@@ -169,7 +169,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         );
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAll("/posts");
+        ExtractableResponse<Response> response = httpGet("/posts");
         PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
         List<String> titles = postsResponse.getPostResponses()
                 .stream()
@@ -193,7 +193,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         }
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAll("/posts");
+        ExtractableResponse<Response> response = httpGet("/posts");
         PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
 
         // then
@@ -208,15 +208,16 @@ public class PostAcceptanceTest extends AcceptanceTest {
         httpPostWithAuthorization(postSaveRequest1, "/posts", token);
 
         // when
-        ExtractableResponse<Response> response = httpGetFindOne("/posts/%d", 1L);
-        PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
+        ExtractableResponse<Response> response = httpGet("/posts/1");
+        PostDetailResponse postDetailResponse = response.jsonPath().getObject(".", PostDetailResponse.class);
 
         // then
         assertAll(
-                () -> assertThat(postResponse.getId()).isEqualTo(1L),
-                () -> assertThat(postResponse.getTitle()).isEqualTo("제목1"),
-                () -> assertThat(postResponse.getContent()).isEqualTo("내용1"),
-                () -> assertThat(postResponse.getCreatedAt()).isNotNull()
+                () -> assertThat(postDetailResponse.getId()).isEqualTo(1L),
+                () -> assertThat(postDetailResponse.getTitle()).isEqualTo("제목1"),
+                () -> assertThat(postDetailResponse.getContent()).isEqualTo("내용1"),
+                () -> assertThat(postDetailResponse.getCreatedAt()).isNotNull(),
+                () -> assertThat(postDetailResponse.getComments().size()).isEqualTo(0)
         );
     }
 
@@ -224,7 +225,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     @Test
     void findPost_exception_noPost() {
         // when
-        ExtractableResponse<Response> response = httpGetFindOne("/posts/%d", 1L);
+        ExtractableResponse<Response> response = httpGet("/posts/1");
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then

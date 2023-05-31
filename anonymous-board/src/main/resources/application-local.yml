@@ -6,7 +6,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
@@ -28,4 +28,4 @@ logging:
     org:
       hibernate:
         SQL: debug
-        type: trace
+#        type: trace

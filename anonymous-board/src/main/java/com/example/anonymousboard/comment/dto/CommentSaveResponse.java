@@ -5,7 +5,10 @@ import lombok.Getter;
 @Getter
 public class CommentSaveResponse {
 
-    private final Long savedId;
+    private Long savedId;
+
+    private CommentSaveResponse() {
+    }
 
     public CommentSaveResponse(final Long savedId) {
         this.savedId = savedId;
