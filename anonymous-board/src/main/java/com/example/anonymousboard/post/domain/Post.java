@@ -1,11 +1,7 @@
 package com.example.anonymousboard.post.domain;
 
-import com.example.anonymousboard.comment.domain.Comment;
 import com.example.anonymousboard.member.domain.Member;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -17,7 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import lombok.Builder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -43,9 +38,6 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @OneToMany(mappedBy = "post")
-    private List<Comment> comments = new ArrayList<>();
 
     protected Post() {
     }
@@ -82,10 +74,6 @@ public class Post {
 
     public Member getMember() {
         return member;
-    }
-
-    public List<Comment> getComments() {
-        return Collections.unmodifiableList(comments);
     }
 
     public void updateTitle(final String value) {
