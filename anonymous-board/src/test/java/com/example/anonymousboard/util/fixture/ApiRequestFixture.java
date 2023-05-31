@@ -22,13 +22,16 @@ public class ApiRequestFixture {
                 .extract();
     }
 
-    public static List<ExtractableResponse<Response>> httpPostAllWithAuthorization(final String path, final String token, final Object... requestBodies) {
+    public static List<ExtractableResponse<Response>> httpPostAllWithAuthorization(final String path,
+                                                                                   final String token,
+                                                                                   final Object... requestBodies) {
         return Arrays.stream(requestBodies)
                 .map(requestBody -> httpPostWithAuthorization(requestBody, path, token))
                 .collect(Collectors.toList());
     }
 
-    public static ExtractableResponse<Response> httpPostWithAuthorization(final Object requestBody, final String path, final String token) {
+    public static ExtractableResponse<Response> httpPostWithAuthorization(final Object requestBody, final String path,
+                                                                          final String token) {
         return given().log().all()
                 .body(requestBody)
                 .header(AUTHORIZATION, token)

@@ -19,7 +19,8 @@ public class PostDetailResponse {
     private final List<CommentResponse> comments;
 
     @Builder
-    private PostDetailResponse(final Long id, final String title, final String content, final LocalDateTime createdAt, final List<CommentResponse> comments) {
+    private PostDetailResponse(final Long id, final String title, final String content, final LocalDateTime createdAt,
+                               final List<CommentResponse> comments) {
         this.id = id;
         this.title = title;
         this.content = content;

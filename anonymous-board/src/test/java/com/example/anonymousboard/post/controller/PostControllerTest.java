@@ -26,7 +26,6 @@ import com.example.anonymousboard.auth.exception.AuthorizationException;
 import com.example.anonymousboard.comment.dto.CommentResponse;
 import com.example.anonymousboard.member.exception.MemberErrorCode;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
-import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -41,7 +40,6 @@ import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.util.ControllerTest;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.apache.http.auth.AUTH;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -394,9 +392,12 @@ public class PostControllerTest extends ControllerTest {
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글 작성일자"),
-                                fieldWithPath("comments[].content").type(JsonFieldType.STRING).description("해당 게시글 댓글 내용"),
-                                fieldWithPath("comments[].email").type(JsonFieldType.STRING).description("해당 게시글 댓글 작성자 이메일"),
-                                fieldWithPath("comments[].createdAt").type(JsonFieldType.STRING).description("해당 게시글 댓글 작성일자")
+                                fieldWithPath("comments[].content").type(JsonFieldType.STRING)
+                                        .description("해당 게시글 댓글 내용"),
+                                fieldWithPath("comments[].email").type(JsonFieldType.STRING)
+                                        .description("해당 게시글 댓글 작성자 이메일"),
+                                fieldWithPath("comments[].createdAt").type(JsonFieldType.STRING)
+                                        .description("해당 게시글 댓글 작성일자")
                         )
                 )
         );

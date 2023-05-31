@@ -27,7 +27,8 @@ public class CommentService {
         this.postRepository = postRepository;
     }
 
-    public CommentSaveResponse addComment(final AuthInfo authInfo, final Long postId, final CommentSaveRequest commentSaveRequest) {
+    public CommentSaveResponse addComment(final AuthInfo authInfo, final Long postId,
+                                          final CommentSaveRequest commentSaveRequest) {
         Member member = findMember(authInfo.getId());
         Post post = findPost(postId);
         Comment comment = Comment.builder()

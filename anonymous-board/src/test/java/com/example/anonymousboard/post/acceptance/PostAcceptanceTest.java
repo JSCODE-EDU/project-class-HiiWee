@@ -1,8 +1,8 @@
 package com.example.anonymousboard.post.acceptance;
 
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpDeleteOne;
-import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindAllWithParameter;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGet;
+import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpGetFindAllWithParameter;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPost;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPostAllWithAuthorization;
 import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPostWithAuthorization;

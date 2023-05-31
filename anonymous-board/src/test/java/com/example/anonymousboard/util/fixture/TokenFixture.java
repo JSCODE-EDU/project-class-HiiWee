@@ -4,8 +4,6 @@ import static com.example.anonymousboard.util.fixture.ApiRequestFixture.httpPost
 
 import com.example.anonymousboard.auth.dto.LoginRequest;
 import com.example.anonymousboard.auth.dto.TokenResponse;
-import groovy.util.logging.Log;
-import org.apache.http.auth.AUTH;
 
 public class TokenFixture {
 

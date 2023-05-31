@@ -1,6 +1,6 @@
 package com.example.anonymousboard.comment.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.anonymousboard.comment.domain.Comment;
 import com.example.anonymousboard.member.domain.Member;
