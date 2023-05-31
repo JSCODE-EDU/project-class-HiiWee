@@ -6,6 +6,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 
 import com.example.anonymousboard.auth.controller.AuthController;
 import com.example.anonymousboard.auth.service.AuthService;
+import com.example.anonymousboard.comment.controller.CommentController;
+import com.example.anonymousboard.comment.service.CommentService;
 import com.example.anonymousboard.member.controller.MemberController;
 import com.example.anonymousboard.member.service.MemberService;
 import com.example.anonymousboard.post.controller.PostController;
@@ -27,7 +29,8 @@ import org.springframework.web.context.WebApplicationContext;
 @WebMvcTest({
         AuthController.class,
         MemberController.class,
-        PostController.class
+        PostController.class,
+        CommentController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 public class ControllerTest {
@@ -52,6 +55,9 @@ public class ControllerTest {
 
     @MockBean
     protected PostService postService;
+
+    @MockBean
+    protected CommentService commentService;
 
 
     @BeforeEach

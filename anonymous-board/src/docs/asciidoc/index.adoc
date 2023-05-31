@@ -82,6 +82,22 @@ operation::post/findAllWithKeyword/fail/invalidKeyword[snippets='request-paramet
 ===== 공백 제거 1글자 미만의 키워드로 검색한 경우
 operation::post/findAllWithKeyword/fail/invalidKeyword[snippets='http-request,http-response']
 
+== 댓글
+
+=== 댓글 작성
+==== 성공
+operation::comment/create/success[snippets='path-parameters,request-fields,response-fields,http-request,http-response']
+==== 실패
+operation::comment/create/fail/notFoundMember[snippets='path-parameters,request-fields,response-fields']
+===== 댓글을 작성하려는 회원이 존재하지 않는 경우
+operation::comment/create/fail/notFoundMember[snippets='http-request,http-response']
+===== 댓글을 작성하려는 게시글이 존재하지 않는 경우
+operation::comment/create/fail/notFoundPost[snippets='http-request,http-response']
+===== 댓글의 길이가 50을 넘는 경우
+operation::comment/create/fail/invalidCommentLength[snippets='http-request,http-response']
+===== 댓글이 비어있는 경우
+operation::comment/create/fail/blankComment[snippets='http-request,http-response']
+
 
 == 회원
 

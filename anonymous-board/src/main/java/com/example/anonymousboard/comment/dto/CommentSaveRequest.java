@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class CommentSaveRequest {
 
-    @NotBlank
+    @NotBlank(message = "댓글을 반드시 입력해야 합니다.")
     private String content;
 
     private CommentSaveRequest() {
