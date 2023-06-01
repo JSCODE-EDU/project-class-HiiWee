@@ -6,7 +6,6 @@ import com.example.anonymousboard.like.domain.PostLike;
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.util.RepositoryTest;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

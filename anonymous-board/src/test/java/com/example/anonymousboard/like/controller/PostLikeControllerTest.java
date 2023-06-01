@@ -46,7 +46,8 @@ class PostLikeControllerTest extends ControllerTest {
                                 parameterWithName("postId").description("게시글 아이디")
                         ),
                         responseFields(
-                                fieldWithPath("like").type(JsonFieldType.BOOLEAN).description("좋아요 누르기(true)/취소하기(false)")
+                                fieldWithPath("like").type(JsonFieldType.BOOLEAN)
+                                        .description("좋아요 누르기(true)/취소하기(false)")
                         )
                 )
 
