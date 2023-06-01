@@ -2,6 +2,7 @@ package com.example.anonymousboard.like.domain;
 
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.post.domain.Post;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ public class PostLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_like_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
