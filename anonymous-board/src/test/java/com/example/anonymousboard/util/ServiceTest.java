@@ -2,6 +2,8 @@ package com.example.anonymousboard.util;
 
 import com.example.anonymousboard.comment.repository.CommentRepository;
 import com.example.anonymousboard.comment.service.CommentService;
+import com.example.anonymousboard.like.repository.PostLikeRepository;
+import com.example.anonymousboard.like.service.PostLikeService;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.member.service.MemberService;
 import com.example.anonymousboard.post.repository.PostRepository;
@@ -23,6 +25,9 @@ public class ServiceTest {
     @InjectMocks
     protected CommentService commentService;
 
+    @InjectMocks
+    protected PostLikeService postLikeService;
+
     @Mock
     protected MemberRepository memberRepository;
 
@@ -32,4 +37,6 @@ public class ServiceTest {
     @Mock
     protected CommentRepository commentRepository;
 
+    @Mock
+    protected PostLikeRepository postLikeRepository;
 }
