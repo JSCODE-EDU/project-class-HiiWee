@@ -1,12 +1,11 @@
 package com.example.anonymousboard.auth.controller;
 
 
-import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentRequest;
-import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentResponse;
+import static com.example.anonymousboard.util.apidocs.ApiDocumentUtils.getDocumentRequest;
+import static com.example.anonymousboard.util.apidocs.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -18,57 +17,22 @@ import com.example.anonymousboard.auth.dto.LoginRequest;
 import com.example.anonymousboard.auth.dto.TokenResponse;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
 import com.example.anonymousboard.auth.exception.LoginFailedException;
-import com.example.anonymousboard.auth.service.AuthService;
-import com.example.anonymousboard.support.AuthInterceptor;
-import com.example.anonymousboard.support.token.JwtTokenProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.anonymousboard.util.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-@WebMvcTest(AuthController.class)
-@ExtendWith(RestDocumentationExtension.class)
-class AuthControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @MockBean
-    AuthService authService;
-
-    @MockBean
-    AuthInterceptor authInterceptor;
-
-    @MockBean
-    JwtTokenProvider jwtTokenProvider;
+class AuthControllerTest extends ControllerTest {
 
     LoginRequest loginRequest;
 
     TokenResponse tokenResponse;
 
     @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
-                .build();
-        given(authInterceptor.preHandle(any(), any(), any()))
-                .willReturn(true);
-
+    void setUp() {
         loginRequest = LoginRequest.builder()
                 .email("test@mail.com")
                 .password("!qwer1234")

@@ -2,29 +2,24 @@ package com.example.anonymousboard.post.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.anonymousboard.config.JpaConfig;
 import com.example.anonymousboard.post.domain.Post;
+import com.example.anonymousboard.util.RepositoryTest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 
-@DataJpaTest
-@Import(JpaConfig.class)
-class PostRepositoryTest {
-
-    @Autowired
-    PostRepository postRepository;
+class PostRepositoryTest extends RepositoryTest {
 
     Post post1;
+
     Post post2;
+
     Post post3;
+
     Post post4;
 
     @BeforeEach

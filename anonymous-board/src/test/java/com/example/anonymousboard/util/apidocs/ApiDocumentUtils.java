@@ -1,4 +1,4 @@
-package com.example.anonymousboard.util;
+package com.example.anonymousboard.util.apidocs;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;

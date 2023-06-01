@@ -1,14 +1,14 @@
 package com.example.anonymousboard.post.controller;
 
-import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentRequest;
-import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentResponse;
-import static com.example.anonymousboard.util.DocumentFormatGenerator.getConstraints;
+import static com.example.anonymousboard.util.apidocs.ApiDocumentUtils.getDocumentRequest;
+import static com.example.anonymousboard.util.apidocs.ApiDocumentUtils.getDocumentResponse;
+import static com.example.anonymousboard.util.apidocs.DocumentFormatGenerator.getConstraints;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -21,7 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.anonymousboard.advice.CommonErrorCode;
+import com.example.anonymousboard.auth.exception.AuthErrorCode;
+import com.example.anonymousboard.auth.exception.AuthorizationException;
+import com.example.anonymousboard.comment.dto.CommentResponse;
+import com.example.anonymousboard.member.exception.MemberErrorCode;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
@@ -31,51 +37,30 @@ import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 import com.example.anonymousboard.post.exception.InvalidTitleException;
 import com.example.anonymousboard.post.exception.PostErrorCode;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
-import com.example.anonymousboard.post.service.PostService;
-import com.example.anonymousboard.support.AuthInterceptor;
-import com.example.anonymousboard.support.token.JwtTokenProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.anonymousboard.util.ControllerTest;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-@WebMvcTest(PostController.class)
-@ExtendWith(RestDocumentationExtension.class)
-public class PostControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @MockBean
-    PostService postService;
-
-    @MockBean
-    AuthInterceptor authInterceptor;
-
-    @MockBean
-    JwtTokenProvider jwtTokenProvider;
+public class PostControllerTest extends ControllerTest {
 
     PagePostsResponse pagePostsResponse;
 
     PagePostsResponse keywordPosts;
+
+    PostDetailResponse postDetailResponse;
+
+    CommentResponse commentResponse1;
+
+    CommentResponse commentResponse2;
+
+    CommentResponse commentResponse3;
 
     PostResponse postResponse1;
 
@@ -88,12 +73,29 @@ public class PostControllerTest {
     PostResponse keywordPostResponse2;
 
     @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
+    void setUp() {
+        commentResponse1 = CommentResponse.builder()
+                .content("댓글1")
+                .email("valid01@mail.com")
+                .createdAt(LocalDateTime.now())
                 .build();
-        given(authInterceptor.preHandle(any(), any(), any()))
-                .willReturn(true);
+        commentResponse2 = CommentResponse.builder()
+                .content("댓글2")
+                .email("valid02@mail.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+        commentResponse3 = CommentResponse.builder()
+                .content("댓글3")
+                .email("valid03@mail.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+        postDetailResponse = PostDetailResponse.builder()
+                .id(1L)
+                .title("제목1")
+                .content("내용1")
+                .createdAt(LocalDateTime.now())
+                .comments(List.of(commentResponse1, commentResponse2, commentResponse3))
+                .build();
 
         postResponse1 = PostResponse.builder()
                 .id(1L)
@@ -145,10 +147,11 @@ public class PostControllerTest {
                 .title("게시글 제목 입니다.")
                 .content("게시글 내용 입니다.")
                 .build();
-        given(postService.createPost(any(PostSaveRequest.class))).willReturn(saveResponse);
+        given(postService.createPost(any(), any())).willReturn(saveResponse);
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -186,6 +189,7 @@ public class PostControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -197,17 +201,7 @@ public class PostControllerTest {
         ).andDo(
                 document("post/create/fail/emptyTitle",
                         getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
-                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
-                        ),
-                        responseFields(
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
-                        )
+                        getDocumentResponse()
                 )
         );
     }
@@ -221,10 +215,11 @@ public class PostControllerTest {
                 .title(title)
                 .content("게시글 내용 입니다.")
                 .build();
-        given(postService.createPost(any())).willThrow(new InvalidTitleException());
+        given(postService.createPost(any(), any())).willThrow(new InvalidTitleException());
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -236,17 +231,7 @@ public class PostControllerTest {
         ).andDo(
                 document("post/create/fail/tooLongTitle",
                         getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
-                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
-                        ),
-                        responseFields(
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
-                        )
+                        getDocumentResponse()
                 )
         );
     }
@@ -263,6 +248,7 @@ public class PostControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -274,17 +260,7 @@ public class PostControllerTest {
         ).andDo(
                 document("post/create/fail/emptyContent",
                         getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
-                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
-                        ),
-                        responseFields(
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
-                        )
+                        getDocumentResponse()
                 )
         );
     }
@@ -298,10 +274,11 @@ public class PostControllerTest {
                 .title("게시글 제목입니다.")
                 .content(content)
                 .build();
-        given(postService.createPost(any())).willThrow(new InvalidContentException());
+        given(postService.createPost(any(), any())).willThrow(new InvalidContentException());
 
         // when
         ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(post))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -313,19 +290,38 @@ public class PostControllerTest {
         ).andDo(
                 document("post/create/fail/tooLongContent",
                         getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
-                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
-                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
-                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
-                        ),
-                        responseFields(
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
-                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
-                        )
+                        getDocumentResponse()
                 )
         );
+    }
+
+    @DisplayName("존재하지 않는 사용자가 게시글을 작성하면 404를 반환한다.")
+    @Test
+    void createPost_exception_notFoundMember() throws Exception {
+        // given
+        PostSaveRequest post = PostSaveRequest.builder()
+                .title("게시글 제목 입니다.")
+                .content("게시글 내용 입니다.")
+                .build();
+        given(postService.createPost(any(), any())).willThrow(new MemberNotFoundException());
+
+        // when
+        ResultActions result = mockMvc.perform(post("/posts")
+                .header(AUTHORIZATION, "any")
+                .content(objectMapper.writeValueAsString(post))
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        // then
+        result.andExpectAll(status().isNotFound(),
+                jsonPath("$.message").value("회원을 찾을 수 없습니다."),
+                jsonPath("$.errorCode").value(MemberErrorCode.MEMBER_NOT_FOUND.value())
+        ).andDo(
+                document("post/create/fail/notFoundMember",
+                        getDocumentRequest(),
+                        getDocumentResponse()
+                )
+        );
+
     }
 
     @DisplayName("모든 게시글을 조회할 수 있으며 200을 반환한다.")
@@ -369,7 +365,7 @@ public class PostControllerTest {
     @Test
     void findPost() throws Exception {
         // given
-        given(postService.findPostById(any())).willReturn(postResponse1);
+        given(postService.findPostDetailById(any())).willReturn(postDetailResponse);
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 1L));
@@ -380,7 +376,10 @@ public class PostControllerTest {
                 jsonPath("$.id").value(1L),
                 jsonPath("$.title").value("제목1"),
                 jsonPath("$.content").value("내용1"),
-                jsonPath("$.createdAt").isNotEmpty()
+                jsonPath("$.createdAt").isNotEmpty(),
+                jsonPath("$.comments[0].email").value("valid01@mail.com"),
+                jsonPath("$.comments[1].email").value("valid02@mail.com"),
+                jsonPath("$.comments[2].email").value("valid03@mail.com")
         ).andDo(
                 document("post/findById/success",
                         getDocumentRequest(),
@@ -392,7 +391,13 @@ public class PostControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
-                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글 작성일자")
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글 작성일자"),
+                                fieldWithPath("comments[].content").type(JsonFieldType.STRING)
+                                        .description("해당 게시글 댓글 내용"),
+                                fieldWithPath("comments[].email").type(JsonFieldType.STRING)
+                                        .description("해당 게시글 댓글 작성자 이메일"),
+                                fieldWithPath("comments[].createdAt").type(JsonFieldType.STRING)
+                                        .description("해당 게시글 댓글 작성일자")
                         )
                 )
         );
@@ -402,7 +407,7 @@ public class PostControllerTest {
     @Test
     void findPost_exception_notFoundPostId() throws Exception {
         // given
-        given(postService.findPostById(any())).willThrow(new PostNotFoundException());
+        given(postService.findPostDetailById(any())).willThrow(new PostNotFoundException());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 1L));
@@ -443,10 +448,11 @@ public class PostControllerTest {
                 .build();
         given(postService.findPostById(any())).willReturn(updatedPostResponse);
         doNothing().when(postService)
-                .updatePostById(any(), any());
+                .updatePostById(any(), any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -489,10 +495,11 @@ public class PostControllerTest {
                 .content("내용1")
                 .build();
         doThrow(new PostNotFoundException()).when(postService)
-                .updatePostById(any(), any());
+                .updatePostById(any(), any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -533,6 +540,7 @@ public class PostControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -571,10 +579,11 @@ public class PostControllerTest {
                 .content("내용1")
                 .build();
         doThrow(new InvalidTitleException()).when(postService)
-                .updatePostById(any(), any());
+                .updatePostById(any(), any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -615,6 +624,7 @@ public class PostControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -653,10 +663,11 @@ public class PostControllerTest {
                 .content("A".repeat(1001))
                 .build();
         doThrow(new InvalidContentException()).when(postService)
-                .updatePostById(any(), any());
+                .updatePostById(any(), any(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
                 .content(objectMapper.writeValueAsString(updateRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
@@ -686,14 +697,48 @@ public class PostControllerTest {
         );
     }
 
+    @DisplayName("게시글을 수정할 권한이 없다면 403을 반환한다.")
+    @Test
+    void updatePost_exception_noAuthorization() throws Exception {
+        // given
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .build();
+        doThrow(new AuthorizationException()).when(postService)
+                .updatePostById(any(), any(), any());
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any")
+                .content(objectMapper.writeValueAsString(updateRequest))
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        // then
+        result.andExpectAll(
+                status().isForbidden(),
+                jsonPath("$.message").value("권한이 없습니다."),
+                jsonPath("$.errorCode").value(AuthErrorCode.AUTHORIZATION.value())
+        ).andDo(
+                document("post/update/fail/noAuthorization",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("postId").description("게시글 아이디")
+                        )
+                )
+        );
+    }
+
     @DisplayName("특정 게시글을 삭제하면 204를 반환한다.")
     @Test
     void deletePost() throws Exception {
         // given
-        doNothing().when(postService).deletePostById(any());
+        doNothing().when(postService).deletePostById(any(), any());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any"));
 
         // then
         result.andExpectAll(status().isNoContent())
@@ -713,10 +758,11 @@ public class PostControllerTest {
     void deletePost_exception_notFountPostId() throws Exception {
         // given
         doThrow(new PostNotFoundException()).when(postService)
-                .deletePostById(any());
+                .deletePostById(any(), any());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any"));
 
         // then
         result.andExpectAll(
@@ -734,6 +780,29 @@ public class PostControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
                                 fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
                         )
+                )
+        );
+    }
+
+    @DisplayName("게시글을 삭제할 권한이 없다면 403을 반환한다.")
+    @Test
+    void deletePost_exception_noAuthorization() throws Exception {
+        // given
+        doThrow(new AuthorizationException()).when(postService)
+                .deletePostById(any(), any());
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", 1L)
+                .header(AUTHORIZATION, "any"));
+
+        result.andExpectAll(
+                status().isForbidden(),
+                jsonPath("$.message").value("권한이 없습니다."),
+                jsonPath("$.errorCode").value(AuthErrorCode.AUTHORIZATION.value())
+        ).andDo(
+                document("post/delete/fail/noAuthorization",
+                        getDocumentRequest(),
+                        getDocumentResponse()
                 )
         );
     }

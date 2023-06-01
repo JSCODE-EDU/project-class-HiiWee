@@ -1,8 +1,16 @@
 package com.example.anonymousboard.post.service;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.auth.exception.AuthorizationException;
+import com.example.anonymousboard.comment.domain.Comment;
+import com.example.anonymousboard.comment.repository.CommentRepository;
+import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
+import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.post.domain.Keyword;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
@@ -20,16 +28,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
-    public PostService(final PostRepository postRepository) {
+    public PostService(final PostRepository postRepository, final MemberRepository memberRepository,
+                       final CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.memberRepository = memberRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional
-    public PostSaveResponse createPost(final PostSaveRequest postSaveRequest) {
+    public PostSaveResponse createPost(final AuthInfo authInfo, final PostSaveRequest postSaveRequest) {
+        Member member = findMember(authInfo);
         Post post = Post.builder()
                 .title(postSaveRequest.getTitle())
                 .content(postSaveRequest.getContent())
+                .member(member)
                 .build();
         Post savedPost = postRepository.save(post);
         return PostSaveResponse.createPostSuccess(savedPost.getId());
@@ -46,17 +61,32 @@ public class PostService {
         return PagePostsResponse.from(posts);
     }
 
-    public PostResponse findPostById(final Long postId) {
-        Post findPost = postRepository.findById(postId)
+    public PostDetailResponse findPostDetailById(final Long postId) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
-        return PostResponse.from(findPost);
+        List<Comment> comments = commentRepository.findCommentsByPost(post);
+        return PostDetailResponse.of(post, comments);
+    }
+
+    public PostResponse findPostById(final Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+        return PostResponse.from(post);
     }
 
     @Transactional
-    public void updatePostById(final Long postId, final PostUpdateRequest postUpdateRequest) {
+    public void updatePostById(final AuthInfo authInfo, final Long postId, final PostUpdateRequest postUpdateRequest) {
         Post post = findPostObject(postId);
+        validateOwner(authInfo, post);
         post.updateTitle(postUpdateRequest.getTitle());
         post.updateContent(postUpdateRequest.getContent());
+    }
+
+    @Transactional
+    public void deletePostById(final AuthInfo authInfo, final Long postId) {
+        Post post = findPostObject(postId);
+        validateOwner(authInfo, post);
+        postRepository.delete(post);
     }
 
     private Post findPostObject(final Long postId) {
@@ -64,9 +94,14 @@ public class PostService {
                 .orElseThrow(PostNotFoundException::new);
     }
 
-    @Transactional
-    public void deletePostById(final Long postId) {
-        Post post = findPostObject(postId);
-        postRepository.delete(post);
+    private Member findMember(final AuthInfo authInfo) {
+        return memberRepository.findById(authInfo.getId())
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private void validateOwner(final AuthInfo authInfo, final Post post) {
+        if (!post.isOwner(authInfo.getId())) {
+            throw new AuthorizationException();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.anonymousboard.auth.exception;
 public enum AuthErrorCode {
 
     LOGIN_FAILED(3001),
+    AUTHORIZATION(3008),
 
     // JWT 관련 코드
     NO_AUTHORIZATION_HEADER(3002),
