@@ -2,7 +2,7 @@
 
 ---
 ## ERD
-![board-project](https://github.com/JSCODE-EDU/project-class-HiiWee/assets/66772624/aea64be9-0e34-4345-9420-8001d033055f)
+![board-project (1)](https://github.com/JSCODE-EDU/project-class-HiiWee/assets/66772624/305d622b-5b5c-4d5c-9700-080d4a355ce6)
 
 ## API 문서 만들기
 
@@ -199,5 +199,5 @@
 
 ## 좋아요(Like)
 - **기능 사항**
-  - [ ]  사용자가 1개 이상의 게시글에 좋아요를 누를 수 있다.
-  - [ ]  1개의 게시글은 1개 이상의 좋아요를 받을 수 있다.
+  - [x]  사용자가 1개 이상의 게시글에 좋아요를 누를 수 있다.
+  - [x]  1개의 게시글은 1개 이상의 좋아요를 받을 수 있다.

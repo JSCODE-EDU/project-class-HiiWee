@@ -56,7 +56,7 @@ class PostLikeServiceTest extends ServiceTest {
         PostLikeFlipResponse postLikeFlipResponse = postLikeService.flipPostLike(authInfo, 1L);
 
         // then
-        assertThat(postLikeFlipResponse.isLiked()).isTrue();
+        assertThat(postLikeFlipResponse.isLike()).isTrue();
     }
 
     @DisplayName("좋아요를 취소할 수 있다.")
@@ -71,7 +71,7 @@ class PostLikeServiceTest extends ServiceTest {
         PostLikeFlipResponse postLikeFlipResponse = postLikeService.flipPostLike(authInfo, 1L);
 
         // then
-        assertThat(postLikeFlipResponse.isLiked()).isFalse();
+        assertThat(postLikeFlipResponse.isLike()).isFalse();
     }
 
     @DisplayName("좋아요를 하려는 게시글이 없다면 예외가 발생한다.")

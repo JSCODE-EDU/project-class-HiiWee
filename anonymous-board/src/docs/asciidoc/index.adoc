@@ -8,6 +8,47 @@
 :sectnums:
 :docinfo: shared-head
 
+
+== 회원
+
+=== 회원가입
+==== 성공
+operation::member/signUp/success[snippets='request-fields,http-request,http-response']
+==== 실패
+operation::member/signUp/fail/duplicatedEmail[snippets='request-fields,response-fields']
+===== 이미 가입한 이메일인 경우
+operation::member/signUp/fail/duplicatedEmail[snippets='http-request,http-response']
+===== 이메일 포멧이 맞지 않는 경우
+operation::member/signUp/fail/invalidEmailFormat[snippets='http-request,http-response']
+===== 패스워드와 패스워드 확인이 다른 경우
+operation::member/signUp/fail/invalidPasswordConfirmation[snippets='http-request,http-response']
+===== 패스워드 포멧이 맞지 않는 경우
+operation::member/signUp/fail/invalidPasswordFormat[snippets='http-request,http-response']
+===== 이메일, 패스워드 중 하나라도 빈 값인 경우
+operation::member/signUp/fail/emptyRequest[snippets='http-request,http-response']
+
+
+=== 내 정보 조회
+==== 성공
+operation::member/findMyInfo/success[snippets='response-fields,http-request,http-response']
+==== 실패
+===== 없는 id 값으로 내 정보를 조회한 경우
+operation::member/findMyInfo/fail/notFountId[snippets='response-fields,http-request,http-response']
+
+
+
+== 로그인/로그아웃
+
+=== 로그인
+==== 성공
+operation::auth/login/success[snippets='request-fields,response-fields,http-request,http-response']
+==== 실패
+operation::auth/login/fail/wrongEmailOrPassword[snippets='request-fields,response-fields']
+===== 이메일 혹은 패스워드가 일치하지 않는 경우
+operation::auth/login/fail/wrongEmailOrPassword[snippets='http-request,http-response']
+
+
+
 == 게시글
 
 
@@ -99,40 +140,12 @@ operation::comment/create/fail/invalidCommentLength[snippets='http-request,http-
 operation::comment/create/fail/blankComment[snippets='http-request,http-response']
 
 
-== 회원
+== 좋아요
 
-=== 회원가입
+=== 게시글 좋아요
 ==== 성공
-operation::member/signUp/success[snippets='request-fields,http-request,http-response']
-==== 실패
-operation::member/signUp/fail/duplicatedEmail[snippets='request-fields,response-fields']
-===== 이미 가입한 이메일인 경우
-operation::member/signUp/fail/duplicatedEmail[snippets='http-request,http-response']
-===== 이메일 포멧이 맞지 않는 경우
-operation::member/signUp/fail/invalidEmailFormat[snippets='http-request,http-response']
-===== 패스워드와 패스워드 확인이 다른 경우
-operation::member/signUp/fail/invalidPasswordConfirmation[snippets='http-request,http-response']
-===== 패스워드 포멧이 맞지 않는 경우
-operation::member/signUp/fail/invalidPasswordFormat[snippets='http-request,http-response']
-===== 이메일, 패스워드 중 하나라도 빈 값인 경우
-operation::member/signUp/fail/emptyRequest[snippets='http-request,http-response']
-
-
-=== 내 정보 조회
-==== 성공
-operation::member/findMyInfo/success[snippets='response-fields,http-request,http-response']
-==== 실패
-===== 없는 id 값으로 내 정보를 조회한 경우
-operation::member/findMyInfo/fail/notFountId[snippets='response-fields,http-request,http-response']
-
-
-
-== 로그인/로그아웃
-
-=== 로그인
-==== 성공
-operation::auth/login/success[snippets='request-fields,response-fields,http-request,http-response']
-==== 실패
-operation::auth/login/fail/wrongEmailOrPassword[snippets='request-fields,response-fields']
-===== 이메일 혹은 패스워드가 일치하지 않는 경우
-operation::auth/login/fail/wrongEmailOrPassword[snippets='http-request,http-response']
+operation::postLike/newLike/success[snippets='path-parameters,response-fields']
+===== 처음 좋아요를 누르는 게시글
+operation::postLike/newLike/success[snippets='http-request,http-response']
+===== 두번째로 좋아요를 누르는 게시글(좋아요 취소)
+operation::postLike/removeLike/success[snippets='http-request,http-response']

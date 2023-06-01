@@ -5,12 +5,12 @@ import lombok.Getter;
 @Getter
 public class PostLikeFlipResponse {
 
-    private boolean isLiked;
+    private boolean like;
 
     private PostLikeFlipResponse() {
     }
 
-    public PostLikeFlipResponse(final boolean isLiked) {
-        this.isLiked = isLiked;
+    public PostLikeFlipResponse(final boolean like) {
+        this.like = like;
     }
 }
