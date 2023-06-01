@@ -26,6 +26,16 @@ public class ControllerAdvice {
                 );
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbiddenException(final ForbiddenException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .errorCode(e.getErrorCode())
+                        .build()
+                );
+    }
+
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedException(final UnauthorizedException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

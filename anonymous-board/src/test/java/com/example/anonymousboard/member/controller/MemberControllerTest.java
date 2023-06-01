@@ -1,14 +1,14 @@
 package com.example.anonymousboard.member.controller;
 
-import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentRequest;
-import static com.example.anonymousboard.util.ApiDocumentUtils.getDocumentResponse;
-import static com.example.anonymousboard.util.DocumentFormatGenerator.getConstraints;
+import static com.example.anonymousboard.util.apidocs.ApiDocumentUtils.getDocumentRequest;
+import static com.example.anonymousboard.util.apidocs.ApiDocumentUtils.getDocumentResponse;
+import static com.example.anonymousboard.util.apidocs.DocumentFormatGenerator.getConstraints;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -26,56 +26,21 @@ import com.example.anonymousboard.member.exception.InvalidPasswordConfirmationEx
 import com.example.anonymousboard.member.exception.InvalidPasswordFormatException;
 import com.example.anonymousboard.member.exception.MemberErrorCode;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
-import com.example.anonymousboard.member.service.MemberService;
-import com.example.anonymousboard.support.AuthInterceptor;
-import com.example.anonymousboard.support.token.JwtTokenProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.anonymousboard.util.ControllerTest;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-@WebMvcTest(MemberController.class)
-@ExtendWith(RestDocumentationExtension.class)
-class MemberControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @MockBean
-    MemberService memberService;
-
-    @MockBean
-    AuthInterceptor authInterceptor;
-
-    @MockBean
-    JwtTokenProvider jwtTokenProvider;
+class MemberControllerTest extends ControllerTest {
 
     SignUpRequest signUpRequest;
 
     @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
-                .build();
-        given(authInterceptor.preHandle(any(), any(), any()))
-                .willReturn(true);
-
+    void setUp() {
         signUpRequest = SignUpRequest.builder()
                 .email("valid@mail.com")
                 .password("!qwer123")
@@ -281,7 +246,7 @@ class MemberControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(get("/members/me")
-                .header("Authorization", "any"));
+                .header(AUTHORIZATION, "any"));
 
         // then
         result.andExpectAll(
@@ -310,7 +275,7 @@ class MemberControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(get("/members/me")
-                .header("Authorization", "any"));
+                .header(AUTHORIZATION, "any"));
 
         // then
         result.andExpectAll(

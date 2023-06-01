@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -26,7 +27,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) {
-        if (CorsUtils.isPreFlightRequest(request)) {
+        if (CorsUtils.isPreFlightRequest(request) || isGetRequest(request)) {
             return true;
         }
         if (notExistHeader(request)) {
@@ -38,6 +39,10 @@ public class AuthInterceptor implements HandlerInterceptor {
         jwtTokenProvider.validateToken(JwtTokenExtractor.extractAccessToken(request));
 
         return true;
+    }
+
+    private boolean isGetRequest(final HttpServletRequest request) {
+        return request.getMethod().equalsIgnoreCase(HttpMethod.GET.name());
     }
 
     private boolean notExistHeader(final HttpServletRequest request) {

@@ -1,11 +1,14 @@
 package com.example.anonymousboard.post.controller;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.service.PostService;
+import com.example.anonymousboard.support.token.Login;
 import java.util.Objects;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +36,9 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<PostSaveResponse> createPost(@Valid @RequestBody final PostSaveRequest postSaveRequest) {
-        PostSaveResponse saveResponse = postService.createPost(postSaveRequest);
+    public ResponseEntity<PostSaveResponse> createPost(@Login final AuthInfo authInfo,
+                                                       @Valid @RequestBody final PostSaveRequest postSaveRequest) {
+        PostSaveResponse saveResponse = postService.createPost(authInfo, postSaveRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveResponse);
     }
 
@@ -51,22 +55,24 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostResponse> findPost(@PathVariable Long postId) {
-        PostResponse findPost = postService.findPostById(postId);
+    public ResponseEntity<PostDetailResponse> findPost(@PathVariable final Long postId) {
+        PostDetailResponse findPost = postService.findPostDetailById(postId);
         return ResponseEntity.ok(findPost);
     }
 
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<PostResponse> updatePost(@PathVariable Long postId,
-                                                   @Valid @RequestBody PostUpdateRequest postUpdateRequest) {
-        postService.updatePostById(postId, postUpdateRequest);
+    public ResponseEntity<PostResponse> updatePost(@Login final AuthInfo authInfo,
+                                                   @PathVariable final Long postId,
+                                                   @Valid @RequestBody final PostUpdateRequest postUpdateRequest) {
+        postService.updatePostById(authInfo, postId, postUpdateRequest);
         PostResponse updatedPost = postService.findPostById(postId);
         return ResponseEntity.ok(updatedPost);
     }
 
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
-        postService.deletePostById(postId);
+    public ResponseEntity<Void> deletePost(@Login final AuthInfo authInfo,
+                                           @PathVariable final Long postId) {
+        postService.deletePostById(authInfo, postId);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.anonymousboard.member.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -39,6 +40,12 @@ public class Member {
         this.password = Password.from(password);
     }
 
+    public Member(final Long id, final String email, final String password) {
+        this.id = id;
+        this.email = Email.from(email);
+        this.password = Password.from(password);
+    }
+
     public Long getId() {
         return id;
     }
@@ -53,5 +60,22 @@ public class Member {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Member member = (Member) o;
+        return Objects.equals(id, member.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

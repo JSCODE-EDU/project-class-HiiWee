@@ -8,74 +8,6 @@
 :sectnums:
 :docinfo: shared-head
 
-== 게시글
-
-
-=== 게시글 작성
-==== 성공
-operation::post/create/success[snippets='request-fields,response-fields,http-request,http-response']
-==== 실패
-operation::post/create/fail/emptyTitle[snippets='request-fields,response-fields']
-===== 게시글의 제목이 비어있는 경우
-operation::post/create/fail/emptyTitle[snippets='http-request,http-response']
-===== 게시글의 제목 길이가 15자를 넘어가는 경우
-operation::post/create/fail/tooLongTitle[snippets='http-request,http-response']
-===== 게시글의 내용이 비어있는 경우
-operation::post/create/fail/emptyContent[snippets='http-request,http-response']
-===== 게시글의 내용 길이가 1000자를 넘어가는 경우
-operation::post/create/fail/tooLongContent[snippets='http-request,http-response']
-
-=== 전체 게시글 조회
-==== 성공
-operation::post/findAll/success[snippets='request-fields']
-없음
-
-operation::post/findAll/success[snippets='response-fields,http-request,http-response']
-
-=== 특정 게시글 조회
-==== 성공
-operation::post/findById/success[snippets='path-parameters,response-fields']
-operation::post/findById/success[snippets='http-request,http-response']
-==== 실패
-operation::post/findById/fail/notFoundPost[snippets='path-parameters,response-fields']
-===== 존재하지 않는 게시글을 조회했을 경우
-operation::post/findById/fail/notFoundPost[snippets='http-request,http-response']
-
-
-=== 특정 게시글 수정
-==== 성공
-operation::post/update/success[snippets='path-parameters,request-fields,response-fields,http-request,http-response']
-==== 실패
-operation::post/update/fail/notFoundPost[snippets='path-parameters,request-fields,response-fields']
-===== 존재하지 않는 게시글일 경우
-operation::post/update/fail/notFoundPost[snippets='http-request,http-response']
-===== 수정할 게시글의 제목이 비어있는 경우
-operation::post/update/fail/emptyTitle[snippets='http-request,http-response']
-===== 수정할 게시글의 제목이 15글자를 넘긴 경우
-operation::post/update/fail/tooLongTitle[snippets='http-request,http-response']
-===== 수정할 게시글의 내용이 비어있는 경우
-operation::post/update/fail/emptyContent[snippets='http-request,http-response']
-===== 수정할 게시글의 내용이 1000글자를 넘긴 경우
-operation::post/update/fail/tooLongContent[snippets='http-request,http-response']
-
-
-=== 특정 게시글 삭제
-==== 성공
-operation::post/delete/success[snippets='path-parameters,http-request,http-response']
-==== 실패
-operation::post/delete/fail/notFoundPost[snippets='path-parameters,response-fields']
-===== 존재하지 않는 게시글일 경우
-operation::post/delete/fail/notFoundPost[snippets='http-request,http-response']
-
-
-=== 게시글 검색
-==== 성공
-operation::post/findAllWithKeyword/success[snippets='request-parameters,response-fields,http-request,http-response']
-==== 실패
-operation::post/findAllWithKeyword/fail/invalidKeyword[snippets='request-parameters,response-fields']
-===== 공백 제거 1글자 미만의 키워드로 검색한 경우
-operation::post/findAllWithKeyword/fail/invalidKeyword[snippets='http-request,http-response']
-
 
 == 회원
 
@@ -114,3 +46,106 @@ operation::auth/login/success[snippets='request-fields,response-fields,http-requ
 operation::auth/login/fail/wrongEmailOrPassword[snippets='request-fields,response-fields']
 ===== 이메일 혹은 패스워드가 일치하지 않는 경우
 operation::auth/login/fail/wrongEmailOrPassword[snippets='http-request,http-response']
+
+
+
+== 게시글
+
+
+=== 게시글 작성
+==== 성공
+operation::post/create/success[snippets='request-fields,response-fields,http-request,http-response']
+==== 실패
+operation::post/create/fail/emptyTitle[snippets='request-fields,response-fields']
+===== 게시글을 작성하는 사용자를 찾을 수 없는 경우
+operation::post/create/fail/notFoundMember[snippets='http-request,http-response']
+===== 게시글의 제목이 비어있는 경우
+operation::post/create/fail/emptyTitle[snippets='http-request,http-response']
+===== 게시글의 제목 길이가 15자를 넘어가는 경우
+operation::post/create/fail/tooLongTitle[snippets='http-request,http-response']
+===== 게시글의 내용이 비어있는 경우
+operation::post/create/fail/emptyContent[snippets='http-request,http-response']
+===== 게시글의 내용 길이가 1000자를 넘어가는 경우
+operation::post/create/fail/tooLongContent[snippets='http-request,http-response']
+
+=== 전체 게시글 조회
+==== 성공
+operation::post/findAll/success[snippets='request-fields']
+없음
+
+operation::post/findAll/success[snippets='response-fields,http-request,http-response']
+
+=== 특정 게시글 조회
+==== 성공
+operation::post/findById/success[snippets='path-parameters,response-fields']
+operation::post/findById/success[snippets='http-request,http-response']
+==== 실패
+operation::post/findById/fail/notFoundPost[snippets='path-parameters,response-fields']
+===== 존재하지 않는 게시글을 조회했을 경우
+operation::post/findById/fail/notFoundPost[snippets='http-request,http-response']
+
+
+=== 특정 게시글 수정
+==== 성공
+operation::post/update/success[snippets='path-parameters,request-fields,response-fields,http-request,http-response']
+==== 실패
+operation::post/update/fail/notFoundPost[snippets='path-parameters,request-fields,response-fields']
+===== 게시글을 수정할 권한이 없는 경우
+operation::post/update/fail/noAuthorization[snippets='http-request,http-response']
+===== 존재하지 않는 게시글일 경우
+operation::post/update/fail/notFoundPost[snippets='http-request,http-response']
+===== 수정할 게시글의 제목이 비어있는 경우
+operation::post/update/fail/emptyTitle[snippets='http-request,http-response']
+===== 수정할 게시글의 제목이 15글자를 넘긴 경우
+operation::post/update/fail/tooLongTitle[snippets='http-request,http-response']
+===== 수정할 게시글의 내용이 비어있는 경우
+operation::post/update/fail/emptyContent[snippets='http-request,http-response']
+===== 수정할 게시글의 내용이 1000글자를 넘긴 경우
+operation::post/update/fail/tooLongContent[snippets='http-request,http-response']
+
+
+=== 특정 게시글 삭제
+==== 성공
+operation::post/delete/success[snippets='path-parameters,http-request,http-response']
+==== 실패
+operation::post/delete/fail/notFoundPost[snippets='path-parameters,response-fields']
+===== 게시글을 삭제할 권한이 없는 경우
+operation::post/delete/fail/noAuthorization[snippets='http-request,http-response']
+
+===== 존재하지 않는 게시글일 경우
+operation::post/delete/fail/notFoundPost[snippets='http-request,http-response']
+
+=== 게시글 검색
+==== 성공
+operation::post/findAllWithKeyword/success[snippets='request-parameters,response-fields,http-request,http-response']
+==== 실패
+operation::post/findAllWithKeyword/fail/invalidKeyword[snippets='request-parameters,response-fields']
+===== 공백 제거 1글자 미만의 키워드로 검색한 경우
+operation::post/findAllWithKeyword/fail/invalidKeyword[snippets='http-request,http-response']
+
+== 댓글
+
+=== 댓글 작성
+==== 성공
+operation::comment/create/success[snippets='path-parameters,request-fields,response-fields,http-request,http-response']
+==== 실패
+operation::comment/create/fail/notFoundMember[snippets='path-parameters,request-fields,response-fields']
+===== 댓글을 작성하려는 회원이 존재하지 않는 경우
+operation::comment/create/fail/notFoundMember[snippets='http-request,http-response']
+===== 댓글을 작성하려는 게시글이 존재하지 않는 경우
+operation::comment/create/fail/notFoundPost[snippets='http-request,http-response']
+===== 댓글의 길이가 50을 넘는 경우
+operation::comment/create/fail/invalidCommentLength[snippets='http-request,http-response']
+===== 댓글이 비어있는 경우
+operation::comment/create/fail/blankComment[snippets='http-request,http-response']
+
+
+== 좋아요
+
+=== 게시글 좋아요
+==== 성공
+operation::postLike/newLike/success[snippets='path-parameters,response-fields']
+===== 처음 좋아요를 누르는 게시글
+operation::postLike/newLike/success[snippets='http-request,http-response']
+===== 두번째로 좋아요를 누르는 게시글(좋아요 취소)
+operation::postLike/removeLike/success[snippets='http-request,http-response']

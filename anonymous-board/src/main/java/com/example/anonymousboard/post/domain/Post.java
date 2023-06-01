@@ -1,13 +1,18 @@
 package com.example.anonymousboard.post.domain;
 
+import com.example.anonymousboard.member.domain.Member;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.Builder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,13 +35,25 @@ public class Post {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     protected Post() {
     }
 
     @Builder
-    private Post(final String title, final String content) {
+    private Post(final String title, final String content, final Member member) {
         this.title = Title.from(title);
         this.content = Content.from(content);
+        this.member = member;
+    }
+
+    public Post(final Long id, final String title, final String content, final Member member) {
+        this.id = id;
+        this.title = Title.from(title);
+        this.content = Content.from(content);
+        this.member = member;
     }
 
     public Long getId() {
@@ -55,11 +72,19 @@ public class Post {
         return createdAt;
     }
 
+    public Member getMember() {
+        return member;
+    }
+
     public void updateTitle(final String value) {
         this.title = Title.from(value);
     }
 
     public void updateContent(final String value) {
         this.content = Content.from(value);
+    }
+
+    public boolean isOwner(final Long id) {
+        return Objects.equals(member.getId(), id);
     }
 }

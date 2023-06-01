@@ -47,15 +47,15 @@ public class MemberService {
         validateUniqueEmail(signUpRequest.getEmail());
     }
 
-    private void validateUniqueEmail(final String email) {
-        if (memberRepository.existsByEmailValue(email)) {
-            throw new DuplicateEmailException();
-        }
-    }
-
     private void confirmPassword(final String password, final String passwordConfirmation) {
         if (!Objects.equals(password, passwordConfirmation)) {
             throw new InvalidPasswordConfirmationException();
+        }
+    }
+
+    private void validateUniqueEmail(final String email) {
+        if (memberRepository.existsByEmailValue(email)) {
+            throw new DuplicateEmailException();
         }
     }
 }

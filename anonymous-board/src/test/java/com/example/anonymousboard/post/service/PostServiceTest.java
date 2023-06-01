@@ -7,43 +7,39 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 
+import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.auth.exception.AuthorizationException;
+import com.example.anonymousboard.comment.domain.Comment;
+import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
+import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
-import com.example.anonymousboard.post.repository.PostRepository;
+import com.example.anonymousboard.util.ServiceTest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 
-@ExtendWith(MockitoExtension.class)
-class PostServiceTest {
+class PostServiceTest extends ServiceTest {
 
-    @InjectMocks
-    PostService postService;
-
-    @Mock
-    PostRepository postRepository;
+    Comment comment;
 
     Post post1;
 
@@ -59,55 +55,88 @@ class PostServiceTest {
 
     Page<Post> pagePosts;
 
+    Member member;
+
+    AuthInfo authInfo;
+
     @BeforeEach
     void setUp() {
+        member = new Member(1L, "valid@mail.com", "!qwer123");
+        comment = Comment.builder()
+                .content("댓글")
+                .member(member)
+                .post(post1)
+                .build();
         post1 = Post.builder()
                 .title("제목1")
                 .content("내용1")
+                .member(member)
                 .build();
         post2 = Post.builder()
                 .title("제목2")
                 .content("내용2")
+                .member(member)
                 .build();
         post3 = Post.builder()
                 .title("제목3")
                 .content("내용3")
+                .member(member)
                 .build();
         post4 = Post.builder()
                 .title("제목4")
                 .content("내용4")
+                .member(member)
                 .build();
         keywordPost1 = Post.builder()
                 .title("비슷한 제목")
                 .content("내용4")
+                .member(member)
                 .build();
         keywordPost2 = Post.builder()
                 .title("비슷한2 제목")
                 .content("내용4")
+                .member(member)
                 .build();
+        authInfo = new AuthInfo(1L);
 
         pagePosts = new PageImpl<>(List.of(post4, post3, post2, post1));
     }
 
-
-    @DisplayName("상품을 저장한다.")
+    @DisplayName("게시글을 저장한다.")
     @Test
-    void createProduct_success() {
+    void createPost_success() {
         // given
         given(postRepository.save(any(Post.class))).willReturn(post1);
+        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
         PostSaveRequest saveRequest = PostSaveRequest.builder()
                 .title("제목1")
                 .content("내용1")
                 .build();
 
         // when
-        PostSaveResponse saveResponse = postService.createPost(saveRequest);
+        PostSaveResponse saveResponse = postService.createPost(authInfo, saveRequest);
 
         // then
         assertAll(
                 () -> assertThat(saveResponse.getMessage()).isEqualTo("게시글 작성을 완료했습니다.")
         );
 
+    }
+
+    @DisplayName("존재하지 않는 사용자라면 게시글을 저장할 수 없다.")
+    @Test
+    void createPost_exception_notFoundMember() {
+        // given
+        given(memberRepository.findById(any())).willReturn(Optional.empty());
+        PostSaveRequest saveRequest = PostSaveRequest.builder()
+                .title("제목1")
+                .content("내용1")
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> postService.createPost(authInfo, saveRequest))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining("회원을 찾을 수 없습니다.");
     }
 
     @DisplayName("임의의 검색 조건을 통해 모든 게시글을 조회할 수 있다.")
@@ -139,14 +168,18 @@ class PostServiceTest {
     void findPostById() {
         // given
         given(postRepository.findById(any())).willReturn(Optional.of(post1));
+        given(commentRepository.findCommentsByPost(post1)).willReturn(List.of(comment));
 
         // when
-        PostResponse findPost = postService.findPostById(1L);
+        PostDetailResponse findPost = postService.findPostDetailById(1L);
 
         // then
         assertAll(
                 () -> assertThat(findPost.getTitle()).isEqualTo("제목1"),
-                () -> assertThat(findPost.getContent()).isEqualTo("내용1")
+                () -> assertThat(findPost.getContent()).isEqualTo("내용1"),
+                () -> assertThat(findPost.getComments().size()).isEqualTo(1),
+                () -> assertThat(findPost.getComments().get(0).getContent()).isEqualTo("댓글"),
+                () -> assertThat(findPost.getComments().get(0).getEmail()).isEqualTo("valid@mail.com")
         );
     }
 
@@ -154,7 +187,7 @@ class PostServiceTest {
     @Test
     void findPostById_exception_notFoundPostId() {
         // when & then
-        assertThatThrownBy(() -> postService.findPostById(11111L))
+        assertThatThrownBy(() -> postService.findPostDetailById(11111L))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
     }
@@ -170,7 +203,7 @@ class PostServiceTest {
                 .build();
 
         // when
-        postService.updatePostById(1L, updateRequest);
+        postService.updatePostById(authInfo, 1L, updateRequest);
         PostResponse updatedPost = postService.findPostById(1L);
 
         // then
@@ -185,14 +218,14 @@ class PostServiceTest {
     @Test
     void updatePost_with_blankContent() {
         // given
-        given(postRepository.findById(any())).willReturn(Optional.of(post1));
+        given(postRepository.findById(any())).willReturn(Optional.ofNullable(post1));
         PostUpdateRequest updateRequest = PostUpdateRequest.builder()
                 .title("수정된 제목")
                 .content(" ")
                 .build();
 
         // when
-        postService.updatePostById(1L, updateRequest);
+        postService.updatePostById(authInfo, 1L, updateRequest);
         PostResponse updatedPost = postService.findPostById(1L);
 
         // then
@@ -213,9 +246,26 @@ class PostServiceTest {
                 .build();
 
         // when & then
-        assertThatThrownBy(() -> postService.updatePostById(1111L, updateRequest))
+        assertThatThrownBy(() -> postService.updatePostById(authInfo, 1111L, updateRequest))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("권한이 없는 게시글을 수정할 수 없다.")
+    @Test
+    void updatePost_exception_noAuthorization() {
+        // given
+        given(postRepository.findById(any())).willReturn(Optional.ofNullable(post1));
+        AuthInfo otherAuth = new AuthInfo(2L);
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> postService.updatePostById(otherAuth, 1L, updateRequest))
+                .isInstanceOf(AuthorizationException.class)
+                .hasMessageContaining("권한이 없습니다.");
     }
 
     @DisplayName("특정 게시글을 삭제할 수 있다.")
@@ -226,20 +276,32 @@ class PostServiceTest {
         doNothing().when(postRepository)
                 .delete(any());
 
-        assertThatNoException().isThrownBy(() -> postService.deletePostById(1L));
+        assertThatNoException().isThrownBy(() -> postService.deletePostById(authInfo, 1L));
     }
 
     @DisplayName("존재하지 않는 게시글은 삭제할 수 없다.")
     @Test
     void deletePost_exception_notFoundPostId() {
         // given
-        doThrow(new PostNotFoundException()).when(postRepository)
-                .findById(any());
+        given(postRepository.findById(any())).willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> postService.deletePostById(111L))
+        assertThatThrownBy(() -> postService.deletePostById(authInfo, 111L))
                 .isInstanceOf(PostNotFoundException.class)
                 .hasMessageContaining("게시글을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("권한이 없는 게시글은 삭제할 수 없다.")
+    @Test
+    void deletePost_exception_noAuthorization() {
+        // given
+        AuthInfo otherAuth = new AuthInfo(2L);
+        given(postRepository.findById(any())).willReturn(Optional.ofNullable(post1));
+
+        // when & then
+        assertThatThrownBy(() -> postService.deletePostById(otherAuth, 111L))
+                .isInstanceOf(AuthorizationException.class)
+                .hasMessageContaining("권한이 없습니다.");
     }
 
     @DisplayName("특정 키워드를 통해 게시글을 검색할 수 있다.")
