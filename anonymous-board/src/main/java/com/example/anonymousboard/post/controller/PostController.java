@@ -9,14 +9,12 @@ import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.service.PostService;
 import com.example.anonymousboard.support.token.Login;
-import java.util.Objects;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,12 +42,14 @@ public class PostController {
 
     @GetMapping("/posts")
     public ResponseEntity<PagePostsResponse> findPosts(
-            @Nullable @RequestParam final String keyword,
             @PageableDefault(sort = "createdAt", direction = Direction.DESC, size = 100) final Pageable pageable) {
-        if (Objects.isNull(keyword)) {
-            PagePostsResponse findPosts = postService.findPosts(pageable);
-            return ResponseEntity.ok(findPosts);
-        }
+        PagePostsResponse findPosts = postService.findPosts(pageable);
+        return ResponseEntity.ok(findPosts);
+    }
+
+    @GetMapping("/posts/search")
+    public ResponseEntity<PagePostsResponse> findPostsByKeyword(@RequestParam final String keyword,
+                                                                  @PageableDefault(sort = "createdAt", direction = Direction.DESC, size = 100) final Pageable pageable) {
         PagePostsResponse findPosts = postService.findPostsByKeyword(keyword, pageable);
         return ResponseEntity.ok(findPosts);
     }

@@ -814,7 +814,7 @@ public class PostControllerTest extends ControllerTest {
         given(postService.findPostsByKeyword(any(), any())).willReturn(keywordPosts);
 
         // when
-        ResultActions result = mockMvc.perform(get("/posts").param("keyword", "비슷한"));
+        ResultActions result = mockMvc.perform(get("/posts/search").param("keyword", "비슷한"));
 
         // then
         result.andExpectAll(
@@ -853,7 +853,7 @@ public class PostControllerTest extends ControllerTest {
         given(postService.findPostsByKeyword(any(), any())).willThrow(new InvalidPostKeywordException());
 
         // when
-        ResultActions result = mockMvc.perform(get("/posts").param("keyword", ""));
+        ResultActions result = mockMvc.perform(get("/posts/search").param("keyword", ""));
 
         // then
         result.andExpectAll(

@@ -404,7 +404,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         );
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts", "keyword", "특정");
+        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts/search", "keyword", "특정");
         PagePostsResponse pagePostsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
         PostResponse postResponse = pagePostsResponse.getPostResponses().get(0);
 
@@ -429,7 +429,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         httpPostWithAuthorization(customRequest, "/posts", token);
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts", "keyword", " ");
+        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts/search", "keyword", " ");
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
