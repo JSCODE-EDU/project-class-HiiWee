@@ -64,6 +64,15 @@ public class ApiRequestFixture {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> httpGetWithAuthorization(final String path, final String token) {
+        return given().log().all()
+                .header(AUTHORIZATION, token)
+                .when()
+                .get(path)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> httpDeleteOne(final String path, final String token) {
         return given().log().all()
                 .header(AUTHORIZATION, token)

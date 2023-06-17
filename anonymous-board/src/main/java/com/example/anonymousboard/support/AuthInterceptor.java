@@ -42,6 +42,10 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private boolean isGetRequest(final HttpServletRequest request) {
+        // TODO: 리팩토링 -> URL 하드코딩
+        if (request.getRequestURI().equalsIgnoreCase("/members/me")) {
+            return false;
+        }
         return request.getMethod().equalsIgnoreCase(HttpMethod.GET.name());
     }
 
