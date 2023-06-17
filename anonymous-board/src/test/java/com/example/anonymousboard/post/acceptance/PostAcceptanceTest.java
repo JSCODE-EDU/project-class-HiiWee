@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.advice.ErrorResponse;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
+import com.example.anonymousboard.post.dto.PagePostsDetailResponse;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -170,10 +171,10 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
         // when
         ExtractableResponse<Response> response = httpGet("/posts");
-        PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
-        List<String> titles = postsResponse.getPostResponses()
+        PagePostsDetailResponse postsResponse = response.jsonPath().getObject(".", PagePostsDetailResponse.class);
+        List<String> titles = postsResponse.getPosts()
                 .stream()
-                .map(PostResponse::getTitle)
+                .map(PostDetailResponse::getTitle)
                 .collect(Collectors.toList());
 
         // then
@@ -188,16 +189,16 @@ public class PostAcceptanceTest extends AcceptanceTest {
     void findPosts_with_limit100() {
         // given
         String token = getMemberToken();
-        for (int sequence = 1; sequence <= 200; sequence++) {
+        for (int sequence = 1; sequence <= 101; sequence++) {
             httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         }
 
         // when
         ExtractableResponse<Response> response = httpGet("/posts");
-        PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
+        PagePostsDetailResponse pagePostsDetailResponse = response.jsonPath().getObject(".", PagePostsDetailResponse.class);
 
         // then
-        assertThat(postsResponse.getTotalPostCount()).isEqualTo(100);
+        assertThat(pagePostsDetailResponse.getTotalPostCount()).isEqualTo(100);
     }
 
     @DisplayName("특정 게시글 1개를 저장하고 조회할 수 있다.")
@@ -444,12 +445,12 @@ public class PostAcceptanceTest extends AcceptanceTest {
     void findPostsByKeyword_with_limit100() {
         // given
         String token = getMemberToken();
-        for (int sequence = 1; sequence <= 200; sequence++) {
+        for (int sequence = 1; sequence <= 101; sequence++) {
             httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         }
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts", "keyword", "제목");
+        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts/search", "keyword", "제목");
         PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
 
         // then

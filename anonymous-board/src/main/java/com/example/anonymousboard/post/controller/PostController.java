@@ -1,6 +1,7 @@
 package com.example.anonymousboard.post.controller;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.post.dto.PagePostsDetailResponse;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -41,15 +42,16 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<PagePostsResponse> findPosts(
+    public ResponseEntity<PagePostsDetailResponse> findPosts(
+            @RequestParam(name = "limit", defaultValue = "100") final int commentLimit,
             @PageableDefault(sort = "createdAt", direction = Direction.DESC, size = 100) final Pageable pageable) {
-        PagePostsResponse findPosts = postService.findPosts(pageable);
+        PagePostsDetailResponse findPosts = postService.findPosts(commentLimit, pageable);
         return ResponseEntity.ok(findPosts);
     }
 
     @GetMapping("/posts/search")
     public ResponseEntity<PagePostsResponse> findPostsByKeyword(@RequestParam final String keyword,
-                                                                  @PageableDefault(sort = "createdAt", direction = Direction.DESC, size = 100) final Pageable pageable) {
+                                                                @PageableDefault(sort = "createdAt", direction = Direction.DESC, size = 100) final Pageable pageable) {
         PagePostsResponse findPosts = postService.findPostsByKeyword(keyword, pageable);
         return ResponseEntity.ok(findPosts);
     }

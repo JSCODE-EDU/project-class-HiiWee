@@ -3,29 +3,40 @@ package com.example.anonymousboard.post.service;
 import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.auth.exception.AuthorizationException;
 import com.example.anonymousboard.comment.domain.Comment;
+import com.example.anonymousboard.comment.exception.CommentLimitException;
 import com.example.anonymousboard.comment.repository.CommentRepository;
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.post.domain.Keyword;
 import com.example.anonymousboard.post.domain.Post;
+import com.example.anonymousboard.post.dto.PagePostsDetailResponse;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
 import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
+import com.example.anonymousboard.post.exception.PostLimitException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class PostService {
+
+    private static final int COMMENT_SEARCHING_LIMIT = 100;
+    private static final int POST_SEARCHING_LIMIT = 100;
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
@@ -50,9 +61,15 @@ public class PostService {
         return PostSaveResponse.createPostSuccess(savedPost.getId());
     }
 
-    public PagePostsResponse findPosts(Pageable pageable) {
-        Page<Post> posts = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
-        return PagePostsResponse.from(posts.getContent());
+    public PagePostsDetailResponse findPosts(final int commentLimit, final Pageable pageable) {
+        validatePostsViewCondition(commentLimit, pageable);
+        Page<Post> postPages = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
+        List<Comment> comments = commentRepository.findCommentsPagesByPostIn(
+                PageRequest.of(0, commentLimit, Direction.DESC, "createdAt"), postPages.getContent());
+        System.out.println(comments.size());
+        Map<Post, List<Comment>> groupedComments = separateCommentsByPost(comments);
+        List<PostDetailResponse> postsResponse = createPostsResponse(postPages.getContent(), groupedComments);
+        return PagePostsDetailResponse.from(postsResponse);
     }
 
     public PagePostsResponse findPostsByKeyword(final String keyword, Pageable pageable) {
@@ -99,9 +116,41 @@ public class PostService {
                 .orElseThrow(MemberNotFoundException::new);
     }
 
+    private List<PostDetailResponse> createPostsResponse(final List<Post> postPages,
+                                                         final Map<Post, List<Comment>> groupedComments) {
+        return postPages.stream()
+                .map(post -> {
+                    if (groupedComments.containsKey(post)) {
+                        return PostDetailResponse.of(post, groupedComments.get(post));
+                    }
+                    return PostDetailResponse.of(post, Collections.emptyList());
+                }).collect(Collectors.toList());
+    }
+
+    private Map<Post, List<Comment>> separateCommentsByPost(final List<Comment> comments) {
+        return comments.stream().collect(Collectors.groupingBy(Comment::getPost));
+    }
+
     private void validateOwner(final AuthInfo authInfo, final Post post) {
         if (!post.isOwner(authInfo.getId())) {
             throw new AuthorizationException();
+        }
+    }
+
+    private void validatePostsViewCondition(final int commentLimit, final Pageable pageable) {
+        validateCommentLimit(commentLimit);
+        validatePostLimit(pageable);
+    }
+
+    private void validatePostLimit(final Pageable pageable) {
+        if (pageable.getPageSize() > POST_SEARCHING_LIMIT) {
+            throw new PostLimitException();
+        }
+    }
+
+    private void validateCommentLimit(final int commentLimit) {
+        if (commentLimit > COMMENT_SEARCHING_LIMIT) {
+            throw new CommentLimitException();
         }
     }
 }

@@ -3,6 +3,7 @@ package com.example.anonymousboard.post.controller;
 import static com.example.anonymousboard.util.apidocs.ApiDocumentUtils.getDocumentRequest;
 import static com.example.anonymousboard.util.apidocs.ApiDocumentUtils.getDocumentResponse;
 import static com.example.anonymousboard.util.apidocs.DocumentFormatGenerator.getConstraints;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
@@ -24,8 +25,11 @@ import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
 import com.example.anonymousboard.auth.exception.AuthorizationException;
 import com.example.anonymousboard.comment.dto.CommentResponse;
+import com.example.anonymousboard.comment.exception.CommentErrorCode;
+import com.example.anonymousboard.comment.exception.CommentLimitException;
 import com.example.anonymousboard.member.exception.MemberErrorCode;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
+import com.example.anonymousboard.post.dto.PagePostsDetailResponse;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -36,6 +40,7 @@ import com.example.anonymousboard.post.exception.InvalidContentException;
 import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
 import com.example.anonymousboard.post.exception.InvalidTitleException;
 import com.example.anonymousboard.post.exception.PostErrorCode;
+import com.example.anonymousboard.post.exception.PostLimitException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.util.ControllerTest;
 import java.time.LocalDateTime;
@@ -50,17 +55,26 @@ import org.springframework.test.web.servlet.ResultActions;
 
 public class PostControllerTest extends ControllerTest {
 
+    PagePostsDetailResponse pagePostsDetailResponse;
+
     PagePostsResponse pagePostsResponse;
 
     PagePostsResponse keywordPosts;
 
-    PostDetailResponse postDetailResponse;
+    PostDetailResponse postDetailResponse1;
+
+    PostDetailResponse postDetailResponse2;
 
     CommentResponse commentResponse1;
 
     CommentResponse commentResponse2;
 
     CommentResponse commentResponse3;
+
+    CommentResponse commentResponse4;
+
+    CommentResponse commentResponse5;
+
 
     PostResponse postResponse1;
 
@@ -89,12 +103,31 @@ public class PostControllerTest extends ControllerTest {
                 .email("valid03@mail.com")
                 .createdAt(LocalDateTime.now())
                 .build();
-        postDetailResponse = PostDetailResponse.builder()
+        commentResponse4 = CommentResponse.builder()
+                .content("댓글4")
+                .email("valid04@mail.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+        commentResponse5 = CommentResponse.builder()
+                .content("댓글5")
+                .email("valid05@mail.com")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        postDetailResponse1 = PostDetailResponse.builder()
                 .id(1L)
                 .title("제목1")
                 .content("내용1")
                 .createdAt(LocalDateTime.now())
                 .comments(List.of(commentResponse1, commentResponse2, commentResponse3))
+                .build();
+
+        postDetailResponse2 = PostDetailResponse.builder()
+                .id(2L)
+                .title("제목2")
+                .content("내용2")
+                .createdAt(LocalDateTime.now())
+                .comments(List.of(commentResponse4, commentResponse5))
                 .build();
 
         postResponse1 = PostResponse.builder()
@@ -127,7 +160,7 @@ public class PostControllerTest extends ControllerTest {
                 .content("내용")
                 .createdAt(LocalDateTime.now())
                 .build();
-
+        pagePostsDetailResponse = PagePostsDetailResponse.from(List.of(postDetailResponse1, postDetailResponse2));
         pagePostsResponse = PagePostsResponse.builder()
                 .postResponses(List.of(postResponse3, postResponse2, postResponse1))
                 .totalPostCount(3)
@@ -201,7 +234,17 @@ public class PostControllerTest extends ControllerTest {
         ).andDo(
                 document("post/create/fail/emptyTitle",
                         getDocumentRequest(),
-                        getDocumentResponse()
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목")
+                                        .attributes(getConstraints("constraints", "제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.")),
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용")
+                                        .attributes(getConstraints("constraints", "내용은 공백 포함 1 ~ 1000자 사이여야 합니다."))
+                        ),
+                        responseFields(
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
+                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
+                        )
                 )
         );
     }
@@ -328,35 +371,116 @@ public class PostControllerTest extends ControllerTest {
     @Test
     void findPosts() throws Exception {
         // given
-        given(postService.findPosts(any())).willReturn(pagePostsResponse);
+        given(postService.findPosts(anyInt(), any())).willReturn(pagePostsDetailResponse);
 
         // when
-        ResultActions result = mockMvc.perform(get("/posts"));
+        ResultActions result = mockMvc.perform(get("/posts")
+                .param("page", "0")
+                .param("size", "100")
+                .param("limit", "100")
+        );
 
         // then
         result.andExpectAll(
                 status().isOk(),
-                jsonPath("$.postResponses.size()").value(3),
-                jsonPath("$.postResponses[0].id").value(3L),
-                jsonPath("$.postResponses[1].id").value(2L),
-                jsonPath("$.postResponses[2].id").value(1L),
-                jsonPath("$.totalPostCount").value(3)
+                jsonPath("$.posts.size()").value(2),
+                jsonPath("$.posts[0].id").value(1L),
+                jsonPath("$.posts[1].id").value(2L),
+                jsonPath("$.posts[0].comments.size()").value(3),
+                jsonPath("$.posts[1].comments.size()").value(2),
+                jsonPath("$.totalPostCount").value(2)
         ).andDo(
                 document("post/findAll/success",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        requestParameters(
+                                parameterWithName("page").description("게시글 페이지 번호(0부터 시작)").optional()
+                                        .attributes(getConstraints("constraints", "최대 100개까지 조회할 수 있습니다.")),
+                                parameterWithName("size").description("하나의 페이지에 해당되는 게시글의 개수").optional(),
+                                parameterWithName("limit").description("게시글 당 조회할 최대 댓글의 수").optional()
+                                        .attributes(getConstraints("constraints", "최대 100개까지 조회할 수 있습니다."))
+                        ),
                         responseFields(
-                                fieldWithPath("postResponses").type(JsonFieldType.ARRAY).description("게시글 조회 배열"),
-                                fieldWithPath("postResponses[].id").type(JsonFieldType.NUMBER).description("게시글 ID")
+                                fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 조회 배열"),
+                                fieldWithPath("posts[].id").type(JsonFieldType.NUMBER).description("게시글 ID")
                                         .optional(),
-                                fieldWithPath("postResponses[].title").type(JsonFieldType.STRING).description("게시글 제목")
+                                fieldWithPath("posts[].title").type(JsonFieldType.STRING).description("게시글 제목")
                                         .optional(),
-                                fieldWithPath("postResponses[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("posts[].content").type(JsonFieldType.STRING)
                                         .description("게시글 내용").optional(),
-                                fieldWithPath("postResponses[].createdAt").type(JsonFieldType.STRING)
+                                fieldWithPath("posts[].createdAt").type(JsonFieldType.STRING)
                                         .description("게시글 작성일자").optional(),
+                                fieldWithPath("posts[].comments[].email").type(JsonFieldType.STRING)
+                                        .description("댓글 작성자 이메일").optional(),
+                                fieldWithPath("posts[].comments[].content").type(JsonFieldType.STRING)
+                                        .description("댓글 내용").optional(),
+                                fieldWithPath("posts[].comments[].createdAt").type(JsonFieldType.STRING)
+                                        .description("댓글 작성일자").optional(),
                                 fieldWithPath("totalPostCount").type(JsonFieldType.NUMBER).description("조회한 게시글 개수")
                         )
+                )
+        );
+    }
+
+    @DisplayName("게시글 전체 조회시 페이지당 게시글의 수가 100개를 넘기면 400을 반환한다.")
+    @Test
+    void findPosts_exception_invalidSizeOfPage() throws Exception {
+        // given
+        given(postService.findPosts(anyInt(), any())).willThrow(new PostLimitException());
+
+        // when
+        ResultActions result = mockMvc.perform(get("/posts")
+                .param("page", "0")
+                .param("size", "101")
+                .param("limit", "100")
+        );
+
+        // then
+        result.andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorCode").value(PostErrorCode.POST_LIMIT.value()),
+                jsonPath("$.message").value("게시글은 최대 100개까지 조회할 수 있습니다.")
+        ).andDo(
+                document("post/findAll/fail/invalidSizeOfPage",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestParameters(
+                                parameterWithName("page").description("게시글 페이지 번호(0부터 시작)").optional()
+                                        .attributes(getConstraints("constraints", "최대 100개까지 조회할 수 있습니다.")),
+                                parameterWithName("size").description("하나의 페이지에 해당되는 게시글의 개수").optional(),
+                                parameterWithName("limit").description("게시글 당 조회할 최대 댓글의 수").optional()
+                                        .attributes(getConstraints("constraints", "최대 100개까지 조회할 수 있습니다."))
+                        ),
+                        responseFields(
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),
+                                fieldWithPath("errorCode").type(JsonFieldType.NUMBER).description("에러 코드")
+                        )
+                )
+        );
+    }
+
+    @DisplayName("게시글 전체 조회시 조회할 댓글의 개수가 100개를 넘기면 400을 반환한다.")
+    @Test
+    void findPosts_exception_invalidCommentCount() throws Exception {
+        // given
+        given(postService.findPosts(anyInt(), any())).willThrow(new CommentLimitException());
+
+        // when
+        ResultActions result = mockMvc.perform(get("/posts")
+                .param("page", "0")
+                .param("size", "100")
+                .param("limit", "101")
+        );
+
+        // then
+        result.andExpectAll(
+                status().isBadRequest(),
+                jsonPath("$.errorCode").value(CommentErrorCode.COMMENT_LIMIT.value()),
+                jsonPath("$.message").value("전체 게시글 조회시 댓글은 최대 100개까지 조회할 수 있습니다.")
+        ).andDo(
+                document("post/findAll/fail/invalidCommentCount",
+                        getDocumentRequest(),
+                        getDocumentResponse()
                 )
         );
     }
@@ -365,7 +489,7 @@ public class PostControllerTest extends ControllerTest {
     @Test
     void findPost() throws Exception {
         // given
-        given(postService.findPostDetailById(any())).willReturn(postDetailResponse);
+        given(postService.findPostDetailById(any())).willReturn(postDetailResponse1);
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 1L));

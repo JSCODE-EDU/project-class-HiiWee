@@ -67,6 +67,10 @@ public class Comment {
         return member;
     }
 
+    public Post getPost() {
+        return post;
+    }
+
     public String getWriterEmail() {
         return member.getEmail();
     }
