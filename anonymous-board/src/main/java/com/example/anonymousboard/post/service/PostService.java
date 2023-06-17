@@ -66,7 +66,6 @@ public class PostService {
         Page<Post> postPages = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
         List<Comment> comments = commentRepository.findCommentsPagesByPostIn(
                 PageRequest.of(0, commentLimit, Direction.DESC, "createdAt"), postPages.getContent());
-        System.out.println(comments.size());
         Map<Post, List<Comment>> groupedComments = separateCommentsByPost(comments);
         List<PostDetailResponse> postsResponse = createPostsResponse(postPages.getContent(), groupedComments);
         return PagePostsDetailResponse.from(postsResponse);
