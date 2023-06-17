@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.advice.ErrorResponse;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
+import com.example.anonymousboard.comment.dto.CommentResponse;
+import com.example.anonymousboard.comment.dto.CommentSaveRequest;
 import com.example.anonymousboard.post.dto.PagePostsDetailResponse;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostDetailResponse;
@@ -44,6 +46,8 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     PostUpdateRequest postUpdateRequest;
 
+    CommentSaveRequest commentSaveRequest;
+
     @BeforeEach
     void setUp() {
         System.out.println("passsssss");
@@ -51,6 +55,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         postSaveRequest2 = PostSaveRequest.builder().title("제목2").content("내용2").build();
         postSaveRequest3 = PostSaveRequest.builder().title("제목3").content("내용3").build();
         postUpdateRequest = PostUpdateRequest.builder().title("수정된 제목").content("수정된 내용").build();
+        commentSaveRequest = new CommentSaveRequest("댓글 내용");
     }
 
     @DisplayName("게시글 작성을 할 수 있다.")
@@ -181,6 +186,39 @@ public class PostAcceptanceTest extends AcceptanceTest {
         assertAll(
                 () -> assertThat(postsResponse.getTotalPostCount()).isEqualTo(3),
                 () -> assertThat(titles).containsExactly("제목3", "제목2", "제목1")
+        );
+    }
+
+    @DisplayName("작성한 게시글에 다른 사용자가 댓글을 달 수 있다.")
+    @Test
+    void findPosts_with_comment() {
+        // given
+        String memberToken = getMemberToken();
+        String otherMemberToken = getOtherMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", memberToken);
+        httpPostWithAuthorization(commentSaveRequest, "/posts/1/comments", otherMemberToken);
+
+        // when
+        ExtractableResponse<Response> response = httpGet("/posts?limit=100");
+        PagePostsDetailResponse pagePostsDetailResponse = response.jsonPath()
+                .getObject(".", PagePostsDetailResponse.class);
+
+        List<PostDetailResponse> posts = pagePostsDetailResponse.getPosts();
+        PostDetailResponse postDetailResponse = posts.get(0);
+
+        List<CommentResponse> comments = postDetailResponse.getComments();
+        CommentResponse commentResponse = comments.get(0);
+
+        // then
+        assertAll(
+                () -> assertThat(posts.size()).isEqualTo(1),
+                () -> assertThat(postDetailResponse.getTitle()).isEqualTo("제목1"),
+                () -> assertThat(postDetailResponse.getContent()).isEqualTo("내용1"),
+                () -> assertThat(postDetailResponse.getCreatedAt()).isNotNull(),
+                () -> assertThat(comments.size()).isEqualTo(1),
+                () -> assertThat(commentResponse.getContent()).isEqualTo("댓글 내용"),
+                () -> assertThat(commentResponse.getEmail()).isEqualTo("valid02@mail.com"),
+                () -> assertThat(commentResponse.getCreatedAt()).isNotNull()
         );
     }
 
