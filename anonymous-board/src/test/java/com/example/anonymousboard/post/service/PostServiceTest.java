@@ -14,6 +14,7 @@ import com.example.anonymousboard.comment.domain.Comment;
 import com.example.anonymousboard.comment.dto.CommentResponse;
 import com.example.anonymousboard.comment.exception.CommentLimitException;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.dto.PagePostsDetailResponse;
@@ -65,7 +66,7 @@ class PostServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        member = new Member(1L, "valid@mail.com", "!qwer123");
+        member = new Member(1L, "valid@mail.com", Password.of(encryptor, "!qwer123"));
         post1 = Post.builder()
                 .title("제목1")
                 .content("내용1")

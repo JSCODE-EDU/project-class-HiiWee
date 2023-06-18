@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.example.anonymousboard.auth.dto.LoginRequest;
 import com.example.anonymousboard.auth.dto.TokenResponse;
 import com.example.anonymousboard.auth.exception.LoginFailedException;
+import com.example.anonymousboard.member.domain.Encryptor;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 class AuthServiceTest {
 
     @Autowired
+    Encryptor encryptor;
+
+    @Autowired
     AuthService authService;
 
     @Autowired
@@ -31,7 +36,7 @@ class AuthServiceTest {
     void setUp() {
         member = Member.builder()
                 .email("test123@test.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
 
         memberRepository.save(member);

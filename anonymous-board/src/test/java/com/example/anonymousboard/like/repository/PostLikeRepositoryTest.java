@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.anonymousboard.like.domain.PostLike;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.util.RepositoryTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,11 +23,11 @@ class PostLikeRepositoryTest extends RepositoryTest {
     void setUp() {
         member = Member.builder()
                 .email("valid1@mail.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
         otherMember = Member.builder()
                 .email("valid2@mail.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
         post = Post.builder()
                 .title("제목")

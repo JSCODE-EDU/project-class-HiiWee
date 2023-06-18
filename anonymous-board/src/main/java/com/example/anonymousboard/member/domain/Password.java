@@ -22,9 +22,9 @@ public class Password {
         this.value = value;
     }
 
-    public static Password from(final String value) {
+    public static Password of(final Encryptor encryptor, final String value) {
         validate(value);
-        return new Password(value);
+        return new Password(encryptor.encrypt(value));
     }
 
     private static void validate(final String value) {
