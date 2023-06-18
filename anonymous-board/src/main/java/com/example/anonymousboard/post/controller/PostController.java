@@ -43,7 +43,7 @@ public class PostController {
 
     @GetMapping("/posts")
     public ResponseEntity<PagePostsDetailResponse> findPosts(
-            @RequestParam(name = "limit", defaultValue = "100") final int commentLimit,
+            @RequestParam(name = "limit", defaultValue = "0") final int commentLimit,
             @PageableDefault(sort = "createdAt", direction = Direction.DESC, size = 100) final Pageable pageable) {
         PagePostsDetailResponse findPosts = postService.findPosts(commentLimit, pageable);
         return ResponseEntity.ok(findPosts);

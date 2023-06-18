@@ -148,7 +148,7 @@ class PostServiceTest extends ServiceTest {
     void findPosts() {
         // given
         given(postRepository.findPostsByOrderByCreatedAtDesc(any())).willReturn(pagePosts);
-        given(commentRepository.findCommentsPagesByPostIn(any(), any())).willReturn(List.of(comment));
+        given(commentRepository.findCommentsPagesByPostIn(any())).willReturn(List.of(comment));
         Pageable pageable = PageRequest.of(0, 100, Direction.DESC, "createdAt");
 
         // when

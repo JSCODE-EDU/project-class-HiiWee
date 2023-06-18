@@ -19,7 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.Builder;
-import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -45,7 +44,6 @@ public class Post {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @BatchSize(size = 100)
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 

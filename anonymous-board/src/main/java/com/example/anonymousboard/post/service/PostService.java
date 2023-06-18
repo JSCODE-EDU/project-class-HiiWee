@@ -20,14 +20,14 @@ import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostLimitException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,9 +64,8 @@ public class PostService {
     public PagePostsDetailResponse findPosts(final int commentLimit, final Pageable pageable) {
         validatePostsViewCondition(commentLimit, pageable);
         Page<Post> postPages = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
-        List<Comment> comments = commentRepository.findCommentsPagesByPostIn(
-                PageRequest.of(0, commentLimit, Direction.DESC, "createdAt"), postPages.getContent());
-        Map<Post, List<Comment>> groupedComments = separateCommentsByPost(comments);
+        List<Comment> comments = commentRepository.findCommentsPagesByPostIn(postPages.getContent());
+        Map<Post, List<Comment>> groupedComments = separateLimitCommentsByPost(comments, commentLimit);
         List<PostDetailResponse> postsResponse = createPostsResponse(postPages.getContent(), groupedComments);
         return PagePostsDetailResponse.from(postsResponse);
     }
@@ -126,8 +125,18 @@ public class PostService {
                 }).collect(Collectors.toList());
     }
 
-    private Map<Post, List<Comment>> separateCommentsByPost(final List<Comment> comments) {
-        return comments.stream().collect(Collectors.groupingBy(Comment::getPost));
+    private Map<Post, List<Comment>> separateLimitCommentsByPost(final List<Comment> comments, final int commentLimit) {
+        Map<Post, List<Comment>> groupedComments = Maps.newHashMap();
+        for (Comment comment : comments) {
+            Post post = comment.getPost();
+            if (!groupedComments.containsKey(post)) {
+                groupedComments.computeIfAbsent(post, k -> Lists.newArrayList());
+            }
+            if (groupedComments.get(post).size() < commentLimit) {
+                groupedComments.get(post).add(comment);
+            }
+        }
+        return groupedComments;
     }
 
     private void validateOwner(final AuthInfo authInfo, final Post post) {

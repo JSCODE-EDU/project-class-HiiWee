@@ -79,7 +79,8 @@ public class MemberAcceptanceTest extends AcceptanceTest {
         TokenResponse loginToken = loginResponse.jsonPath().getObject(".", TokenResponse.class);
 
         // when
-        ExtractableResponse<Response> response = httpGetWithAuthorization("/members/me", "Bearer " + loginToken.getToken());
+        ExtractableResponse<Response> response = httpGetWithAuthorization("/members/me",
+                "Bearer " + loginToken.getToken());
         MyInfoResponse myInfo = response.jsonPath().getObject(".", MyInfoResponse.class);
 
         // then

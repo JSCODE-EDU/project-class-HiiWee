@@ -50,7 +50,6 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        System.out.println("passsssss");
         postSaveRequest1 = PostSaveRequest.builder().title("제목1").content("내용1").build();
         postSaveRequest2 = PostSaveRequest.builder().title("제목2").content("내용2").build();
         postSaveRequest3 = PostSaveRequest.builder().title("제목3").content("내용3").build();
@@ -233,10 +232,39 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
         // when
         ExtractableResponse<Response> response = httpGet("/posts");
-        PagePostsDetailResponse pagePostsDetailResponse = response.jsonPath().getObject(".", PagePostsDetailResponse.class);
+        PagePostsDetailResponse pagePostsDetailResponse = response.jsonPath()
+                .getObject(".", PagePostsDetailResponse.class);
 
         // then
         assertThat(pagePostsDetailResponse.getTotalPostCount()).isEqualTo(100);
+    }
+
+    @DisplayName("전체 게시글 조회시 각 게시글의 댓글을 임의의 수를 지정해 조회할 수 있다.")
+    @Test
+    void findPosts_with_commentsEachPost() {
+        // given
+        String memberToken = getMemberToken();
+        String otherMemberToken = getOtherMemberToken();
+        for (int sequence = 1; sequence <= 3; sequence++) {
+            httpPostWithAuthorization(postSaveRequest1, "/posts", memberToken);
+        }
+        for (int sequence = 1; sequence <= 101; sequence++) {
+            httpPostWithAuthorization(commentSaveRequest, "/posts/1/comments", otherMemberToken);
+            httpPostWithAuthorization(commentSaveRequest, "/posts/2/comments", otherMemberToken);
+            httpPostWithAuthorization(commentSaveRequest, "/posts/3/comments", otherMemberToken);
+        }
+
+        // when
+        ExtractableResponse<Response> response = httpGet("/posts?limit=50");
+        PagePostsDetailResponse pagePostsDetailResponse = response.jsonPath()
+                .getObject(".", PagePostsDetailResponse.class);
+        List<Integer> commentsSize = pagePostsDetailResponse.getPosts()
+                .stream()
+                .map(postDetailResponse -> postDetailResponse.getComments().size())
+                .collect(Collectors.toList());
+
+        // then
+        assertThat(commentsSize).containsExactly(50, 50, 50);
     }
 
     @DisplayName("특정 게시글 1개를 저장하고 조회할 수 있다.")
