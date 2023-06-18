@@ -364,7 +364,6 @@ public class PostControllerTest extends ControllerTest {
                         getDocumentResponse()
                 )
         );
-
     }
 
     @DisplayName("모든 게시글을 조회할 수 있으며 200을 반환한다.")
@@ -394,11 +393,11 @@ public class PostControllerTest extends ControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParameters(
-                                parameterWithName("page").description("게시글 페이지 번호(0부터 시작)").optional()
-                                        .attributes(getConstraints("constraints", "최대 100개까지 조회할 수 있습니다.")),
-                                parameterWithName("size").description("하나의 페이지에 해당되는 게시글의 개수").optional(),
+                                parameterWithName("page").description("게시글 페이지 번호(0부터 시작)").optional(),
+                                parameterWithName("size").description("하나의 페이지에 해당되는 게시글의 개수").optional()
+                                        .attributes(getConstraints("constraints", "0 <= size <= 100")),
                                 parameterWithName("limit").description("게시글 당 조회할 최대 댓글의 수").optional()
-                                        .attributes(getConstraints("constraints", "최대 100개까지 조회할 수 있습니다."))
+                                        .attributes(getConstraints("constraints", "0 <= limit <= 100"))
                         ),
                         responseFields(
                                 fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 조회 배열"),
@@ -445,11 +444,11 @@ public class PostControllerTest extends ControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParameters(
-                                parameterWithName("page").description("게시글 페이지 번호(0부터 시작)").optional()
-                                        .attributes(getConstraints("constraints", "최대 100개까지 조회할 수 있습니다.")),
-                                parameterWithName("size").description("하나의 페이지에 해당되는 게시글의 개수").optional(),
+                                parameterWithName("page").description("게시글 페이지 번호(0부터 시작)").optional(),
+                                parameterWithName("size").description("하나의 페이지에 해당되는 게시글의 개수").optional()
+                                        .attributes(getConstraints("constraints", "0 <= size <= 100")),
                                 parameterWithName("limit").description("게시글 당 조회할 최대 댓글의 수").optional()
-                                        .attributes(getConstraints("constraints", "최대 100개까지 조회할 수 있습니다."))
+                                        .attributes(getConstraints("constraints", "0 <= limit <= 100"))
                         ),
                         responseFields(
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("실패 메시지"),

@@ -916,7 +916,7 @@ Content-Length: 90
 {
   "id" : 1,
   "email" : "valid@main.com",
-  "createdAt" : "2023-06-17T23:55:21.239644"
+  "createdAt" : "2023-06-18T19:14:31.222459"
 }</code></pre>
 </div>
 </div>
@@ -1632,19 +1632,19 @@ Content-Length: 122
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 페이지 번호(0부터 시작)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">최대 100개까지 조회할 수 있습니다.</p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">하나의 페이지에 해당되는 게시글의 개수</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &#8656; size &#8656; 100</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>limit</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 당 조회할 최대 댓글의 수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">최대 100개까지 조회할 수 있습니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &#8656; limit &#8656; 100</p></td>
 </tr>
 </tbody>
 </table>
@@ -1753,40 +1753,40 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 939
+Content-Length: 938
 
 {
   "posts" : [ {
     "id" : 1,
     "title" : "제목1",
     "content" : "내용1",
-    "createdAt" : "2023-06-17T23:55:23.866145",
+    "createdAt" : "2023-06-18T19:14:36.059917",
     "comments" : [ {
       "email" : "valid01@mail.com",
       "content" : "댓글1",
-      "createdAt" : "2023-06-17T23:55:23.866137"
+      "createdAt" : "2023-06-18T19:14:36.05991"
     }, {
       "email" : "valid02@mail.com",
       "content" : "댓글2",
-      "createdAt" : "2023-06-17T23:55:23.866142"
+      "createdAt" : "2023-06-18T19:14:36.059914"
     }, {
       "email" : "valid03@mail.com",
       "content" : "댓글3",
-      "createdAt" : "2023-06-17T23:55:23.866142"
+      "createdAt" : "2023-06-18T19:14:36.059915"
     } ]
   }, {
     "id" : 2,
     "title" : "제목2",
     "content" : "내용2",
-    "createdAt" : "2023-06-17T23:55:23.866149",
+    "createdAt" : "2023-06-18T19:14:36.059921",
     "comments" : [ {
       "email" : "valid04@mail.com",
       "content" : "댓글4",
-      "createdAt" : "2023-06-17T23:55:23.866143"
+      "createdAt" : "2023-06-18T19:14:36.059915"
     }, {
       "email" : "valid05@mail.com",
       "content" : "댓글5",
-      "createdAt" : "2023-06-17T23:55:23.866143"
+      "createdAt" : "2023-06-18T19:14:36.059916"
     } ]
   } ],
   "totalPostCount" : 2
@@ -1819,19 +1819,19 @@ Content-Length: 939
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 페이지 번호(0부터 시작)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">최대 100개까지 조회할 수 있습니다.</p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">하나의 페이지에 해당되는 게시글의 개수</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &#8656; size &#8656; 100</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>limit</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 당 조회할 최대 댓글의 수</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">최대 100개까지 조회할 수 있습니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &#8656; limit &#8656; 100</p></td>
 </tr>
 </tbody>
 </table>
@@ -2051,25 +2051,25 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 471
+Content-Length: 472
 
 {
   "id" : 1,
   "title" : "제목1",
   "content" : "내용1",
-  "createdAt" : "2023-06-17T23:55:23.798333",
+  "createdAt" : "2023-06-18T19:14:35.941789",
   "comments" : [ {
     "email" : "valid01@mail.com",
     "content" : "댓글1",
-    "createdAt" : "2023-06-17T23:55:23.798322"
+    "createdAt" : "2023-06-18T19:14:35.941781"
   }, {
     "email" : "valid02@mail.com",
     "content" : "댓글2",
-    "createdAt" : "2023-06-17T23:55:23.798329"
+    "createdAt" : "2023-06-18T19:14:35.941786"
   }, {
     "email" : "valid03@mail.com",
     "content" : "댓글3",
-    "createdAt" : "2023-06-17T23:55:23.79833"
+    "createdAt" : "2023-06-18T19:14:35.941786"
   } ]
 }</code></pre>
 </div>
@@ -2315,7 +2315,7 @@ Content-Length: 126
   "id" : 1,
   "title" : "수정된 제목",
   "content" : "수정된 내용",
-  "createdAt" : "2023-06-17T23:55:23.833179"
+  "createdAt" : "2023-06-18T19:14:36.015826"
 }</code></pre>
 </div>
 </div>
@@ -2943,12 +2943,12 @@ Content-Length: 307
     "id" : 5,
     "title" : "비슷한2 제목",
     "content" : "내용",
-    "createdAt" : "2023-06-17T23:55:23.745336"
+    "createdAt" : "2023-06-18T19:14:35.846176"
   }, {
     "id" : 4,
     "title" : "비슷한 제목",
     "content" : "내용",
-    "createdAt" : "2023-06-17T23:55:23.745335"
+    "createdAt" : "2023-06-18T19:14:35.846175"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -3549,7 +3549,7 @@ Content-Length: 20
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-06-17 18:45:30 +0900
+Last updated 2023-06-18 18:01:31 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

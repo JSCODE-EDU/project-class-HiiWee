@@ -9,7 +9,6 @@ import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.comment.domain.Comment;
 import com.example.anonymousboard.comment.dto.CommentSaveRequest;
 import com.example.anonymousboard.comment.dto.CommentSaveResponse;
-import com.example.anonymousboard.member.domain.Encryptor;
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;

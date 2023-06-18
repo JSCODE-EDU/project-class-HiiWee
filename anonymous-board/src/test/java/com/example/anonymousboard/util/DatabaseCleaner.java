@@ -54,10 +54,12 @@ public class DatabaseCleaner implements InitializingBean {
     public void insertInitialData() {
         String encryptedPassword = encryptor.encrypt("!qwer123");
         entityManager.createNativeQuery(
-                        "insert into member(email, password, created_at) values('valid01@mail.com', '"+ encryptedPassword +"', CURRENT_TIMESTAMP())")
+                        "insert into member(email, password, created_at) values('valid01@mail.com', '" + encryptedPassword
+                                + "', CURRENT_TIMESTAMP())")
                 .executeUpdate();
         entityManager.createNativeQuery(
-                        "insert into member(email, password, created_at) values('valid02@mail.com', '"+ encryptedPassword +"', CURRENT_TIMESTAMP())")
+                        "insert into member(email, password, created_at) values('valid02@mail.com', '" + encryptedPassword
+                                + "', CURRENT_TIMESTAMP())")
                 .executeUpdate();
     }
 }
