@@ -3,6 +3,7 @@ package com.example.anonymousboard.member.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.util.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ class MemberRepositoryTest extends RepositoryTest {
         // given
         Member member = Member.builder()
                 .email("valid@mail.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
 
         // when

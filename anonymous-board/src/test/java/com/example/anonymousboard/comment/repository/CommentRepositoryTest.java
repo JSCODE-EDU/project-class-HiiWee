@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.anonymousboard.comment.domain.Comment;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.util.RepositoryTest;
 import java.util.List;
@@ -23,7 +24,7 @@ class CommentRepositoryTest extends RepositoryTest {
     void setUp() {
         member = Member.builder()
                 .email("valid@mail.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
         memberRepository.save(member);
 

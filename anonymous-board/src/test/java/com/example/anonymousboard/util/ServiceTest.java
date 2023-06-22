@@ -4,6 +4,7 @@ import com.example.anonymousboard.comment.repository.CommentRepository;
 import com.example.anonymousboard.comment.service.CommentService;
 import com.example.anonymousboard.like.repository.PostLikeRepository;
 import com.example.anonymousboard.like.service.PostLikeService;
+import com.example.anonymousboard.member.domain.Encryptor;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.member.service.MemberService;
 import com.example.anonymousboard.post.repository.PostRepository;
@@ -39,4 +40,7 @@ public class ServiceTest {
 
     @Mock
     protected PostLikeRepository postLikeRepository;
+
+    @Mock
+    protected Encryptor encryptor;
 }

@@ -10,6 +10,7 @@ import com.example.anonymousboard.comment.domain.Comment;
 import com.example.anonymousboard.comment.dto.CommentSaveRequest;
 import com.example.anonymousboard.comment.dto.CommentSaveResponse;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
@@ -31,7 +32,7 @@ class CommentServiceTest extends ServiceTest {
     void setUp() {
         member = Member.builder()
                 .email("valid@mail.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
         post = Post.builder()
                 .title("제목입니다.")

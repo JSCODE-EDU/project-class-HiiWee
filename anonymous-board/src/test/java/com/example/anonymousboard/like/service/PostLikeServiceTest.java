@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.like.dto.PostLikeFlipResponse;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.domain.Post;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
@@ -25,16 +26,15 @@ class PostLikeServiceTest extends ServiceTest {
 
     Post post;
 
-
     @BeforeEach
     void setUp() {
         otherMember = Member.builder()
                 .email("valid2@mail.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
         member = Member.builder()
                 .email("valid1@mail.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
         post = Post.builder()
                 .title("제목")

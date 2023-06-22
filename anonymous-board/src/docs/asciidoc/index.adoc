@@ -70,10 +70,14 @@ operation::post/create/fail/tooLongContent[snippets='http-request,http-response'
 
 === 전체 게시글 조회
 ==== 성공
-operation::post/findAll/success[snippets='request-fields']
-없음
+operation::post/findAll/success[snippets='request-parameters,response-fields,http-request,http-response']
+==== 실패
+operation::post/findAll/fail/invalidSizeOfPage[snippets='request-parameters,response-fields']
+===== 요청 파라미터 size(게시글의 수)가 100을 넘긴 경우
+operation::post/findAll/fail/invalidSizeOfPage[snippets='http-request,http-response']
+===== 요청 파라미터 limit(게시글당 댓글 수)가 100을 넘긴 경우
+operation::post/findAll/fail/invalidCommentCount[snippets='http-request,http-response']
 
-operation::post/findAll/success[snippets='response-fields,http-request,http-response']
 
 === 특정 게시글 조회
 ==== 성공

@@ -11,9 +11,13 @@ import static org.mockito.Mockito.doNothing;
 import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.auth.exception.AuthorizationException;
 import com.example.anonymousboard.comment.domain.Comment;
+import com.example.anonymousboard.comment.dto.CommentResponse;
+import com.example.anonymousboard.comment.exception.CommentLimitException;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.post.domain.Post;
+import com.example.anonymousboard.post.dto.PagePostsDetailResponse;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -21,6 +25,7 @@ import com.example.anonymousboard.post.dto.PostSaveRequest;
 import com.example.anonymousboard.post.dto.PostSaveResponse;
 import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.InvalidPostKeywordException;
+import com.example.anonymousboard.post.exception.PostLimitException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.util.ServiceTest;
 import java.util.List;
@@ -61,12 +66,7 @@ class PostServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        member = new Member(1L, "valid@mail.com", "!qwer123");
-        comment = Comment.builder()
-                .content("댓글")
-                .member(member)
-                .post(post1)
-                .build();
+        member = new Member(1L, "valid@mail.com", Password.of(encryptor, "!qwer123"));
         post1 = Post.builder()
                 .title("제목1")
                 .content("내용1")
@@ -96,6 +96,11 @@ class PostServiceTest extends ServiceTest {
                 .title("비슷한2 제목")
                 .content("내용4")
                 .member(member)
+                .build();
+        comment = Comment.builder()
+                .content("댓글")
+                .member(member)
+                .post(post1)
                 .build();
         authInfo = new AuthInfo(1L);
 
@@ -139,28 +144,58 @@ class PostServiceTest extends ServiceTest {
                 .hasMessageContaining("회원을 찾을 수 없습니다.");
     }
 
-    @DisplayName("임의의 검색 조건을 통해 모든 게시글을 조회할 수 있다.")
+    @DisplayName("전체 게시글을 조회할 수 있다.")
     @Test
-    void findPosts_with_limit100() {
+    void findPosts() {
         // given
         given(postRepository.findPostsByOrderByCreatedAtDesc(any())).willReturn(pagePosts);
-        Pageable pageable = PageRequest.of(0, 4, Direction.DESC, "createdAt");
+        given(commentRepository.findCommentsPagesByPostIn(any())).willReturn(List.of(comment));
+        Pageable pageable = PageRequest.of(0, 100, Direction.DESC, "createdAt");
 
         // when
-        PagePostsResponse posts = postService.findPosts(pageable);
-        PostResponse postResponse = posts.getPostResponses().get(0);
-        List<String> titles = posts.getPostResponses()
+        PagePostsDetailResponse posts = postService.findPosts(100, pageable);
+        PostDetailResponse postDetailResponse = posts.getPosts().get(0);
+        List<String> titles = posts.getPosts()
                 .stream()
-                .map(PostResponse::getTitle)
+                .map(PostDetailResponse::getTitle)
                 .collect(Collectors.toList());
+        List<CommentResponse> comments = posts.getPosts()
+                .get(3)
+                .getComments();
 
         // then
         assertAll(
                 () -> assertThat(posts.getTotalPostCount()).isEqualTo(4),
                 () -> assertThat(titles).containsExactly("제목4", "제목3", "제목2", "제목1"),
-                () -> assertThat(postResponse.getTitle()).isEqualTo("제목4"),
-                () -> assertThat(postResponse.getContent()).isEqualTo("내용4")
+                () -> assertThat(postDetailResponse.getTitle()).isEqualTo("제목4"),
+                () -> assertThat(postDetailResponse.getContent()).isEqualTo("내용4"),
+                () -> assertThat(comments.size()).isEqualTo(1),
+                () -> assertThat(comments.get(0).getContent()).isEqualTo("댓글")
         );
+    }
+
+    @DisplayName("전체 게시글의 개수를 100개 넘게 조회할 수 없다.")
+    @Test
+    void findPosts_exception_invalidPostSize() {
+        // given
+        Pageable pageable = PageRequest.of(0, 101, Direction.DESC, "createdAt");
+
+        // when & then
+        assertThatThrownBy(() -> postService.findPosts(100, pageable))
+                .isInstanceOf(PostLimitException.class)
+                .hasMessageContaining("게시글은 최대 100개까지 조회할 수 있습니다.");
+    }
+
+    @DisplayName("전체 게시글 조회시 게시글당 댓글 조회 개수를 100개 넘게 조회할 수 없다.")
+    @Test
+    void findPosts_exception_invalidCommentSize() {
+        // given
+        Pageable pageable = PageRequest.of(0, 100, Direction.DESC, "createdAt");
+
+        // when & then
+        assertThatThrownBy(() -> postService.findPosts(101, pageable))
+                .isInstanceOf(CommentLimitException.class)
+                .hasMessageContaining("댓글은 최대 100개까지 조회할 수 있습니다.");
     }
 
     @DisplayName("특정 id값의 게시글을 조회할 수 있다.")

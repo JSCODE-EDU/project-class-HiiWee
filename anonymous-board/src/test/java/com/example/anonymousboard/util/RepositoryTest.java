@@ -3,6 +3,7 @@ package com.example.anonymousboard.util;
 import com.example.anonymousboard.comment.repository.CommentRepository;
 import com.example.anonymousboard.config.JpaConfig;
 import com.example.anonymousboard.like.repository.PostLikeRepository;
+import com.example.anonymousboard.member.domain.Encryptor;
 import com.example.anonymousboard.member.repository.MemberRepository;
 import com.example.anonymousboard.post.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,4 +26,5 @@ public class RepositoryTest {
     @Autowired
     protected PostLikeRepository postLikeRepository;
 
+    protected Encryptor encryptor = new Encryptor();
 }

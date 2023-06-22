@@ -1,7 +1,9 @@
 package com.example.anonymousboard.member.service;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
+import com.example.anonymousboard.member.domain.Encryptor;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.dto.MyInfoResponse;
 import com.example.anonymousboard.member.dto.SignUpRequest;
 import com.example.anonymousboard.member.exception.DuplicateEmailException;
@@ -17,9 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final Encryptor encryptor;
 
-    public MemberService(final MemberRepository memberRepository) {
+    public MemberService(final MemberRepository memberRepository, final Encryptor encryptor) {
         this.memberRepository = memberRepository;
+        this.encryptor = encryptor;
     }
 
     public MyInfoResponse findMyInfo(final AuthInfo authInfo) {
@@ -32,7 +36,7 @@ public class MemberService {
         validate(signUpRequest);
         Member member = Member.builder()
                 .email(signUpRequest.getEmail())
-                .password(signUpRequest.getPassword())
+                .password(Password.of(encryptor, signUpRequest.getPassword()))
                 .build();
         memberRepository.save(member);
     }

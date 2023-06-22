@@ -4,14 +4,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.anonymousboard.comment.exception.InvalidCommentException;
+import com.example.anonymousboard.member.domain.Encryptor;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.post.domain.Post;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class CommentTest {
+
+    Encryptor encryptor;
+
+    @BeforeEach
+    void setUp() {
+        encryptor = new Encryptor();
+    }
 
     @DisplayName("댓글을 생성할 수 있다.")
     @Test
@@ -23,7 +33,7 @@ class CommentTest {
                 .build();
         Member member = Member.builder()
                 .email("valid@main.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
         String content = "첫 댓글 입니다!";
 

@@ -1,5 +1,6 @@
 package com.example.anonymousboard.util;
 
+import com.example.anonymousboard.member.domain.Encryptor;
 import com.google.common.base.CaseFormat;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,9 @@ public class DatabaseCleaner implements InitializingBean {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    Encryptor encryptor;
 
     private List<String> tableNames;
 
@@ -47,11 +52,14 @@ public class DatabaseCleaner implements InitializingBean {
 
     @Transactional
     public void insertInitialData() {
+        String encryptedPassword = encryptor.encrypt("!qwer123");
         entityManager.createNativeQuery(
-                        "insert into member(email, password, created_at) values('valid01@mail.com', '!qwer123', CURRENT_TIMESTAMP())")
+                        "insert into member(email, password, created_at) values('valid01@mail.com', '" + encryptedPassword
+                                + "', CURRENT_TIMESTAMP())")
                 .executeUpdate();
         entityManager.createNativeQuery(
-                        "insert into member(email, password, created_at) values('valid02@mail.com', '!qwer123', CURRENT_TIMESTAMP())")
+                        "insert into member(email, password, created_at) values('valid02@mail.com', '" + encryptedPassword
+                                + "', CURRENT_TIMESTAMP())")
                 .executeUpdate();
     }
 }
