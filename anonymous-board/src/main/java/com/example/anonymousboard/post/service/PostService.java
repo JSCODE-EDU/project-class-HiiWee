@@ -20,8 +20,6 @@ import com.example.anonymousboard.post.dto.PostUpdateRequest;
 import com.example.anonymousboard.post.exception.PostLimitException;
 import com.example.anonymousboard.post.exception.PostNotFoundException;
 import com.example.anonymousboard.post.repository.PostRepository;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +59,7 @@ public class PostService {
         return PostSaveResponse.createPostSuccess(savedPost.getId());
     }
 
+    // TODO: N번의 댓글 조회와 전체 댓글 조회후 게시글에 맞게 그룹화 시키는 방법을 성능테스트 해보자!!
     public PagePostsDetailResponse findPosts(final int commentLimit, final Pageable pageable) {
         validatePostsViewCondition(commentLimit, pageable);
         Page<Post> postPages = postRepository.findPostsByOrderByCreatedAtDesc(pageable);
@@ -117,26 +116,20 @@ public class PostService {
     private List<PostDetailResponse> createPostsResponse(final List<Post> postPages,
                                                          final Map<Post, List<Comment>> groupedComments) {
         return postPages.stream()
-                .map(post -> {
-                    if (groupedComments.containsKey(post)) {
-                        return PostDetailResponse.of(post, groupedComments.get(post));
-                    }
-                    return PostDetailResponse.of(post, Collections.emptyList());
-                }).collect(Collectors.toList());
+                .map(post -> PostDetailResponse.of(post, groupedComments.getOrDefault(post, Collections.emptyList())))
+                .collect(Collectors.toList());
     }
 
     private Map<Post, List<Comment>> separateLimitCommentsByPost(final List<Comment> comments, final int commentLimit) {
-        Map<Post, List<Comment>> groupedComments = Maps.newHashMap();
-        for (Comment comment : comments) {
-            Post post = comment.getPost();
-            if (!groupedComments.containsKey(post)) {
-                groupedComments.computeIfAbsent(post, k -> Lists.newArrayList());
-            }
-            if (groupedComments.get(post).size() < commentLimit) {
-                groupedComments.get(post).add(comment);
-            }
-        }
-        return groupedComments;
+        return comments.stream()
+                .collect(Collectors.groupingBy(Comment::getPost))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue()
+                                .subList(0, Math.min(entry.getValue().size(), commentLimit))
+                ));
     }
 
     private void validateOwner(final AuthInfo authInfo, final Post post) {
