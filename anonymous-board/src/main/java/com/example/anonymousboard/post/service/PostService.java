@@ -122,14 +122,8 @@ public class PostService {
 
     private Map<Post, List<Comment>> separateLimitCommentsByPost(final List<Comment> comments, final int commentLimit) {
         return comments.stream()
-                .collect(Collectors.groupingBy(Comment::getPost))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue()
-                                .subList(0, Math.min(entry.getValue().size(), commentLimit))
-                ));
+                .collect(Collectors.groupingBy(Comment::getPost, Collectors.collectingAndThen(Collectors.toList(),
+                        eachComments -> eachComments.subList(0, Math.min(eachComments.size(), commentLimit)))));
     }
 
     private void validateOwner(final AuthInfo authInfo, final Post post) {
