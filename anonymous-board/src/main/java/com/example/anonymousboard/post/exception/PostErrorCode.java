@@ -5,7 +5,8 @@ public enum PostErrorCode {
     INVALID_TITLE(1001),
     INVALID_CONTENT(1002),
     POST_NOT_FOUND(1003),
-    INVALID_POST_KEYWORD(1004);
+    INVALID_POST_KEYWORD(1004),
+    POST_LIMIT(1005);
 
     private final int errorCode;
 

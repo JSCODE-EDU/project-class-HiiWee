@@ -35,15 +35,15 @@ public class Member {
     }
 
     @Builder
-    private Member(final String email, final String password) {
+    private Member(final String email, final Password password) {
         this.email = Email.from(email);
-        this.password = Password.from(password);
+        this.password = password;
     }
 
-    public Member(final Long id, final String email, final String password) {
+    public Member(final Long id, final String email, final Password password) {
         this.id = id;
         this.email = Email.from(email);
-        this.password = Password.from(password);
+        this.password = password;
     }
 
     public Long getId() {

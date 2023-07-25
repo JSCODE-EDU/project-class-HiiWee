@@ -15,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.example.anonymousboard.advice.CommonErrorCode;
 import com.example.anonymousboard.advice.ErrorResponse;
 import com.example.anonymousboard.auth.exception.AuthErrorCode;
+import com.example.anonymousboard.comment.dto.CommentResponse;
+import com.example.anonymousboard.comment.dto.CommentSaveRequest;
+import com.example.anonymousboard.post.dto.PagePostsDetailResponse;
 import com.example.anonymousboard.post.dto.PagePostsResponse;
 import com.example.anonymousboard.post.dto.PostDetailResponse;
 import com.example.anonymousboard.post.dto.PostResponse;
@@ -43,13 +46,15 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     PostUpdateRequest postUpdateRequest;
 
+    CommentSaveRequest commentSaveRequest;
+
     @BeforeEach
     void setUp() {
-        System.out.println("passsssss");
         postSaveRequest1 = PostSaveRequest.builder().title("제목1").content("내용1").build();
         postSaveRequest2 = PostSaveRequest.builder().title("제목2").content("내용2").build();
         postSaveRequest3 = PostSaveRequest.builder().title("제목3").content("내용3").build();
         postUpdateRequest = PostUpdateRequest.builder().title("수정된 제목").content("수정된 내용").build();
+        commentSaveRequest = new CommentSaveRequest("댓글 내용");
     }
 
     @DisplayName("게시글 작성을 할 수 있다.")
@@ -170,10 +175,10 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
         // when
         ExtractableResponse<Response> response = httpGet("/posts");
-        PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
-        List<String> titles = postsResponse.getPostResponses()
+        PagePostsDetailResponse postsResponse = response.jsonPath().getObject(".", PagePostsDetailResponse.class);
+        List<String> titles = postsResponse.getPosts()
                 .stream()
-                .map(PostResponse::getTitle)
+                .map(PostDetailResponse::getTitle)
                 .collect(Collectors.toList());
 
         // then
@@ -183,21 +188,83 @@ public class PostAcceptanceTest extends AcceptanceTest {
         );
     }
 
+    @DisplayName("작성한 게시글에 다른 사용자가 댓글을 달 수 있다.")
+    @Test
+    void findPosts_with_comment() {
+        // given
+        String memberToken = getMemberToken();
+        String otherMemberToken = getOtherMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", memberToken);
+        httpPostWithAuthorization(commentSaveRequest, "/posts/1/comments", otherMemberToken);
+
+        // when
+        ExtractableResponse<Response> response = httpGet("/posts?limit=100");
+        PagePostsDetailResponse pagePostsDetailResponse = response.jsonPath()
+                .getObject(".", PagePostsDetailResponse.class);
+
+        List<PostDetailResponse> posts = pagePostsDetailResponse.getPosts();
+        PostDetailResponse postDetailResponse = posts.get(0);
+
+        List<CommentResponse> comments = postDetailResponse.getComments();
+        CommentResponse commentResponse = comments.get(0);
+
+        // then
+        assertAll(
+                () -> assertThat(posts.size()).isEqualTo(1),
+                () -> assertThat(postDetailResponse.getTitle()).isEqualTo("제목1"),
+                () -> assertThat(postDetailResponse.getContent()).isEqualTo("내용1"),
+                () -> assertThat(postDetailResponse.getCreatedAt()).isNotNull(),
+                () -> assertThat(comments.size()).isEqualTo(1),
+                () -> assertThat(commentResponse.getContent()).isEqualTo("댓글 내용"),
+                () -> assertThat(commentResponse.getEmail()).isEqualTo("valid02@mail.com"),
+                () -> assertThat(commentResponse.getCreatedAt()).isNotNull()
+        );
+    }
+
     @DisplayName("게시글은 최대 100개까지 조회할 수 있다.")
     @Test
     void findPosts_with_limit100() {
         // given
         String token = getMemberToken();
-        for (int sequence = 1; sequence <= 200; sequence++) {
+        for (int sequence = 1; sequence <= 101; sequence++) {
             httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         }
 
         // when
         ExtractableResponse<Response> response = httpGet("/posts");
-        PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
+        PagePostsDetailResponse pagePostsDetailResponse = response.jsonPath()
+                .getObject(".", PagePostsDetailResponse.class);
 
         // then
-        assertThat(postsResponse.getTotalPostCount()).isEqualTo(100);
+        assertThat(pagePostsDetailResponse.getTotalPostCount()).isEqualTo(100);
+    }
+
+    @DisplayName("전체 게시글 조회시 각 게시글의 댓글을 임의의 수를 지정해 조회할 수 있다.")
+    @Test
+    void findPosts_with_commentsEachPost() {
+        // given
+        String memberToken = getMemberToken();
+        String otherMemberToken = getOtherMemberToken();
+        for (int sequence = 1; sequence <= 3; sequence++) {
+            httpPostWithAuthorization(postSaveRequest1, "/posts", memberToken);
+        }
+        for (int sequence = 1; sequence <= 101; sequence++) {
+            httpPostWithAuthorization(commentSaveRequest, "/posts/1/comments", otherMemberToken);
+            httpPostWithAuthorization(commentSaveRequest, "/posts/2/comments", otherMemberToken);
+            httpPostWithAuthorization(commentSaveRequest, "/posts/3/comments", otherMemberToken);
+        }
+
+        // when
+        ExtractableResponse<Response> response = httpGet("/posts?limit=50");
+        PagePostsDetailResponse pagePostsDetailResponse = response.jsonPath()
+                .getObject(".", PagePostsDetailResponse.class);
+        List<Integer> commentsSize = pagePostsDetailResponse.getPosts()
+                .stream()
+                .map(postDetailResponse -> postDetailResponse.getComments().size())
+                .collect(Collectors.toList());
+
+        // then
+        assertThat(commentsSize).containsExactly(50, 50, 50);
     }
 
     @DisplayName("특정 게시글 1개를 저장하고 조회할 수 있다.")
@@ -404,7 +471,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         );
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts", "keyword", "특정");
+        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts/search", "keyword", "특정");
         PagePostsResponse pagePostsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
         PostResponse postResponse = pagePostsResponse.getPostResponses().get(0);
 
@@ -429,7 +496,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         httpPostWithAuthorization(customRequest, "/posts", token);
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts", "keyword", " ");
+        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts/search", "keyword", " ");
         ErrorResponse errorResponse = response.jsonPath().getObject(".", ErrorResponse.class);
 
         // then
@@ -444,12 +511,12 @@ public class PostAcceptanceTest extends AcceptanceTest {
     void findPostsByKeyword_with_limit100() {
         // given
         String token = getMemberToken();
-        for (int sequence = 1; sequence <= 200; sequence++) {
+        for (int sequence = 1; sequence <= 101; sequence++) {
             httpPostWithAuthorization(postSaveRequest1, "/posts", token);
         }
 
         // when
-        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts", "keyword", "제목");
+        ExtractableResponse<Response> response = httpGetFindAllWithParameter("/posts/search", "keyword", "제목");
         PagePostsResponse postsResponse = response.jsonPath().getObject(".", PagePostsResponse.class);
 
         // then

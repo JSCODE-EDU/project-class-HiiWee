@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.example.anonymousboard.auth.dto.AuthInfo;
 import com.example.anonymousboard.member.domain.Member;
+import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.dto.MyInfoResponse;
 import com.example.anonymousboard.member.dto.SignUpRequest;
 import com.example.anonymousboard.member.exception.DuplicateEmailException;
@@ -27,7 +28,7 @@ class MemberServiceTest extends ServiceTest {
     void setUp() {
         member = Member.builder()
                 .email("valid@mail.com")
-                .password("!qwer123")
+                .password(Password.of(encryptor, "!qwer123"))
                 .build();
     }
 

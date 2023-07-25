@@ -916,7 +916,7 @@ Content-Length: 90
 {
   "id" : 1,
   "email" : "valid@main.com",
-  "createdAt" : "2023-06-02T03:34:29.444081"
+  "createdAt" : "2023-06-18T19:14:31.222459"
 }</code></pre>
 </div>
 </div>
@@ -1342,15 +1342,77 @@ Content-Length: 76
 <h4 id="_실패_4"><a class="link" href="#_실패_4">3.1.2. 실패</a></h4>
 <div class="sect4">
 <h5 id="_실패_4_request_fields"><a class="link" href="#_실패_4_request_fields">Request fields</a></h5>
-<div class="paragraph">
-<p>Snippet request-fields not found for operation::post/create/fail/emptyTitle</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">설명</th>
+<th class="tableblock halign-left valign-top">제약사항</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 제목</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제목은 앞뒤 공백 제외 1 ~ 15자 사이여야 합니다.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 내용</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내용은 공백 포함 1 ~ 1000자 사이여야 합니다.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect4">
 <h5 id="_실패_4_response_fields"><a class="link" href="#_실패_4_response_fields">Response fields</a></h5>
-<div class="paragraph">
-<p>Snippet response-fields not found for operation::post/create/fail/emptyTitle</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">양식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">실패 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorCode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러 코드</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect4">
 <h5 id="_게시글을_작성하는_사용자를_찾을_수_없는_경우"><a class="link" href="#_게시글을_작성하는_사용자를_찾을_수_없는_경우">게시글을 작성하는 사용자를 찾을 수 없는 경우</a></h5>
@@ -1549,13 +1611,43 @@ Content-Length: 122
 <div class="sect3">
 <h4 id="_성공_5"><a class="link" href="#_성공_5">3.2.1. 성공</a></h4>
 <div class="sect4">
-<h5 id="_성공_5_request_fields"><a class="link" href="#_성공_5_request_fields">Request fields</a></h5>
-<div class="paragraph">
-<p>Snippet request-fields not found for operation::post/findAll/success</p>
-</div>
-</div>
-<div class="paragraph">
-<p>없음</p>
+<h5 id="_성공_5_request_parameters"><a class="link" href="#_성공_5_request_parameters">Request parameters</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">설명</th>
+<th class="tableblock halign-left valign-top">제약사항</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 페이지 번호(0부터 시작)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하나의 페이지에 해당되는 게시글의 개수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &#8656; size &#8656; 100</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>limit</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 당 조회할 최대 댓글의 수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &#8656; limit &#8656; 100</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect4">
 <h5 id="_성공_5_response_fields"><a class="link" href="#_성공_5_response_fields">Response fields</a></h5>
@@ -1578,39 +1670,60 @@ Content-Length: 122
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postResponses</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posts</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 조회 배열</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postResponses[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posts[].id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 ID</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postResponses[].title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posts[].title</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 제목</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postResponses[].content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posts[].content</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 내용</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postResponses[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posts[].createdAt</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성일자</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posts[].comments[].email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">댓글 작성자 이메일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posts[].comments[].content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">댓글 내용</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posts[].comments[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">댓글 작성일자</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>totalPostCount</code></p></td>
@@ -1626,7 +1739,7 @@ Content-Length: 122
 <h5 id="_성공_5_http_request"><a class="link" href="#_성공_5_http_request">HTTP request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts?page=0&amp;size=100&amp;limit=100 HTTP/1.1
 Host: docs.api.com</code></pre>
 </div>
 </div>
@@ -1640,27 +1753,183 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 410
+Content-Length: 938
 
 {
-  "postResponses" : [ {
-    "id" : 3,
-    "title" : "제목3",
-    "content" : "내용3",
-    "createdAt" : "2023-06-02T03:34:32.416438"
+  "posts" : [ {
+    "id" : 1,
+    "title" : "제목1",
+    "content" : "내용1",
+    "createdAt" : "2023-06-18T19:14:36.059917",
+    "comments" : [ {
+      "email" : "valid01@mail.com",
+      "content" : "댓글1",
+      "createdAt" : "2023-06-18T19:14:36.05991"
+    }, {
+      "email" : "valid02@mail.com",
+      "content" : "댓글2",
+      "createdAt" : "2023-06-18T19:14:36.059914"
+    }, {
+      "email" : "valid03@mail.com",
+      "content" : "댓글3",
+      "createdAt" : "2023-06-18T19:14:36.059915"
+    } ]
   }, {
     "id" : 2,
     "title" : "제목2",
     "content" : "내용2",
-    "createdAt" : "2023-06-02T03:34:32.416438"
-  }, {
-    "id" : 1,
-    "title" : "제목1",
-    "content" : "내용1",
-    "createdAt" : "2023-06-02T03:34:32.416437"
+    "createdAt" : "2023-06-18T19:14:36.059921",
+    "comments" : [ {
+      "email" : "valid04@mail.com",
+      "content" : "댓글4",
+      "createdAt" : "2023-06-18T19:14:36.059915"
+    }, {
+      "email" : "valid05@mail.com",
+      "content" : "댓글5",
+      "createdAt" : "2023-06-18T19:14:36.059916"
+    } ]
   } ],
-  "totalPostCount" : 3
+  "totalPostCount" : 2
 }</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_실패_5"><a class="link" href="#_실패_5">3.2.2. 실패</a></h4>
+<div class="sect4">
+<h5 id="_실패_5_request_parameters"><a class="link" href="#_실패_5_request_parameters">Request parameters</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">파라미터</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">설명</th>
+<th class="tableblock halign-left valign-top">제약사항</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 페이지 번호(0부터 시작)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">하나의 페이지에 해당되는 게시글의 개수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &#8656; size &#8656; 100</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>limit</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 당 조회할 최대 댓글의 수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 &#8656; limit &#8656; 100</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_실패_5_response_fields"><a class="link" href="#_실패_5_response_fields">Response fields</a></h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+<th class="tableblock halign-left valign-top">양식</th>
+<th class="tableblock halign-left valign-top">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">실패 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>errorCode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">에러 코드</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_요청_파라미터_size게시글의_수가_100을_넘긴_경우"><a class="link" href="#_요청_파라미터_size게시글의_수가_100을_넘긴_경우">요청 파라미터 size(게시글의 수)가 100을 넘긴 경우</a></h5>
+<div class="sect5">
+<h6 id="_요청_파라미터_size게시글의_수가_100을_넘긴_경우_http_request"><a class="link" href="#_요청_파라미터_size게시글의_수가_100을_넘긴_경우_http_request">HTTP request</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts?page=0&amp;size=101&amp;limit=100 HTTP/1.1
+Host: docs.api.com</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_요청_파라미터_size게시글의_수가_100을_넘긴_경우_http_response"><a class="link" href="#_요청_파라미터_size게시글의_수가_100을_넘긴_경우_http_response">HTTP response</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 102
+
+{
+  "message" : "게시글은 최대 100개까지 조회할 수 있습니다.",
+  "errorCode" : 1005
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_요청_파라미터_limit게시글당_댓글_수가_100을_넘긴_경우"><a class="link" href="#_요청_파라미터_limit게시글당_댓글_수가_100을_넘긴_경우">요청 파라미터 limit(게시글당 댓글 수)가 100을 넘긴 경우</a></h5>
+<div class="sect5">
+<h6 id="_요청_파라미터_limit게시글당_댓글_수가_100을_넘긴_경우_http_request"><a class="link" href="#_요청_파라미터_limit게시글당_댓글_수가_100을_넘긴_경우_http_request">HTTP request</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts?page=0&amp;size=100&amp;limit=101 HTTP/1.1
+Host: docs.api.com</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_요청_파라미터_limit게시글당_댓글_수가_100을_넘긴_경우_http_response"><a class="link" href="#_요청_파라미터_limit게시글당_댓글_수가_100을_넘긴_경우_http_response">HTTP response</a></h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 400 Bad Request
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 126
+
+{
+  "message" : "전체 게시글 조회시 댓글은 최대 100개까지 조회할 수 있습니다.",
+  "errorCode" : 4002
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1782,25 +2051,25 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 471
+Content-Length: 472
 
 {
   "id" : 1,
   "title" : "제목1",
   "content" : "내용1",
-  "createdAt" : "2023-06-02T03:34:32.36818",
+  "createdAt" : "2023-06-18T19:14:35.941789",
   "comments" : [ {
+    "email" : "valid01@mail.com",
     "content" : "댓글1",
-    "createdAt" : "2023-06-02T03:34:32.368174",
-    "email" : "valid01@mail.com"
+    "createdAt" : "2023-06-18T19:14:35.941781"
   }, {
+    "email" : "valid02@mail.com",
     "content" : "댓글2",
-    "createdAt" : "2023-06-02T03:34:32.368178",
-    "email" : "valid02@mail.com"
+    "createdAt" : "2023-06-18T19:14:35.941786"
   }, {
+    "email" : "valid03@mail.com",
     "content" : "댓글3",
-    "createdAt" : "2023-06-02T03:34:32.368178",
-    "email" : "valid03@mail.com"
+    "createdAt" : "2023-06-18T19:14:35.941786"
   } ]
 }</code></pre>
 </div>
@@ -1808,9 +2077,9 @@ Content-Length: 471
 </div>
 </div>
 <div class="sect3">
-<h4 id="_실패_5"><a class="link" href="#_실패_5">3.3.2. 실패</a></h4>
+<h4 id="_실패_6"><a class="link" href="#_실패_6">3.3.2. 실패</a></h4>
 <div class="sect4">
-<h5 id="_실패_5_path_parameters"><a class="link" href="#_실패_5_path_parameters">Path parameters</a></h5>
+<h5 id="_실패_6_path_parameters"><a class="link" href="#_실패_6_path_parameters">Path parameters</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}</caption>
 <colgroup>
@@ -1832,7 +2101,7 @@ Content-Length: 471
 </table>
 </div>
 <div class="sect4">
-<h5 id="_실패_5_response_fields"><a class="link" href="#_실패_5_response_fields">Response fields</a></h5>
+<h5 id="_실패_6_response_fields"><a class="link" href="#_실패_6_response_fields">Response fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2040,22 +2309,22 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 125
+Content-Length: 126
 
 {
   "id" : 1,
   "title" : "수정된 제목",
   "content" : "수정된 내용",
-  "createdAt" : "2023-06-02T03:34:32.39687"
+  "createdAt" : "2023-06-18T19:14:36.015826"
 }</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_실패_6"><a class="link" href="#_실패_6">3.4.2. 실패</a></h4>
+<h4 id="_실패_7"><a class="link" href="#_실패_7">3.4.2. 실패</a></h4>
 <div class="sect4">
-<h5 id="_실패_6_path_parameters"><a class="link" href="#_실패_6_path_parameters">Path parameters</a></h5>
+<h5 id="_실패_7_path_parameters"><a class="link" href="#_실패_7_path_parameters">Path parameters</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}</caption>
 <colgroup>
@@ -2077,7 +2346,7 @@ Content-Length: 125
 </table>
 </div>
 <div class="sect4">
-<h5 id="_실패_6_request_fields"><a class="link" href="#_실패_6_request_fields">Request fields</a></h5>
+<h5 id="_실패_7_request_fields"><a class="link" href="#_실패_7_request_fields">Request fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2114,7 +2383,7 @@ Content-Length: 125
 </table>
 </div>
 <div class="sect4">
-<h5 id="_실패_6_response_fields"><a class="link" href="#_실패_6_response_fields">Response fields</a></h5>
+<h5 id="_실패_7_response_fields"><a class="link" href="#_실패_7_response_fields">Response fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2429,9 +2698,9 @@ Vary: Access-Control-Request-Headers</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_실패_7"><a class="link" href="#_실패_7">3.5.2. 실패</a></h4>
+<h4 id="_실패_8"><a class="link" href="#_실패_8">3.5.2. 실패</a></h4>
 <div class="sect4">
-<h5 id="_실패_7_path_parameters"><a class="link" href="#_실패_7_path_parameters">Path parameters</a></h5>
+<h5 id="_실패_8_path_parameters"><a class="link" href="#_실패_8_path_parameters">Path parameters</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}</caption>
 <colgroup>
@@ -2453,7 +2722,7 @@ Vary: Access-Control-Request-Headers</code></pre>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_실패_7_response_fields"><a class="link" href="#_실패_7_response_fields">Response fields</a></h5>
+<h5 id="_실패_8_response_fields"><a class="link" href="#_실패_8_response_fields">Response fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2653,7 +2922,7 @@ Content-Length: 79
 <h5 id="_성공_9_http_request"><a class="link" href="#_성공_9_http_request">HTTP request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts?keyword=%EB%B9%84%EC%8A%B7%ED%95%9C HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/search?keyword=%EB%B9%84%EC%8A%B7%ED%95%9C HTTP/1.1
 Host: docs.api.com</code></pre>
 </div>
 </div>
@@ -2674,12 +2943,12 @@ Content-Length: 307
     "id" : 5,
     "title" : "비슷한2 제목",
     "content" : "내용",
-    "createdAt" : "2023-06-02T03:34:32.330118"
+    "createdAt" : "2023-06-18T19:14:35.846176"
   }, {
     "id" : 4,
     "title" : "비슷한 제목",
     "content" : "내용",
-    "createdAt" : "2023-06-02T03:34:32.330117"
+    "createdAt" : "2023-06-18T19:14:35.846175"
   } ],
   "totalPostCount" : 3
 }</code></pre>
@@ -2688,9 +2957,9 @@ Content-Length: 307
 </div>
 </div>
 <div class="sect3">
-<h4 id="_실패_8"><a class="link" href="#_실패_8">3.6.2. 실패</a></h4>
+<h4 id="_실패_9"><a class="link" href="#_실패_9">3.6.2. 실패</a></h4>
 <div class="sect4">
-<h5 id="_실패_8_request_parameters"><a class="link" href="#_실패_8_request_parameters">Request parameters</a></h5>
+<h5 id="_실패_9_request_parameters"><a class="link" href="#_실패_9_request_parameters">Request parameters</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2717,7 +2986,7 @@ Content-Length: 307
 </table>
 </div>
 <div class="sect4">
-<h5 id="_실패_8_response_fields"><a class="link" href="#_실패_8_response_fields">Response fields</a></h5>
+<h5 id="_실패_9_response_fields"><a class="link" href="#_실패_9_response_fields">Response fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2759,7 +3028,7 @@ Content-Length: 307
 <h6 id="_공백_제거_1글자_미만의_키워드로_검색한_경우_http_request"><a class="link" href="#_공백_제거_1글자_미만의_키워드로_검색한_경우_http_request">HTTP request</a></h6>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts?keyword= HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/search?keyword= HTTP/1.1
 Host: docs.api.com</code></pre>
 </div>
 </div>
@@ -2911,9 +3180,9 @@ Content-Length: 19
 </div>
 </div>
 <div class="sect3">
-<h4 id="_실패_9"><a class="link" href="#_실패_9">4.1.2. 실패</a></h4>
+<h4 id="_실패_10"><a class="link" href="#_실패_10">4.1.2. 실패</a></h4>
 <div class="sect4">
-<h5 id="_실패_9_path_parameters"><a class="link" href="#_실패_9_path_parameters">Path parameters</a></h5>
+<h5 id="_실패_10_path_parameters"><a class="link" href="#_실패_10_path_parameters">Path parameters</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}/comments</caption>
 <colgroup>
@@ -2935,7 +3204,7 @@ Content-Length: 19
 </table>
 </div>
 <div class="sect4">
-<h5 id="_실패_9_request_fields"><a class="link" href="#_실패_9_request_fields">Request fields</a></h5>
+<h5 id="_실패_10_request_fields"><a class="link" href="#_실패_10_request_fields">Request fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2965,7 +3234,7 @@ Content-Length: 19
 </table>
 </div>
 <div class="sect4">
-<h5 id="_실패_9_response_fields"><a class="link" href="#_실패_9_response_fields">Response fields</a></h5>
+<h5 id="_실패_10_response_fields"><a class="link" href="#_실패_10_response_fields">Response fields</a></h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -3280,7 +3549,7 @@ Content-Length: 20
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-06-01 22:11:57 +0900
+Last updated 2023-06-18 18:01:31 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
