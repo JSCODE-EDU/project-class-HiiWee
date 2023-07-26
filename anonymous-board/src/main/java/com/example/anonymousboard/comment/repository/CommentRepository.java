@@ -13,5 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c LEFT JOIN FETCH c.member WHERE c.post IN :posts ORDER BY c.createdAt ASC")
     List<Comment> findCommentsPagesByPostIn(List<Post> posts);
+
+    void deleteAllByPost(Post post);
 }
 

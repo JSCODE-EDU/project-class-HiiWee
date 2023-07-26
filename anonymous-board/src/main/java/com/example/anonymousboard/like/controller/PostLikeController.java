@@ -22,6 +22,7 @@ public class PostLikeController {
     public ResponseEntity<PostLikeFlipResponse> likePost(@Login AuthInfo authInfo,
                                                          @PathVariable Long postId) {
         PostLikeFlipResponse postLikeFlipResponse = postLikeService.flipPostLike(authInfo, postId);
-        return ResponseEntity.ok(postLikeFlipResponse);
+        return ResponseEntity.
+                ok(postLikeFlipResponse);
     }
 }
