@@ -16,6 +16,23 @@ spring:
           time_zone: Asia/Seoul
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${s3.iam.access.key}
+      secret-key: ${s3.iam.secret.key}
+    s3:
+      bucket: ${s3.bucket.name}
+    region:
+      static: ${s3.region}
+    stack:
+      auto: false
+
 security:
   jwt:
     token:
