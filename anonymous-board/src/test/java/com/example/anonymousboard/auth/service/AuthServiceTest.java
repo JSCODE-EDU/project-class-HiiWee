@@ -10,6 +10,8 @@ import com.example.anonymousboard.member.domain.Encryptor;
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.member.domain.Password;
 import com.example.anonymousboard.member.repository.MemberRepository;
+import com.example.anonymousboard.util.DatabaseCleaner;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,9 @@ class AuthServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    DatabaseCleaner databaseCleaner;
+
     Member member;
 
     @BeforeEach
@@ -40,6 +45,11 @@ class AuthServiceTest {
                 .build();
 
         memberRepository.save(member);
+    }
+
+    @AfterEach
+    void clearDatabase() {
+        databaseCleaner.clear();
     }
 
     @DisplayName("로그인 요청이 들어오면 토큰을 생성한다.")

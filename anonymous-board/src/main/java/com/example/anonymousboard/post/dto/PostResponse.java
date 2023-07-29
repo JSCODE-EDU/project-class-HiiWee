@@ -8,10 +8,13 @@ import lombok.Getter;
 @Getter
 public class PostResponse {
 
-    private final Long id;
-    private final String title;
-    private final String content;
-    private final LocalDateTime createdAt;
+    private Long id;
+    private String title;
+    private String content;
+    private LocalDateTime createdAt;
+
+    private PostResponse() {
+    }
 
     @Builder
     private PostResponse(final Long id, final String title, final String content, final LocalDateTime createdAt) {

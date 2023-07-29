@@ -8,8 +8,11 @@ public class PostSaveResponse {
 
     public static final String CREATED_POST = "게시글 작성을 완료했습니다.";
 
-    private final Long savedId;
-    private final String message;
+    private Long savedId;
+    private String message;
+
+    private PostSaveResponse() {
+    }
 
     @Builder
     private PostSaveResponse(final Long savedId, final String message) {
