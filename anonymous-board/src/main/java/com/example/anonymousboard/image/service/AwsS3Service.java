@@ -36,7 +36,7 @@ public class AwsS3Service {
     }
 
     private void putToS3(final MultipartFile multipartFile, final String fileName,
-                           final ObjectMetadata objectMetadata) {
+                         final ObjectMetadata objectMetadata) {
         try (InputStream inputStream = multipartFile.getInputStream()) {
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata);
             amazonS3.putObject(putObjectRequest.withCannedAcl(CannedAccessControlList.PublicRead));
