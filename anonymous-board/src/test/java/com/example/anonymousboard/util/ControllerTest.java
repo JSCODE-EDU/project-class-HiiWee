@@ -8,6 +8,8 @@ import com.example.anonymousboard.auth.controller.AuthController;
 import com.example.anonymousboard.auth.service.AuthService;
 import com.example.anonymousboard.comment.controller.CommentController;
 import com.example.anonymousboard.comment.service.CommentService;
+import com.example.anonymousboard.image.controller.FileUploadController;
+import com.example.anonymousboard.image.service.AwsS3Service;
 import com.example.anonymousboard.like.controller.PostLikeController;
 import com.example.anonymousboard.like.service.PostLikeService;
 import com.example.anonymousboard.member.controller.MemberController;
@@ -33,7 +35,8 @@ import org.springframework.web.context.WebApplicationContext;
         MemberController.class,
         PostController.class,
         CommentController.class,
-        PostLikeController.class
+        PostLikeController.class,
+        FileUploadController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 public class ControllerTest {
@@ -64,6 +67,9 @@ public class ControllerTest {
 
     @MockBean
     protected PostLikeService postLikeService;
+
+    @MockBean
+    protected AwsS3Service awsS3Service;
 
 
     @BeforeEach

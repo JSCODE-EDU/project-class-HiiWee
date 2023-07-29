@@ -5,6 +5,7 @@ import com.example.anonymousboard.auth.exception.AuthorizationException;
 import com.example.anonymousboard.comment.domain.Comment;
 import com.example.anonymousboard.comment.exception.CommentLimitException;
 import com.example.anonymousboard.comment.repository.CommentRepository;
+import com.example.anonymousboard.like.repository.PostLikeRepository;
 import com.example.anonymousboard.member.domain.Member;
 import com.example.anonymousboard.member.exception.MemberNotFoundException;
 import com.example.anonymousboard.member.repository.MemberRepository;
@@ -39,12 +40,14 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
+    private final PostLikeRepository postLikeRepository;
 
     public PostService(final PostRepository postRepository, final MemberRepository memberRepository,
-                       final CommentRepository commentRepository) {
+                       final CommentRepository commentRepository, final PostLikeRepository postLikeRepository) {
         this.postRepository = postRepository;
         this.memberRepository = memberRepository;
         this.commentRepository = commentRepository;
+        this.postLikeRepository = postLikeRepository;
     }
 
     @Transactional
@@ -100,6 +103,9 @@ public class PostService {
     public void deletePostById(final AuthInfo authInfo, final Long postId) {
         Post post = findPostObject(postId);
         validateOwner(authInfo, post);
+        postLikeRepository.deleteAllByPost(post);
+        commentRepository.deleteAllByPost(post);
+
         postRepository.delete(post);
     }
 

@@ -1,7 +1,9 @@
 package com.example.anonymousboard.util;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.example.anonymousboard.comment.repository.CommentRepository;
 import com.example.anonymousboard.comment.service.CommentService;
+import com.example.anonymousboard.image.service.AwsS3Service;
 import com.example.anonymousboard.like.repository.PostLikeRepository;
 import com.example.anonymousboard.like.service.PostLikeService;
 import com.example.anonymousboard.member.domain.Encryptor;
@@ -29,6 +31,9 @@ public class ServiceTest {
     @InjectMocks
     protected PostLikeService postLikeService;
 
+    @InjectMocks
+    protected AwsS3Service awsS3Service;
+
     @Mock
     protected MemberRepository memberRepository;
 
@@ -43,4 +48,7 @@ public class ServiceTest {
 
     @Mock
     protected Encryptor encryptor;
+
+    @Mock
+    protected AmazonS3 amazonS3;
 }

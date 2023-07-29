@@ -8,9 +8,12 @@ import lombok.Getter;
 @Getter
 public class CommentResponse {
 
-    private final String email;
-    private final String content;
-    private final LocalDateTime createdAt;
+    private String email;
+    private String content;
+    private LocalDateTime createdAt;
+
+    private CommentResponse() {
+    }
 
     @Builder
     private CommentResponse(final String content, final LocalDateTime createdAt, final String email) {

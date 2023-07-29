@@ -7,8 +7,11 @@ import lombok.Getter;
 @Getter
 public class PagePostsDetailResponse {
 
-    private final List<PostDetailResponse> posts;
-    private final long totalPostCount;
+    private List<PostDetailResponse> posts;
+    private long totalPostCount;
+
+    private PagePostsDetailResponse() {
+    }
 
     @Builder
     private PagePostsDetailResponse(final List<PostDetailResponse> posts, final long totalPostCount) {
