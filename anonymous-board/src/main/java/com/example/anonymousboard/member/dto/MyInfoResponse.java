@@ -8,9 +8,12 @@ import lombok.Getter;
 @Getter
 public class MyInfoResponse {
 
-    private final Long id;
-    private final String email;
-    private final LocalDateTime createdAt;
+    private Long id;
+    private String email;
+    private LocalDateTime createdAt;
+
+    private MyInfoResponse() {
+    }
 
     @Builder
     private MyInfoResponse(final Long id, final String email, final LocalDateTime createdAt) {

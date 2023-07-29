@@ -9,8 +9,11 @@ import lombok.Getter;
 @Getter
 public class PagePostsResponse {
 
-    private final List<PostResponse> postResponses;
-    private final long totalPostCount;
+    private List<PostResponse> postResponses;
+    private long totalPostCount;
+
+    private PagePostsResponse() {
+    }
 
     @Builder
     private PagePostsResponse(final List<PostResponse> postResponses, final long totalPostCount) {

@@ -416,6 +416,31 @@ public class PostAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
+    @DisplayName("게시글이 삭제되면 좋아요와 댓글도 삭제된다.")
+    @Test
+    void deleteCommentsAndLike_when_deletePost() {
+        // given
+        String memberToken = getMemberToken();
+        String otherMemberToken = getOtherMemberToken();
+        httpPostWithAuthorization(postSaveRequest1, "/posts", memberToken);
+        httpPostWithAuthorization(commentSaveRequest, "/posts/1/comments", otherMemberToken);
+        httpPostWithAuthorization("", "posts/1/like", otherMemberToken);
+
+        // when
+        httpDeleteOne("/posts/1", memberToken);
+        ErrorResponse commentErrorResponse = httpPostWithAuthorization(commentSaveRequest, "/posts/1/comments",
+                otherMemberToken).jsonPath()
+                .getObject(".", ErrorResponse.class);
+        ErrorResponse likeErrorResponse = httpPostWithAuthorization("", "posts/1/like", otherMemberToken).jsonPath()
+                .getObject(".", ErrorResponse.class);
+
+        // then
+        assertAll(
+                () -> assertThat(commentErrorResponse.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND.value()),
+                () -> assertThat(likeErrorResponse.getErrorCode()).isEqualTo(PostErrorCode.POST_NOT_FOUND.value())
+        );
+    }
+
     @DisplayName("없는 게시글은 삭제할 수 없다.")
     @Test
     void deletePost_exception_notFoundPostId() {

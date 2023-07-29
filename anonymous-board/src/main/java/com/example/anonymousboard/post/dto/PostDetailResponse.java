@@ -12,11 +12,14 @@ import lombok.Getter;
 @Getter
 public class PostDetailResponse {
 
-    private final Long id;
-    private final String title;
-    private final String content;
-    private final LocalDateTime createdAt;
-    private final List<CommentResponse> comments;
+    private Long id;
+    private String title;
+    private String content;
+    private LocalDateTime createdAt;
+    private List<CommentResponse> comments;
+
+    private PostDetailResponse() {
+    }
 
     @Builder
     private PostDetailResponse(final Long id, final String title, final String content, final LocalDateTime createdAt,
