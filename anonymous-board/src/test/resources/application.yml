@@ -19,6 +19,8 @@ spring:
 
 cloud:
   aws:
+    s3:
+      bucket: test-bucket-name
     region:
       static: ap-northeast-2
     stack:

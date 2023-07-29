@@ -1,13 +1,16 @@
 package com.example.anonymousboard.advice;
 
+import com.example.anonymousboard.image.exception.FileErrorCode;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @Slf4j
 @RestControllerAdvice
@@ -21,6 +24,19 @@ public class ControllerAdvice {
         return ResponseEntity.badRequest()
                 .body(ErrorResponse.builder()
                         .errorCode(CommonErrorCode.METHOD_ARGUMENT_NOT_VALID.value())
+                        .message(defaultMessage)
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<ErrorResponse> handleBindException(final BindingResult bindingResult) {
+        String defaultMessage = bindingResult.getFieldErrors()
+                .get(0)
+                .getDefaultMessage();
+        return ResponseEntity.badRequest()
+                .body(ErrorResponse.builder()
+                        .errorCode(CommonErrorCode.BIND_FILED_NOT_VALUE.value())
                         .message(defaultMessage)
                         .build()
                 );
@@ -77,6 +93,27 @@ public class ControllerAdvice {
                 );
     }
 
+    /**
+     * 파일 사이즈 초과 예외 처리
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleFileSizeLimitExceededException(final MaxUploadSizeExceededException e) {
+        return ResponseEntity.badRequest()
+                .body(ErrorResponse.builder()
+                        .message("업로드 가능한 파일 용량은 최대 10MB 입니다.")
+                        .errorCode(FileErrorCode.FILE_SIZE_LIMIT.value())
+                        .build());
+    }
+
+    @ExceptionHandler(InternalServerException.class)
+    public ResponseEntity<ErrorResponse> handleInternalServerException(final InternalServerException e) {
+        return ResponseEntity.internalServerError()
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .errorCode(e.getErrorCode())
+                        .build());
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(final RuntimeException e) {
         log.error(e.getMessage(), e);
@@ -84,7 +121,6 @@ public class ControllerAdvice {
                 .body(ErrorResponse.builder()
                         .message("서버에서 예상치 못한 오류가 발생했습니다.")
                         .errorCode(CommonErrorCode.RUNTIME.value())
-                        .build()
-                );
+                        .build());
     }
 }
