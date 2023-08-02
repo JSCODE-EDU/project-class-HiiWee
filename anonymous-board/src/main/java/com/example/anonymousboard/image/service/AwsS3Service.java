@@ -31,7 +31,7 @@ public class AwsS3Service {
         String fileName = FileUtils.buildFileName(category, multipartFile.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(multipartFile.getContentType());
-        System.out.println(multipartFile.getContentType());
+        objectMetadata.setContentLength(multipartFile.getSize());
         putToS3(multipartFile, fileName, objectMetadata);
     }
 
